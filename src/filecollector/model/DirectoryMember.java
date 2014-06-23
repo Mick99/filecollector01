@@ -1,5 +1,5 @@
 package filecollector.model;
 
-public class DirectoryMember extends AbstractCollector {
+public class DirectoryMember extends Member {
 
 }
