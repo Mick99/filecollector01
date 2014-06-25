@@ -1,26 +1,17 @@
-package filecollector.model;
+package filecollector.model.filemember;
 
 import java.nio.file.Path;
 import java.util.EnumSet;
 
-public class Member {
+public class FileSystemMember {
 	private final String canonicalPathName;
 	// Path from nio
-	private Path path;
-	// File length or sum of files inside directory
-	private long capacity = -1L;
+	private final Path path;
 	private EnumSet<FileAttributesEnum> fileAttributes = EnumSet.noneOf (FileAttributesEnum.class);
 	
-	public Member (String canonicalPathName) {
-		this.canonicalPathName = canonicalPathName;
-	}
-
-	long getCapacity () {
-		return capacity;
-	}
-
-	void setCapacity (long capacity) {
-		this.capacity = capacity;
+	public FileSystemMember (final Path path) {
+		this.path  = path;
+		this.canonicalPathName = path.toString ();
 	}
 
 	EnumSet<FileAttributesEnum> getFileAttributes () {
@@ -33,6 +24,10 @@ public class Member {
 
 	String getCanonicalPathName () {
 		return canonicalPathName;
+	}
+
+	Path getPath () {
+		return path;
 	}
 	
 }

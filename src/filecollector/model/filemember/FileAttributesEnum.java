@@ -1,4 +1,4 @@
-package filecollector.model;
+package filecollector.model.filemember;
 
 /**
  * Based on java.io.File "Method Summary"
