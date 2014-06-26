@@ -10,4 +10,14 @@ public class FileMember extends FileSystemMember {
 		super (path);
 		this.fileName = path.getFileName ().toString (); 
 	}
+
+	public long getFileSize () {
+		return fileSize;
+	}
+
+	public void setFileSize (long fileSize) {
+		this.fileSize = fileSize;
+	}
+	
+
 }
