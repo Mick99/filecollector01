@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.attribute.DosFileAttributes;
 import java.util.Iterator;
 
+import filecollector.model.Collector;
 import filecollector.model.filemember.DirectoryMember;
 import filecollector.model.filemember.FileMember;
 
@@ -23,7 +24,6 @@ public class DirectoryWorker implements Runnable {
 	public DirectoryWorker (DirectoryMember directory) {
 		this.directory = directory;
 	}
-	
 	@Override
 	public void run () {
 		openDirectoryStreamInstance ();
@@ -56,7 +56,7 @@ public class DirectoryWorker implements Runnable {
 			return;
 		}
 		if (Files.isDirectory (dirEntry)) {
-			addDirectoryMember (dirEntry, dosFileAttributes);
+//			addDirectoryMember (dirEntry, dosFileAttributes);
 			return;
 		}
 	}

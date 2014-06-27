@@ -18,6 +18,8 @@ public class FileMember extends FileSystemMember {
 	public void setFileSize (long fileSize) {
 		this.fileSize = fileSize;
 	}
-	
+	public String getFileName () {
+		return fileName;
+	}
 
 }
