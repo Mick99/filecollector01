@@ -9,7 +9,6 @@ import java.nio.file.Path;
 import java.nio.file.attribute.DosFileAttributes;
 import java.util.Iterator;
 
-import filecollector.model.Collector;
 import filecollector.model.filemember.DirectoryMember;
 import filecollector.model.filemember.FileMember;
 
@@ -17,12 +16,15 @@ public class DirectoryWorker implements Runnable {
 	
 	private final DirectoryMember directory;
 	private DirectoryStream<Path> dirStream;
-//	private DirectoryWorker[] newDirectoryWorkerThread = null;
+	private String workerName;
 	private boolean isFinish = false;
 	private boolean isDirStreamOpen = false;
 	
 	public DirectoryWorker (DirectoryMember directory) {
 		this.directory = directory;
+		int tmp = WorkerCounter.createWorker ();
+		workerName = "Worker [ " + WorkerCounter.getWorkerId () + " ]";
+		System.out.println ("Create worker count " + tmp + " : " + workerName);
 	}
 	@Override
 	public void run () {
@@ -39,10 +41,26 @@ public class DirectoryWorker implements Runnable {
 				}
 				
 			}
+			try {
+				Thread.sleep (8);
+				allWorkerFinish ();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 	}
 
+	private void allWorkerFinish () {
+		if (WorkerCounter.allWorkerFinish ()) {
+//			System.out.println ("Finish " + workerName);
+			isFinish = true;
+		} else {
+//			System.out.println ("Wait " + workerName);
+		}
+		
+	}
 	private void processNextDirectoryEntry (Path dirEntry) {
 		DosFileAttributes dosFileAttributes = null;
 		try {
@@ -56,7 +74,7 @@ public class DirectoryWorker implements Runnable {
 			return;
 		}
 		if (Files.isDirectory (dirEntry)) {
-//			addDirectoryMember (dirEntry, dosFileAttributes);
+			addDirectoryMember (dirEntry, dosFileAttributes);
 			return;
 		}
 	}
@@ -92,7 +110,8 @@ public class DirectoryWorker implements Runnable {
 			if (dirStream != null)
 				dirStream.close ();
 			isDirStreamOpen = false;
-			isFinish = true;
+			int tmp = WorkerCounter.releaseWorker ();
+			System.out.println ("Release " + tmp + " for " + workerName);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
