@@ -26,15 +26,15 @@ public class Collector {
 		DirectoryWorker firstWorker = new DirectoryWorker (root);
 		Thread t = new Thread (firstWorker);
 		t.start ();
-		while (!WorkerCounter.allWorkerFinish ()) {
+		do {
 			try {
-				Thread.sleep (4);
+				Thread.sleep (10);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			System.out.println ("ALIVE");
-		}
+		} while (!WorkerCounter.allWorkerFinish ());
 	}
 	public void print () {
 		System.out.println (root.getDirContent ().toString ());

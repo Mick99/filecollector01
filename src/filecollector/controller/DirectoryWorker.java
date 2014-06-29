@@ -22,9 +22,6 @@ public class DirectoryWorker implements Runnable {
 	
 	public DirectoryWorker (DirectoryMember directory) {
 		this.directory = directory;
-		int tmp = WorkerCounter.createWorker ();
-		workerName = "Worker [ " + WorkerCounter.getWorkerId () + " ]";
-		System.out.println ("Create worker count " + tmp + " : " + workerName);
 	}
 	@Override
 	public void run () {
@@ -39,7 +36,6 @@ public class DirectoryWorker implements Runnable {
 				} else {
 					closeDirectoryStreamInstance ();
 				}
-				
 			}
 			try {
 				Thread.sleep (8);
@@ -49,15 +45,13 @@ public class DirectoryWorker implements Runnable {
 				e.printStackTrace();
 			}
 		}
-
 	}
-
 	private void allWorkerFinish () {
 		if (WorkerCounter.allWorkerFinish ()) {
-//			System.out.println ("Finish " + workerName);
+			System.out.println ("Finish " + workerName);
 			isFinish = true;
 		} else {
-//			System.out.println ("Wait " + workerName);
+			System.out.println ("Wait " + workerName);
 		}
 		
 	}
@@ -99,11 +93,14 @@ public class DirectoryWorker implements Runnable {
 		try {
 			dirStream = Files.newDirectoryStream (directory.getPath ());
 			isDirStreamOpen = true;
+			int tmp = WorkerCounter.createWorker ();
+			workerName = "Worker [ " + WorkerCounter.getWorkerId () + " ]";
+			System.out.println ("Create worker count " + tmp + " : " + workerName);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			isFinish = true;
 		}
-		
 	}
 	private void closeDirectoryStreamInstance () {
 		try {
