@@ -9,10 +9,13 @@ import java.nio.file.Path;
 import java.nio.file.attribute.DosFileAttributes;
 import java.util.Iterator;
 
+import org.apache.log4j.Logger;
+
 import filecollector.model.filemember.DirectoryMember;
 import filecollector.model.filemember.FileMember;
 
 public class DirectoryWorker implements Runnable {
+	static Logger log = Logger.getLogger ("MW_Log4j");
 	
 	private final DirectoryMember directory;
 	private DirectoryStream<Path> dirStream;
@@ -48,10 +51,10 @@ public class DirectoryWorker implements Runnable {
 	}
 	private void allWorkerFinish () {
 		if (WorkerCounter.allWorkerFinish ()) {
-			System.out.println ("Finish " + workerName);
+			log.info ("Finish " + workerName);
 			isFinish = true;
 		} else {
-			System.out.println ("Wait " + workerName);
+			log.debug ("Wait " + workerName);
 		}
 		
 	}
@@ -88,14 +91,13 @@ public class DirectoryWorker implements Runnable {
 		t1.start ();
 		
 	}
-
 	private void openDirectoryStreamInstance () {
 		try {
 			dirStream = Files.newDirectoryStream (directory.getPath ());
 			isDirStreamOpen = true;
 			int tmp = WorkerCounter.createWorker ();
 			workerName = "Worker [ " + WorkerCounter.getWorkerId () + " ]";
-			System.out.println ("Create worker count " + tmp + " : " + workerName);
+			log.info ("Create worker count " + tmp + " : " + workerName);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -108,7 +110,7 @@ public class DirectoryWorker implements Runnable {
 				dirStream.close ();
 			isDirStreamOpen = false;
 			int tmp = WorkerCounter.releaseWorker ();
-			System.out.println ("Release " + tmp + " for " + workerName);
+			log.warn ("Release " + tmp + " for " + workerName);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
