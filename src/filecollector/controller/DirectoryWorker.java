@@ -15,7 +15,7 @@ import filecollector.model.filemember.DirectoryMember;
 import filecollector.model.filemember.FileMember;
 
 public class DirectoryWorker implements Runnable {
-	static Logger log = Logger.getLogger ("MW_Log4j");
+	Logger log = Logger.getLogger ("MW_Level"); // DirectoryWorker.class.getSimpleName ()
 	
 	private final DirectoryMember directory;
 	private DirectoryStream<Path> dirStream;

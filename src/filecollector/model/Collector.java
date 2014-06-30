@@ -14,10 +14,10 @@ import filecollector.model.filemember.FileSystemMember;
 
 public class Collector {
 
-	static Logger log = Logger.getLogger ("MW_Log4j");
+	Logger log = Logger.getLogger ("MW_Level"); // Collector.class.getSimpleName ()
 
-	public DirectoryMember root;
-	public DirectoryMember current;
+	private DirectoryMember root;
+	private DirectoryMember current;
 	
 	public Collector (Path rootDir) {
 		if (!Files.isDirectory (rootDir)) {
@@ -26,19 +26,22 @@ public class Collector {
 		}
 		root = new DirectoryMember (rootDir);
 	}
-	public void startFirstWorkerThread () {
-		DirectoryWorker firstWorker = new DirectoryWorker (root);
-		Thread t = new Thread (firstWorker);
-		t.start ();
-		do {
-			try {
-				Thread.sleep (10);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			log.info ("ALIVE");
-		} while (!WorkerCounter.allWorkerFinish ());
+	public DirectoryMember getCollectionView (CollectionViewSelector vs) {
+		DirectoryMember tmp = null;
+		// At the present time only root 
+		switch (vs) {
+		case ORIG_UNSORTED:
+			tmp = root;
+			break;
+
+		default:
+			break;
+		}
+		if (tmp == null) {
+			log.error ("NULL is nich wirklich gut???");
+			throw new NullPointerException ();
+		}
+		return tmp;
 	}
 	public void printTest () {
 		log.debug (root.getDirContent ().toString ());
