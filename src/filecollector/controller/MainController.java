@@ -24,6 +24,10 @@ public class MainController {
 		DirectoryWorker firstWorker = new DirectoryWorker (collector.getCollectionView (CollectionViewSelector.ORIG_UNSORTED));
 		Thread t = new Thread (firstWorker);
 		t.start ();
+		/**
+		 * !!! Das ist nicht immer SICHER, allWorkerFinish kann 0 sein obwohl noch weitere Verzeichnissse da sind.
+		 * Wird nur ueber sleep 10 entschaerft, kann mit sleep 0 geprueft werden !!!
+		 */
 		do {
 			try {
 				Thread.sleep (10);
