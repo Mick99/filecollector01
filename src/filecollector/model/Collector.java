@@ -6,8 +6,6 @@ import java.nio.file.Path;
 import org.apache.log4j.Logger;
 
 
-import filecollector.controller.collectorWorker.DirectoryWorker;
-import filecollector.controller.collectorWorker.WorkerCounter;
 import filecollector.model.filemember.DirectoryMember;
 import filecollector.model.filemember.FileMember;
 import filecollector.model.filemember.FileSystemMember;

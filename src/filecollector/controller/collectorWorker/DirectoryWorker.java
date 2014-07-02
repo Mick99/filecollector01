@@ -11,6 +11,7 @@ import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 
+import filecollector.controller.ExecutorSingleton;
 import filecollector.model.filemember.DirectoryMember;
 import filecollector.model.filemember.FileMember;
 
@@ -20,7 +21,10 @@ public class DirectoryWorker implements Runnable {
 	private final DirectoryMember directory;
 	private DirectoryStream<Path> dirStream;
 	private String workerName;
-	private boolean isFinish = false;
+	private Boolean isFinish = false;
+	public Boolean getIsFinish () {
+		return isFinish;
+	}
 	private boolean isDirStreamOpen = false;
 	
 	public DirectoryWorker (DirectoryMember directory) {
@@ -28,6 +32,21 @@ public class DirectoryWorker implements Runnable {
 	}
 	@Override
 	public void run () {
+		openDirectoryStreamInstance ();
+		Iterator<Path> it = null;
+		if (isDirStreamOpen)
+			it = dirStream.iterator ();
+		while (isDirStreamOpen) {
+			if (it.hasNext ()) {
+				processNextDirectoryEntry (it.next ());
+			} else {
+				closeDirectoryStreamInstance ();
+			}
+		}
+		isFinish = true;
+	}
+	
+	public void run_OLD () {
 		openDirectoryStreamInstance ();
 		Iterator<Path> it = null;
 		if (isDirStreamOpen)
@@ -86,6 +105,10 @@ public class DirectoryWorker implements Runnable {
 		createNewDirectoryWorker (dm);
 	}
 	private void createNewDirectoryWorker (DirectoryMember dm) {
+		DirectoryWorker newDirectoryWorkerThread = new DirectoryWorker (dm);
+		ExecutorSingleton.getInstance ().executeWorker (newDirectoryWorkerThread);		
+	}
+	private void createNewDirectoryWorker_OLD (DirectoryMember dm) {
 		DirectoryWorker newDirectoryWorkerThread = new DirectoryWorker (dm);
 		Thread t1 = new Thread (newDirectoryWorkerThread);
 		t1.start ();

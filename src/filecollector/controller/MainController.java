@@ -5,6 +5,8 @@ import java.nio.file.Paths;
 import org.apache.log4j.Logger;
 
 import filecollector.controller.collectorWorker.DirectoryWorker;
+import filecollector.controller.ExecutorSingleton;
+import filecollector.controller.ExecutorSingleton.WhichExecutor;
 import filecollector.controller.collectorWorker.WorkerCounter;
 import filecollector.model.CollectionViewSelectorEnum;
 import filecollector.model.Collector;
@@ -18,9 +20,15 @@ public class MainController {
 	public void entryApplikation (String[] args) {
 		
 		collector = new Collector (Paths.get (args[0]));
-		startFirstWorkerThread ();
+//		startFirstWorkerThread ();
+		callExecutor ();
 		collector.printTest ();
 
+	}
+	private void callExecutor () {
+		DirectoryWorker dw = new DirectoryWorker (collector.getCollectionView (CollectionViewSelectorEnum.ORIG_UNSORTED));
+		ExecutorSingleton executor = new ExecutorSingleton (WhichExecutor.CACHEDPOOL);
+		executor.executeWorker (dw);
 	}
 	private void startFirstWorkerThread () {
 		DirectoryWorker firstWorker = new DirectoryWorker (collector.getCollectionView (CollectionViewSelectorEnum.ORIG_UNSORTED));
