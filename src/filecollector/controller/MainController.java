@@ -27,8 +27,18 @@ public class MainController {
 	}
 	private void callExecutor () {
 		DirectoryWorker dw = new DirectoryWorker (collector.getCollectionView (CollectionViewSelectorEnum.ORIG_UNSORTED));
-		ExecutorSingleton executor = new ExecutorSingleton (WhichExecutor.CACHEDPOOL);
+		ExecutorSingleton executor = new ExecutorSingleton (WhichExecutor.FIXEDPOOL, 20);
 		executor.executeWorker (dw);
+		do {
+			try {
+				Thread.sleep (10);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			log.info ("ALIVE");
+		} while (!WorkerCounter.allWorkerFinish ());
+		executor.shutdownExecutor ();
 	}
 	private void startFirstWorkerThread () {
 		DirectoryWorker firstWorker = new DirectoryWorker (collector.getCollectionView (CollectionViewSelectorEnum.ORIG_UNSORTED));

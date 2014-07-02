@@ -4,6 +4,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 
@@ -44,16 +45,30 @@ public class ExecutorSingleton {
 		}
 		instance = this;
 	}
-	public void executeWorker (DirectoryWorker directoryWorker) {
-		Boolean isFinish = false;
-		Future<Boolean> future = executorService.submit (directoryWorker, isFinish);
+	public void shutdownExecutor () {
 		try {
-			isFinish = future.get ();
-			log.error ("Future finish");
-		} catch (InterruptedException | ExecutionException e) {
+			if (!executorService.awaitTermination (20, TimeUnit.SECONDS)) {
+				executorService.shutdown ();
+				
+			}
+		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			executorService.shutdown ();
+			Thread.currentThread ().interrupt ();
 		}
+	}
+	public void executeWorker (DirectoryWorker directoryWorker) {
+		executorService.execute (directoryWorker);
+//		Boolean isFinish = false;
+//		Future<Boolean> future = executorService.submit (directoryWorker, isFinish);
+//		try {
+//			isFinish = future.get ();
+//			log.error ("Future finish");
+//		} catch (InterruptedException | ExecutionException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 	}
 	
 	// Bsp. Ueberladene Methode um andere Runables auszufuehren... Parameter muss sein!
