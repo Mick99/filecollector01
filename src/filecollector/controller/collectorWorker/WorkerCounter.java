@@ -1,4 +1,4 @@
-package filecollector.controller;
+package filecollector.controller.collectorWorker;
 
 import java.util.concurrent.atomic.AtomicInteger;
 /**

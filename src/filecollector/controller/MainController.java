@@ -4,6 +4,8 @@ import java.nio.file.Paths;
 
 import org.apache.log4j.Logger;
 
+import filecollector.controller.collectorWorker.DirectoryWorker;
+import filecollector.controller.collectorWorker.WorkerCounter;
 import filecollector.model.CollectionViewSelectorEnum;
 import filecollector.model.Collector;
 
