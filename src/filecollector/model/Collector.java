@@ -26,7 +26,7 @@ public class Collector {
 		}
 		root = new DirectoryMember (rootDir);
 	}
-	public DirectoryMember getCollectionView (CollectionViewSelector vs) {
+	public DirectoryMember getCollectionView (CollectionViewSelectorEnum vs) {
 		DirectoryMember tmp = null;
 		// At the present time only root 
 		switch (vs) {

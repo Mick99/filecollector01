@@ -4,7 +4,7 @@ import java.nio.file.Paths;
 
 import org.apache.log4j.Logger;
 
-import filecollector.model.CollectionViewSelector;
+import filecollector.model.CollectionViewSelectorEnum;
 import filecollector.model.Collector;
 
 public class MainController {
@@ -21,7 +21,7 @@ public class MainController {
 
 	}
 	private void startFirstWorkerThread () {
-		DirectoryWorker firstWorker = new DirectoryWorker (collector.getCollectionView (CollectionViewSelector.ORIG_UNSORTED));
+		DirectoryWorker firstWorker = new DirectoryWorker (collector.getCollectionView (CollectionViewSelectorEnum.ORIG_UNSORTED));
 		Thread t = new Thread (firstWorker);
 		t.start ();
 		/**
