@@ -43,7 +43,6 @@ public class DirectoryWorker implements Runnable {
 				closeDirectoryStreamInstance ();
 			}
 		}
-		isFinish = true;
 	}
 	
 	public void run_OLD () {

@@ -19,12 +19,6 @@ public class ExecutorSingleton {
 	private ExecutorService executorService = null;
 	private static ExecutorSingleton instance = null;
 	
-	public static ExecutorSingleton getInstance () {
-		if (instance == null) {
-			throw new NullPointerException ("instance cannot be null?");
-		}
-		return instance;
-	}
 	ExecutorSingleton (final WhichExecutor we,final int ... threadPoolSize) {
 		
 		switch (we) {
@@ -43,36 +37,54 @@ public class ExecutorSingleton {
 		default:
 			break;
 		}
-		instance = this;
+		if (executorService != null)
+			instance = this;
+	}
+	public static ExecutorSingleton getInstance () {
+		if (instance == null) {
+			throw new NullPointerException ("instance cannot be null?");
+		}
+		return instance;
 	}
 	public void shutdownExecutor () {
+		executorService.shutdown ();
 		try {
-			if (!executorService.awaitTermination (20, TimeUnit.SECONDS)) {
-				executorService.shutdown ();
-				
+			if (!executorService.awaitTermination (2, TimeUnit.SECONDS)) {
+				executorService.shutdownNow ();
+				if (!executorService.awaitTermination (2, TimeUnit.SECONDS)) {
+					log.error ("awaitTermination");
+				}
 			}
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 			executorService.shutdown ();
+			// Preserve interrupt status
 			Thread.currentThread ().interrupt ();
 		}
 	}
-	public void executeWorker (DirectoryWorker directoryWorker) {
-		executorService.execute (directoryWorker);
-//		Boolean isFinish = false;
-//		Future<Boolean> future = executorService.submit (directoryWorker, isFinish);
-//		try {
-//			isFinish = future.get ();
-//			log.error ("Future finish");
-//		} catch (InterruptedException | ExecutionException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-	}
-	
 	// Bsp. Ueberladene Methode um andere Runables auszufuehren... Parameter muss sein!
 	public void executeWorker () {
 		return;
+	}
+	public void executeWorker (DirectoryWorker directoryWorker) {
+		executeWorkerTest2(directoryWorker);
+	}
+	private void executeWorkerTest1 (DirectoryWorker directoryWorker) {
+		executorService.execute (directoryWorker);
+	}
+	private void executeWorkerTest2 (DirectoryWorker directoryWorker) {
+		Future<?> future = executorService.submit (directoryWorker);
+		try {
+			future.get ();
+		} catch (InterruptedException e) {
+			Thread.currentThread ().interrupt ();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	@Deprecated
+	public Boolean hasToWait () {
+		// do something cool things
+		return true;
 	}
 }
