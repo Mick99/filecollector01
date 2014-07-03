@@ -51,6 +51,13 @@ public class Collector {
 			if (f.getClass () == DirectoryMember.class) {
 				DirectoryMember m = (DirectoryMember) f;
 				log.warn (m.getPath ().toString ());
+				if (m.getPath ().endsWith ("FirstOrdner")) {
+					DirectoryMember subDir = (DirectoryMember) f;
+					for (FileSystemMember f1 : subDir.getDirContent ()) {
+						FileMember m1 = (FileMember) f1;
+						log.warn (m1.getFileSize () + m1.getFileName ());
+					}
+				}
 			}
 		}
 	}
