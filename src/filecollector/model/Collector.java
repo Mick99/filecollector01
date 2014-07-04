@@ -27,11 +27,9 @@ public class Collector {
 			System.exit(1);
 		}
 		rootDirectory = rootDir;
-//		root = new DirectoryMember (rootDir);
 	}
 	public DirectoryMember getCollectionView (CollectionViewSelectorEnum vs) {
 		DirectoryMember tmp = null;
-		// At the present time only root 
 		switch (vs) {
 		case ORIG_UNSORTED:
 			root = new DirectoryMember (rootDirectory);

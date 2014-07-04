@@ -21,10 +21,6 @@ public class DirectoryWorker implements Runnable {
 	private final DirectoryMember directory;
 	private DirectoryStream<Path> dirStream;
 	private String workerName;
-	private Boolean isFinish = false;
-	public Boolean getIsFinish () {
-		return isFinish;
-	}
 	private boolean isDirStreamOpen = false;
 	
 	public DirectoryWorker (DirectoryMember directory) {
@@ -43,38 +39,6 @@ public class DirectoryWorker implements Runnable {
 				closeDirectoryStreamInstance ();
 			}
 		}
-	}
-	
-	public void run_OLD () {
-		openDirectoryStreamInstance ();
-		Iterator<Path> it = null;
-		if (isDirStreamOpen)
-			it = dirStream.iterator ();
-		while (!isFinish) {
-			while (isDirStreamOpen) {
-				if (it.hasNext ()) {
-					processNextDirectoryEntry (it.next ());
-				} else {
-					closeDirectoryStreamInstance ();
-				}
-			}
-			try {
-				Thread.sleep (8);
-				allWorkerFinish ();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
-	private void allWorkerFinish () {
-		if (WorkerCounter.allWorkerFinish ()) {
-			log.info ("Finish " + workerName);
-			isFinish = true;
-		} else {
-			log.debug ("Wait " + workerName);
-		}
-		
 	}
 	private void processNextDirectoryEntry (Path dirEntry) {
 		DosFileAttributes dosFileAttributes = null;
@@ -107,12 +71,6 @@ public class DirectoryWorker implements Runnable {
 		DirectoryWorker newDirectoryWorkerThread = new DirectoryWorker (dm);
 		ExecutorSingleton.getInstance ().executeWorker (newDirectoryWorkerThread);		
 	}
-	private void createNewDirectoryWorker_OLD (DirectoryMember dm) {
-		DirectoryWorker newDirectoryWorkerThread = new DirectoryWorker (dm);
-		Thread t1 = new Thread (newDirectoryWorkerThread);
-		t1.start ();
-		
-	}
 	private void openDirectoryStreamInstance () {
 		try {
 			dirStream = Files.newDirectoryStream (directory.getPath ());
@@ -123,19 +81,19 @@ public class DirectoryWorker implements Runnable {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			isFinish = true;
 		}
 	}
 	private void closeDirectoryStreamInstance () {
 		try {
 			if (dirStream != null)
 				dirStream.close ();
-			isDirStreamOpen = false;
-			int tmp = WorkerCounter.releaseWorker ();
-			log.warn ("Release " + tmp + " for " + workerName);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			isDirStreamOpen = false;
+			int tmp = WorkerCounter.releaseWorker ();
+			log.warn ("Release " + tmp + " for " + workerName);
 		}
 		
 	}

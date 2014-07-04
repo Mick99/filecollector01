@@ -20,7 +20,6 @@ public class ExecutorSingleton {
 	private static ExecutorSingleton instance = null;
 	
 	ExecutorSingleton (final WhichExecutor we,final int ... threadPoolSize) {
-		
 		switch (we) {
 		case SINGLE:
 			executorService = Executors.newSingleThreadExecutor ();
@@ -94,10 +93,5 @@ public class ExecutorSingleton {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-	@Deprecated
-	public Boolean hasToWait () {
-		// do something cool things
-		return true;
 	}
 }

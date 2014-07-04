@@ -1,7 +1,7 @@
 package filecollector.controller;
 
 import java.nio.file.Paths;
-import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 
@@ -11,6 +11,7 @@ import filecollector.controller.ExecutorSingleton.WhichExecutor;
 import filecollector.controller.collectorWorker.WorkerCounter;
 import filecollector.model.CollectionViewSelectorEnum;
 import filecollector.model.Collector;
+import filecollector.util.SleepUtils;
 
 public class MainController {
 
@@ -62,7 +63,6 @@ public class MainController {
 		default:
 			break;
 		}
-		
 	}
 	private void callExecutor_FutureGet () {
 		DirectoryWorker dw = new DirectoryWorker (collector.getCollectionView (CollectionViewSelectorEnum.TEST_FUTURE_GET));
@@ -78,34 +78,11 @@ public class MainController {
 		 * !!! Das ist nicht immer SICHER, allWorkerFinish kann 0 sein obwohl noch weitere Verzeichnissse da sind.
 		 * Wird nur ueber sleep 10 entschaerft, kann mit sleep 0 geprueft werden !!!
 		 */
+		
 		do {
-			try {
-				Thread.sleep (10);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			SleepUtils.safeSleep (TimeUnit.MILLISECONDS, 10);
 			log.info ("ALIVE");
 		} while (!WorkerCounter.allWorkerFinish ());
 		executor.shutdownExecutor ();
 	}
-	private void startFirstWorkerThread () {
-		DirectoryWorker firstWorker = new DirectoryWorker (collector.getCollectionView (CollectionViewSelectorEnum.ORIG_UNSORTED));
-		Thread t = new Thread (firstWorker);
-		t.start ();
-		/**
-		 * !!! Das ist nicht immer SICHER, allWorkerFinish kann 0 sein obwohl noch weitere Verzeichnissse da sind.
-		 * Wird nur ueber sleep 10 entschaerft, kann mit sleep 0 geprueft werden !!!
-		 */
-		do {
-			try {
-				Thread.sleep (10);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			log.info ("ALIVE");
-		} while (!WorkerCounter.allWorkerFinish ());
-	}
-
 }
