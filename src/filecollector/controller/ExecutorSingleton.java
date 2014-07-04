@@ -66,12 +66,25 @@ public class ExecutorSingleton {
 		return;
 	}
 	public void executeWorker (DirectoryWorker directoryWorker) {
-		executeWorkerTest2(directoryWorker);
+		switch (TestExecutorEnum.getCurrentEnum ()) {
+		case SLEEP_EXECUTOR:
+			executeWorker_Sleep (directoryWorker);
+			break;
+		case FUTURE_GET_EXECUTOR:
+			executeWorker_FutureGet (directoryWorker);
+			break;
+		case CALLABLE_EXECUTOR:
+			
+			break;
+
+		default:
+			break;
+		}
 	}
-	private void executeWorkerTest1 (DirectoryWorker directoryWorker) {
+	private void executeWorker_Sleep (DirectoryWorker directoryWorker) {
 		executorService.execute (directoryWorker);
 	}
-	private void executeWorkerTest2 (DirectoryWorker directoryWorker) {
+	private void executeWorker_FutureGet (DirectoryWorker directoryWorker) {
 		Future<?> future = executorService.submit (directoryWorker);
 		try {
 			future.get ();

@@ -14,22 +14,40 @@ public class Collector {
 
 	Logger log = Logger.getLogger ("MW_Level"); // Collector.class.getSimpleName ()
 
+	private final Path rootDirectory;
 	private DirectoryMember root;
 	private DirectoryMember current;
+	private DirectoryMember test_sleep;
+	private DirectoryMember test_futureGet;
+	private DirectoryMember test_callable;
 	
-	public Collector (Path rootDir) {
+	public Collector (final Path rootDir) {
 		if (!Files.isDirectory (rootDir)) {
 			log.error ("No Directory.. exit now");
 			System.exit(1);
 		}
-		root = new DirectoryMember (rootDir);
+		rootDirectory = rootDir;
+//		root = new DirectoryMember (rootDir);
 	}
 	public DirectoryMember getCollectionView (CollectionViewSelectorEnum vs) {
 		DirectoryMember tmp = null;
 		// At the present time only root 
 		switch (vs) {
 		case ORIG_UNSORTED:
+			root = new DirectoryMember (rootDirectory);
 			tmp = root;
+			break;
+		case TEST_SLEEP:
+			test_sleep = new DirectoryMember (rootDirectory);
+			tmp = test_sleep;
+			break;
+		case TEST_FUTURE_GET:
+			test_futureGet = new DirectoryMember (rootDirectory);
+			tmp = test_futureGet;
+			break;
+		case TEST_CALLABLE:
+			test_callable = new DirectoryMember (rootDirectory);
+			tmp = test_callable;
 			break;
 
 		default:
@@ -42,8 +60,24 @@ public class Collector {
 		return tmp;
 	}
 	public void printTest () {
-		log.debug (root.getDirContent ().toString ());
-		for (FileSystemMember f : root.getDirContent ()) {
+		DirectoryMember tmpPrint = null;
+		if (root != null) {
+			tmpPrint = root;
+		} else if (test_sleep != null) {
+			tmpPrint = test_sleep;
+		} else if (test_futureGet != null) {
+			tmpPrint = test_futureGet;
+		} else {
+			tmpPrint = test_callable;
+		}
+		
+		if (tmpPrint == null) {
+			log.fatal ("Geht gar nich!!!");
+			System.exit (3);
+		}
+		
+		log.debug (tmpPrint.getDirContent ().toString ());
+		for (FileSystemMember f : tmpPrint.getDirContent ()) {
 			if (f.getClass () == FileMember.class) {
 				FileMember m = (FileMember) f;
 				log.warn (m.getFileSize () + m.getFileName ());
