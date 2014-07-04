@@ -15,32 +15,18 @@ import filecollector.controller.ExecutorSingleton;
 import filecollector.model.filemember.DirectoryMember;
 import filecollector.model.filemember.FileMember;
 
-public class DirectoryWorker implements Runnable {
+public class DirectoryWorker {
 	Logger log = Logger.getLogger ("MW_Level"); // DirectoryWorker.class.getSimpleName ()
 	
-	private final DirectoryMember directory;
-	private DirectoryStream<Path> dirStream;
+	protected final DirectoryMember directory;
+	protected DirectoryStream<Path> dirStream;
 	private String workerName;
-	private boolean isDirStreamOpen = false;
+	protected boolean isDirStreamOpen = false;
 	
 	public DirectoryWorker (DirectoryMember directory) {
 		this.directory = directory;
 	}
-	@Override
-	public void run () {
-		openDirectoryStreamInstance ();
-		Iterator<Path> it = null;
-		if (isDirStreamOpen)
-			it = dirStream.iterator ();
-		while (isDirStreamOpen) {
-			if (it.hasNext ()) {
-				processNextDirectoryEntry (it.next ());
-			} else {
-				closeDirectoryStreamInstance ();
-			}
-		}
-	}
-	private void processNextDirectoryEntry (Path dirEntry) {
+	protected void processNextDirectoryEntry (Path dirEntry) {
 		DosFileAttributes dosFileAttributes = null;
 		try {
 			dosFileAttributes = Files.readAttributes (dirEntry, DosFileAttributes.class);
@@ -71,7 +57,7 @@ public class DirectoryWorker implements Runnable {
 		DirectoryWorker newDirectoryWorkerThread = new DirectoryWorker (dm);
 		ExecutorSingleton.getInstance ().executeWorker (newDirectoryWorkerThread);		
 	}
-	private void openDirectoryStreamInstance () {
+	protected void openDirectoryStreamInstance () {
 		try {
 			dirStream = Files.newDirectoryStream (directory.getPath ());
 			isDirStreamOpen = true;
@@ -83,7 +69,7 @@ public class DirectoryWorker implements Runnable {
 			e.printStackTrace();
 		}
 	}
-	private void closeDirectoryStreamInstance () {
+	protected void closeDirectoryStreamInstance () {
 		try {
 			if (dirStream != null)
 				dirStream.close ();
@@ -95,8 +81,5 @@ public class DirectoryWorker implements Runnable {
 			int tmp = WorkerCounter.releaseWorker ();
 			log.warn ("Release " + tmp + " for " + workerName);
 		}
-		
 	}
-	
-
 }
