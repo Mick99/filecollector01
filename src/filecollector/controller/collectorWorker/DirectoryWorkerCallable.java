@@ -6,7 +6,7 @@ import java.util.concurrent.Callable;
 
 import filecollector.model.filemember.DirectoryMember;
 
-public class DirectoryWorkerCallable extends DirectoryWorker implements Callable<DirectoryMember> {
+public class DirectoryWorkerCallable extends DirectoryWorker {
 
 	public DirectoryWorkerCallable (DirectoryMember directory) {
 		super (directory);

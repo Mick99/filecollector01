@@ -32,14 +32,14 @@ public class MainController {
 		long startTime = System.currentTimeMillis ();
 
 		long futureDiffTime = 0;
-		/*
-		 * // Only for tests set Enum to get current test to run...
-		 * TestExecutorEnum.setCurrentEnum
-		 * (TestExecutorEnum.FUTURE_GET_EXECUTOR); startTime =
-		 * System.currentTimeMillis (); testCallExecutor (); endTime =
-		 * System.currentTimeMillis (); long futureDiffTime = endTime -
-		 * startTime;
-		 */
+		
+		// Only for tests set Enum to get current test to run...
+		TestExecutorEnum.setCurrentEnum
+		(TestExecutorEnum.FUTURE_GET_EXECUTOR); startTime =
+		System.currentTimeMillis (); testCallExecutor (); endTime =
+		System.currentTimeMillis (); 
+		futureDiffTime = endTime - startTime;
+		 
 		// Only for tests set Enum to get current test to run...
 		TestExecutorEnum.setCurrentEnum (TestExecutorEnum.SLEEP_EXECUTOR);
 		startTime = System.currentTimeMillis ();
@@ -71,19 +71,14 @@ public class MainController {
 	}
 
 	private void callExecutor_FutureGet () {
-		DirectoryWorker dw = new DirectoryWorker (
-				collector.getCollectionView (CollectionViewSelectorEnum.TEST_FUTURE_GET));
 		ExecutorSingleton executor = new ExecutorSingleton (WhichExecutor.CACHEDPOOL);
-
-		executor.executeWorker (dw);
+		executor.executeWorker (collector.getCollectionView (CollectionViewSelectorEnum.TEST_FUTURE_GET));
 		executor.shutdownExecutor ();
 	}
 
 	private void callExecutor_Sleep () {
-		DirectoryWorkerRunnable dwr = new DirectoryWorkerRunnable (
-				collector.getCollectionView (CollectionViewSelectorEnum.TEST_SLEEP));
 		ExecutorSingleton executor = new ExecutorSingleton (WhichExecutor.CACHEDPOOL);
-		executor.executeWorker (dwr);
+		executor.executeWorker (collector.getCollectionView (CollectionViewSelectorEnum.TEST_SLEEP));
 		/**
 		 * !!! Das ist nicht immer SICHER, allWorkerFinish kann 0 sein obwohl
 		 * noch weitere Verzeichnissse da sind. Wird nur ueber sleep 10

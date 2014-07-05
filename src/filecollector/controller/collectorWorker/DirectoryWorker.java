@@ -55,8 +55,7 @@ public class DirectoryWorker implements Runnable, Callable<DirectoryMember>{
 		createNewDirectoryWorker (dm);
 	}
 	private void createNewDirectoryWorker (DirectoryMember dm) {
-		DirectoryWorker newDirectoryWorkerThread = new DirectoryWorker (dm);
-		ExecutorSingleton.getInstance ().executeWorker (newDirectoryWorkerThread);		
+		ExecutorSingleton.getInstance ().executeWorker (dm);		
 	}
 	protected void openDirectoryStreamInstance () {
 		try {

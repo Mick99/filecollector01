@@ -9,6 +9,9 @@ import java.util.concurrent.TimeUnit;
 import org.apache.log4j.Logger;
 
 import filecollector.controller.collectorWorker.DirectoryWorker;
+import filecollector.controller.collectorWorker.DirectoryWorkerCallable;
+import filecollector.controller.collectorWorker.DirectoryWorkerRunnable;
+import filecollector.model.filemember.DirectoryMember;
 
 public class ExecutorSingleton {
 	Logger log = Logger.getLogger ("MW_Level"); // MainController.class.getSimpleName
@@ -51,9 +54,11 @@ public class ExecutorSingleton {
 
 	public void shutdownExecutor () {
 		executorService.shutdown ();
+		log.warn ("shutdown");
 		try {
 			if (!executorService.awaitTermination (2, TimeUnit.SECONDS)) {
 				executorService.shutdownNow ();
+				log.error ("shutdownNow");
 				if (!executorService.awaitTermination (2, TimeUnit.SECONDS)) {
 					log.error ("awaitTermination");
 				}
@@ -71,15 +76,22 @@ public class ExecutorSingleton {
 		return;
 	}
 
-	public void executeWorker (DirectoryWorker directoryWorker) {
+	public void executeWorker (DirectoryMember directoryMember) {
+		DirectoryWorkerRunnable workerRunnable;
+		DirectoryWorkerCallable workerCallable;
+		
 		switch (TestExecutorEnum.getCurrentEnum ()) {
 		case SLEEP_EXECUTOR:
-			executeWorker_Sleep (directoryWorker);
+			workerRunnable = new DirectoryWorkerRunnable (directoryMember);
+			executeWorker_Sleep (workerRunnable);
 			break;
 		case FUTURE_GET_EXECUTOR:
-			executeWorker_FutureGet (directoryWorker);
+			workerRunnable = new DirectoryWorkerRunnable (directoryMember);
+			executeWorker_FutureGet (workerRunnable);
 			break;
 		case CALLABLE_EXECUTOR:
+			workerCallable = new DirectoryWorkerCallable (directoryMember);
+			// TODO MW_140705: Not imlemented yet...
 
 			break;
 
@@ -90,19 +102,19 @@ public class ExecutorSingleton {
 
 	// private <T extends DirectoryWorker> void executeWorker_Sleep (T
 	// directoryWorker)
-	private void executeWorker_Sleep (DirectoryWorker directoryWorker) {
+	private void executeWorker_Sleep (DirectoryWorkerRunnable directoryWorker) {
 		executorService.execute (directoryWorker);
 	}
 
-	private void executeWorker_FutureGet (DirectoryWorker directoryWorker) {
-		// Future<?> future = executorService.submit (directoryWorker);
-		// try {
-		// future.get ();
-		// } catch (InterruptedException e) {
-		// Thread.currentThread ().interrupt ();
-		// } catch (ExecutionException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
+	private void executeWorker_FutureGet (DirectoryWorkerRunnable directoryWorker) {
+		 Future<?> future = executorService.submit ((Runnable) directoryWorker);
+		 try {
+		 future.get ();
+		 } catch (InterruptedException e) {
+		 Thread.currentThread ().interrupt ();
+		 } catch (ExecutionException e) {
+		 // TODO Auto-generated catch block
+		 e.printStackTrace();
+		 }
 	}
 }

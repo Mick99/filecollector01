@@ -5,7 +5,7 @@ import java.util.Iterator;
 
 import filecollector.model.filemember.DirectoryMember;
 
-public class DirectoryWorkerRunnable extends DirectoryWorker implements Runnable {
+public class DirectoryWorkerRunnable extends DirectoryWorker {
 
 	public DirectoryWorkerRunnable (DirectoryMember directory) {
 		super (directory);
