@@ -10,16 +10,18 @@ import org.apache.log4j.Logger;
 
 import filecollector.controller.collectorWorker.DirectoryWorker;
 
-
 public class ExecutorSingleton {
-	Logger log = Logger.getLogger ("MW_Level"); // MainController.class.getSimpleName ()
-	
-	enum WhichExecutor {SINGLE, FIXEDPOOL, CACHEDPOOL}
-	
+	Logger log = Logger.getLogger ("MW_Level"); // MainController.class.getSimpleName
+												// ()
+
+	enum WhichExecutor {
+		SINGLE, FIXEDPOOL, CACHEDPOOL
+	}
+
 	private ExecutorService executorService = null;
 	private static ExecutorSingleton instance = null;
-	
-	ExecutorSingleton (final WhichExecutor we,final int ... threadPoolSize) {
+
+	ExecutorSingleton (final WhichExecutor we, final int... threadPoolSize) {
 		switch (we) {
 		case SINGLE:
 			executorService = Executors.newSingleThreadExecutor ();
@@ -39,12 +41,14 @@ public class ExecutorSingleton {
 		if (executorService != null)
 			instance = this;
 	}
+
 	public static ExecutorSingleton getInstance () {
 		if (instance == null) {
 			throw new NullPointerException ("instance cannot be null?");
 		}
 		return instance;
 	}
+
 	public void shutdownExecutor () {
 		executorService.shutdown ();
 		try {
@@ -60,10 +64,13 @@ public class ExecutorSingleton {
 			Thread.currentThread ().interrupt ();
 		}
 	}
-	// Bsp. Ueberladene Methode um andere Runables auszufuehren... Parameter muss sein!
+
+	// Bsp. Ueberladene Methode um andere Runables auszufuehren... Parameter
+	// muss sein!
 	public void executeWorker () {
 		return;
 	}
+
 	public void executeWorker (DirectoryWorker directoryWorker) {
 		switch (TestExecutorEnum.getCurrentEnum ()) {
 		case SLEEP_EXECUTOR:
@@ -73,25 +80,29 @@ public class ExecutorSingleton {
 			executeWorker_FutureGet (directoryWorker);
 			break;
 		case CALLABLE_EXECUTOR:
-			
+
 			break;
 
 		default:
 			break;
 		}
 	}
+
+	// private <T extends DirectoryWorker> void executeWorker_Sleep (T
+	// directoryWorker)
 	private void executeWorker_Sleep (DirectoryWorker directoryWorker) {
 		executorService.execute (directoryWorker);
 	}
+
 	private void executeWorker_FutureGet (DirectoryWorker directoryWorker) {
-		Future<?> future = executorService.submit (directoryWorker);
-		try {
-			future.get ();
-		} catch (InterruptedException e) {
-			Thread.currentThread ().interrupt ();
-		} catch (ExecutionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		// Future<?> future = executorService.submit (directoryWorker);
+		// try {
+		// future.get ();
+		// } catch (InterruptedException e) {
+		// Thread.currentThread ().interrupt ();
+		// } catch (ExecutionException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
 	}
 }

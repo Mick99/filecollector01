@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.DosFileAttributes;
 import java.util.Iterator;
+import java.util.concurrent.Callable;
 
 import org.apache.log4j.Logger;
 
@@ -15,7 +16,7 @@ import filecollector.controller.ExecutorSingleton;
 import filecollector.model.filemember.DirectoryMember;
 import filecollector.model.filemember.FileMember;
 
-public class DirectoryWorker {
+public class DirectoryWorker implements Runnable, Callable<DirectoryMember>{
 	Logger log = Logger.getLogger ("MW_Level"); // DirectoryWorker.class.getSimpleName ()
 	
 	protected final DirectoryMember directory;
@@ -81,5 +82,15 @@ public class DirectoryWorker {
 			int tmp = WorkerCounter.releaseWorker ();
 			log.warn ("Release " + tmp + " for " + workerName);
 		}
+	}
+	@Override
+	public DirectoryMember call () throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public void run () {
+		// TODO Auto-generated method stub
+		
 	}
 }
