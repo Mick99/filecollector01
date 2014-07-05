@@ -5,7 +5,6 @@ import java.nio.file.Path;
 
 import org.apache.log4j.Logger;
 
-
 import filecollector.model.filemember.DirectoryMember;
 import filecollector.model.filemember.FileMember;
 import filecollector.model.filemember.FileSystemMember;
@@ -20,11 +19,11 @@ public class Collector {
 	private DirectoryMember test_sleep;
 	private DirectoryMember test_futureGet;
 	private DirectoryMember test_callable;
-	
+
 	public Collector (final Path rootDir) {
 		if (!Files.isDirectory (rootDir)) {
 			log.error ("No Directory.. exit now");
-			System.exit(1);
+			System.exit (1);
 		}
 		rootDirectory = rootDir;
 	}
@@ -68,12 +67,12 @@ public class Collector {
 		} else {
 			tmpPrint = test_callable;
 		}
-		
+
 		if (tmpPrint == null) {
 			log.fatal ("Geht gar nich!!!");
 			System.exit (3);
 		}
-		
+
 		log.debug (tmpPrint.getDirContent ().toString ());
 		for (FileSystemMember f : tmpPrint.getDirContent ()) {
 			if (f.getClass () == FileMember.class) {

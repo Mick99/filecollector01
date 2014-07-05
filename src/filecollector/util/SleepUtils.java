@@ -3,9 +3,10 @@ package filecollector.util;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Sleep utility class to send automatic new interrupt.  
+ * Sleep utility class to send automatic new interrupt.
+ * 
  * @author Michael Inden (Der Weg zum Java-Profi)
- *
+ * 
  */
 public final class SleepUtils {
 
@@ -20,6 +21,6 @@ public final class SleepUtils {
 		}
 	}
 	private SleepUtils () {
-		
+
 	}
 }

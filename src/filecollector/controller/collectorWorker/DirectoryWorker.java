@@ -1,13 +1,10 @@
 package filecollector.controller.collectorWorker;
 
-
-
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.DosFileAttributes;
-import java.util.Iterator;
 import java.util.concurrent.Callable;
 
 import org.apache.log4j.Logger;
@@ -16,14 +13,14 @@ import filecollector.controller.ExecutorSingleton;
 import filecollector.model.filemember.DirectoryMember;
 import filecollector.model.filemember.FileMember;
 
-public class DirectoryWorker implements Runnable, Callable<DirectoryMember>{
+public class DirectoryWorker implements Runnable, Callable<DirectoryMember> {
 	Logger log = Logger.getLogger ("MW_Level"); // DirectoryWorker.class.getSimpleName ()
-	
+
 	protected final DirectoryMember directory;
 	protected DirectoryStream<Path> dirStream;
 	private String workerName;
 	protected boolean isDirStreamOpen = false;
-	
+
 	public DirectoryWorker (DirectoryMember directory) {
 		this.directory = directory;
 	}
@@ -33,8 +30,8 @@ public class DirectoryWorker implements Runnable, Callable<DirectoryMember>{
 			dosFileAttributes = Files.readAttributes (dirEntry, DosFileAttributes.class);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
+			e.printStackTrace ();
+		}
 		if (Files.isRegularFile (dirEntry)) {
 			addFileMember (dirEntry, dosFileAttributes);
 			return;
@@ -55,7 +52,7 @@ public class DirectoryWorker implements Runnable, Callable<DirectoryMember>{
 		createNewDirectoryWorker (dm);
 	}
 	private void createNewDirectoryWorker (DirectoryMember dm) {
-		ExecutorSingleton.getInstance ().executeWorker (dm);		
+		ExecutorSingleton.getInstance ().executeWorker (dm);
 	}
 	protected void openDirectoryStreamInstance () {
 		try {
@@ -66,7 +63,7 @@ public class DirectoryWorker implements Runnable, Callable<DirectoryMember>{
 			log.info ("Create worker count " + tmp + " : " + workerName);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e.printStackTrace ();
 		}
 	}
 	protected void closeDirectoryStreamInstance () {
@@ -75,7 +72,7 @@ public class DirectoryWorker implements Runnable, Callable<DirectoryMember>{
 				dirStream.close ();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e.printStackTrace ();
 		} finally {
 			isDirStreamOpen = false;
 			int tmp = WorkerCounter.releaseWorker ();
@@ -90,6 +87,6 @@ public class DirectoryWorker implements Runnable, Callable<DirectoryMember>{
 	@Override
 	public void run () {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

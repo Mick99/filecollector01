@@ -32,14 +32,14 @@ public class MainController {
 		long startTime = System.currentTimeMillis ();
 
 		long futureDiffTime = 0;
-		
+
 		// Only for tests set Enum to get current test to run...
-		TestExecutorEnum.setCurrentEnum
-		(TestExecutorEnum.FUTURE_GET_EXECUTOR); startTime =
-		System.currentTimeMillis (); testCallExecutor (); endTime =
-		System.currentTimeMillis (); 
+		TestExecutorEnum.setCurrentEnum (TestExecutorEnum.FUTURE_GET_EXECUTOR);
+		startTime = System.currentTimeMillis ();
+		testCallExecutor ();
+		endTime = System.currentTimeMillis ();
 		futureDiffTime = endTime - startTime;
-		 
+
 		// Only for tests set Enum to get current test to run...
 		TestExecutorEnum.setCurrentEnum (TestExecutorEnum.SLEEP_EXECUTOR);
 		startTime = System.currentTimeMillis ();
@@ -72,26 +72,27 @@ public class MainController {
 	}
 
 	private void callExecutor_FutureGet () {
-//		ExecutorSingleton executor = new ExecutorSingleton (WhichExecutor.CACHEDPOOL);
-//		executor.executeWorker (collector.getCollectionView (CollectionViewSelectorEnum.TEST_FUTURE_GET));
-//		executor.shutdownExecutor ();
-		ExecutorSingleton.getInstance ().executeWorker (collector.getCollectionView (CollectionViewSelectorEnum.TEST_FUTURE_GET));
+		// ExecutorSingleton executor = new ExecutorSingleton (WhichExecutor.CACHEDPOOL);
+		// executor.executeWorker (collector.getCollectionView (CollectionViewSelectorEnum.TEST_FUTURE_GET));
+		// executor.shutdownExecutor ();
+		ExecutorSingleton.getInstance ().executeWorker (
+				collector.getCollectionView (CollectionViewSelectorEnum.TEST_FUTURE_GET));
 	}
 
 	private void callExecutor_Sleep () {
-//		ExecutorSingleton executor = new ExecutorSingleton (WhichExecutor.CACHEDPOOL);
-//		executor.executeWorker (collector.getCollectionView (CollectionViewSelectorEnum.TEST_SLEEP));
-		ExecutorSingleton.getInstance ().executeWorker (collector.getCollectionView (CollectionViewSelectorEnum.TEST_SLEEP));
+		// ExecutorSingleton executor = new ExecutorSingleton (WhichExecutor.CACHEDPOOL);
+		// executor.executeWorker (collector.getCollectionView (CollectionViewSelectorEnum.TEST_SLEEP));
+		ExecutorSingleton.getInstance ().executeWorker (
+				collector.getCollectionView (CollectionViewSelectorEnum.TEST_SLEEP));
 		/**
-		 * !!! Das ist nicht immer SICHER, allWorkerFinish kann 0 sein obwohl
-		 * noch weitere Verzeichnissse da sind. Wird nur ueber sleep 10
-		 * entschaerft, kann mit sleep 0 geprueft werden !!!
+		 * !!! Das ist nicht immer SICHER, allWorkerFinish kann 0 sein obwohl noch weitere Verzeichnissse da sind. Wird
+		 * nur ueber sleep 10 entschaerft, kann mit sleep 0 geprueft werden !!!
 		 */
 
 		do {
 			SleepUtils.safeSleep (TimeUnit.MILLISECONDS, 10);
 			log.info ("ALIVE");
 		} while (!WorkerCounter.allWorkerFinish ());
-//		executor.shutdownExecutor ();
+		// executor.shutdownExecutor ();
 	}
 }

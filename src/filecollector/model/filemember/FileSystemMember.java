@@ -8,9 +8,9 @@ public class FileSystemMember {
 	// Path from nio
 	private final Path path;
 	private EnumSet<FileAttributesEnum> fileAttributes = EnumSet.noneOf (FileAttributesEnum.class);
-	
+
 	public FileSystemMember (final Path path) {
-		this.path  = path;
+		this.path = path;
 		this.canonicalPathName = path.toString ();
 	}
 
@@ -29,5 +29,5 @@ public class FileSystemMember {
 	Path getPath () {
 		return path;
 	}
-	
+
 }

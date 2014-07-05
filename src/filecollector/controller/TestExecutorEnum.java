@@ -2,7 +2,7 @@ package filecollector.controller;
 
 public enum TestExecutorEnum {
 	SLEEP_EXECUTOR, FUTURE_GET_EXECUTOR, CALLABLE_EXECUTOR;
-	
+
 	private static TestExecutorEnum currentEnum = null;
 
 	public static TestExecutorEnum getCurrentEnum () {

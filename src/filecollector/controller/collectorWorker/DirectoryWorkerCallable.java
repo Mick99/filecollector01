@@ -2,7 +2,6 @@ package filecollector.controller.collectorWorker;
 
 import java.nio.file.Path;
 import java.util.Iterator;
-import java.util.concurrent.Callable;
 
 import filecollector.model.filemember.DirectoryMember;
 

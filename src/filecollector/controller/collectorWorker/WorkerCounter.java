@@ -1,11 +1,12 @@
 package filecollector.controller.collectorWorker;
 
 import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * WorkerCounter use AtomicInteger may be synchronize not necessary?
  * 
  * @author Mick_02
- *
+ * 
  */
 public final class WorkerCounter {
 	private static AtomicInteger count = new AtomicInteger ();
@@ -16,7 +17,7 @@ public final class WorkerCounter {
 	}
 	public static int releaseWorker () {
 		return count.getAndDecrement ();
-		
+
 	}
 	public static boolean allWorkerFinish () {
 		return (count.intValue () == 0) ? true : false;

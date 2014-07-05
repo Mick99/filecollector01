@@ -8,7 +8,6 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 
-import filecollector.controller.collectorWorker.DirectoryWorker;
 import filecollector.controller.collectorWorker.DirectoryWorkerCallable;
 import filecollector.controller.collectorWorker.DirectoryWorkerRunnable;
 import filecollector.model.filemember.DirectoryMember;
@@ -79,7 +78,7 @@ public class ExecutorSingleton {
 	public void executeWorker (DirectoryMember directoryMember) {
 		DirectoryWorkerRunnable workerRunnable;
 		DirectoryWorkerCallable workerCallable;
-		
+
 		switch (TestExecutorEnum.getCurrentEnum ()) {
 		case SLEEP_EXECUTOR:
 			workerRunnable = new DirectoryWorkerRunnable (directoryMember);
@@ -107,14 +106,14 @@ public class ExecutorSingleton {
 	}
 
 	private void executeWorker_FutureGet (DirectoryWorkerRunnable directoryWorker) {
-		 Future<?> future = executorService.submit ((Runnable) directoryWorker);
-		 try {
-		 future.get ();
-		 } catch (InterruptedException e) {
-		 Thread.currentThread ().interrupt ();
-		 } catch (ExecutionException e) {
-		 // TODO Auto-generated catch block
-		 e.printStackTrace();
-		 }
+		Future<?> future = executorService.submit ((Runnable) directoryWorker);
+		try {
+			future.get ();
+		} catch (InterruptedException e) {
+			Thread.currentThread ().interrupt ();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace ();
+		}
 	}
 }
