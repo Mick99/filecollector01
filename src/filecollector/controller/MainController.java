@@ -15,7 +15,6 @@ import filecollector.util.SleepUtils;
 public class MainController {
 
 	Logger log = Logger.getLogger ("MW_Level"); // MainController.class.getSimpleName
-												// ()
 
 	private Collector collector;
 
@@ -34,14 +33,14 @@ public class MainController {
 		long futureDiffTime = 0;
 
 		// Only for tests set Enum to get current test to run...
-		TestExecutorEnum.setCurrentEnum (TestExecutorEnum.FUTURE_GET_EXECUTOR);
-		startTime = System.currentTimeMillis ();
-		testCallExecutor ();
-		endTime = System.currentTimeMillis ();
-		futureDiffTime = endTime - startTime;
+//		TestExecutorEnum.setCurrentEnum (TestExecutorEnum.FUTURE_GET_EXECUTOR);
+//		startTime = System.currentTimeMillis ();
+//		testCallExecutor ();
+//		endTime = System.currentTimeMillis ();
+//		futureDiffTime = endTime - startTime;
 
 		// Only for tests set Enum to get current test to run...
-		TestExecutorEnum.setCurrentEnum (TestExecutorEnum.SLEEP_EXECUTOR);
+		TestExecutorEnum.setCurrentEnum (TestExecutorEnum.CALLABLE_EXECUTOR);
 		startTime = System.currentTimeMillis ();
 		testCallExecutor ();
 		endTime = System.currentTimeMillis ();
@@ -63,6 +62,7 @@ public class MainController {
 			callExecutor_FutureGet ();
 			break;
 		case CALLABLE_EXECUTOR:
+			callExecutor_Callable ();
 
 			break;
 
@@ -94,5 +94,9 @@ public class MainController {
 			log.info ("ALIVE");
 		} while (!WorkerCounter.allWorkerFinish ());
 		// executor.shutdownExecutor ();
+	}
+	private void callExecutor_Callable () {
+		ExecutorSingleton.getInstance ().executeWorker (
+				collector.getCollectionView (CollectionViewSelectorEnum.TEST_CALLABLE));
 	}
 }

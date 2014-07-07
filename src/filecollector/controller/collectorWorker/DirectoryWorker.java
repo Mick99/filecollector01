@@ -81,12 +81,12 @@ public class DirectoryWorker implements Runnable, Callable<DirectoryMember> {
 	}
 	@Override
 	public DirectoryMember call () throws Exception {
-		// TODO Auto-generated method stub
+		// Have to be override by subclass
 		return null;
 	}
 	@Override
 	public void run () {
-		// TODO Auto-generated method stub
+		// Have to be override by subclass
 
 	}
 }

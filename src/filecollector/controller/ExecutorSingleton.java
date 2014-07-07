@@ -1,5 +1,6 @@
 package filecollector.controller;
 
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -91,6 +92,7 @@ public class ExecutorSingleton {
 		case CALLABLE_EXECUTOR:
 			workerCallable = new DirectoryWorkerCallable (directoryMember);
 			// TODO MW_140705: Not imlemented yet...
+			executeWorker_Callable (workerCallable);
 
 			break;
 
@@ -115,5 +117,23 @@ public class ExecutorSingleton {
 			// TODO Auto-generated catch block
 			e.printStackTrace ();
 		}
+	}
+	private void executeWorker_Callable (DirectoryWorkerCallable directoryWorker) {
+		Future<DirectoryMember> future = executorService.submit ((Callable<DirectoryMember>) directoryWorker);
+		try {
+			/* TODO MW_140705: Have to redesign! dirMember is not really necessary, because DirectoryMember is in 
+			 * DirectoryWorker as member attribute defined. 
+			 */
+			DirectoryMember dirMember = future.get ();
+			if (true)
+				dirMember = dirMember;
+		} catch (InterruptedException e) {
+			Thread.currentThread ().interrupt ();
+			e.printStackTrace();
+		} catch (ExecutionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 }
