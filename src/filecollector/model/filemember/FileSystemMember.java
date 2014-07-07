@@ -3,31 +3,45 @@ package filecollector.model.filemember;
 import java.nio.file.Path;
 import java.util.EnumSet;
 
+import org.apache.log4j.Logger;
+
+/**
+ * Only absolute paths are allowed. No relative paths like "./../Test"
+ * 
+ * @author Mick_02
+ * 
+ */
 public class FileSystemMember {
-	private final String canonicalPathName;
-	// Path from nio
-	private final Path path;
+	Logger log = Logger.getLogger ("MW_Level");
+
+	private final String ABSOLUTE_PATH_NAME;
+	private Path path;
 	private EnumSet<FileAttributesEnum> fileAttributes = EnumSet.noneOf (FileAttributesEnum.class);
 
-	public FileSystemMember (final Path path) {
-		this.path = path;
-		this.canonicalPathName = path.toString ();
+	protected FileSystemMember (final Path path) {
+		// Inside "if else" through final not possible
+		this.ABSOLUTE_PATH_NAME = path.toString ();
+		if (path.isAbsolute ()) {
+			this.path = path;
+		} else {
+			log.error (String.format ("Only absolute paths are allowed %s:\n", path.toString ()),
+					new IllegalArgumentException ());
+		}
 	}
 
-	EnumSet<FileAttributesEnum> getFileAttributes () {
-		return fileAttributes;
+	public String getABSOLUTE_PATH_NAME () {
+		return ABSOLUTE_PATH_NAME;
 	}
-
-	void setFileAttributes (EnumSet<FileAttributesEnum> fileAttributes) {
-		this.fileAttributes = fileAttributes;
-	}
-
-	String getCanonicalPathName () {
-		return canonicalPathName;
-	}
-
-	Path getPath () {
+	public Path getPath () {
 		return path;
 	}
-
+	protected void setPath (Path path) {
+		this.path = path;
+	}
+	protected EnumSet<FileAttributesEnum> getFileAttributes () {
+		return fileAttributes;
+	}
+	protected void setFileAttributes (EnumSet<FileAttributesEnum> fileAttributes) {
+		this.fileAttributes = fileAttributes;
+	}
 }

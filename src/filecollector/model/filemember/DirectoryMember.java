@@ -31,9 +31,4 @@ public class DirectoryMember extends FileSystemMember {
 	public List<FileSystemMember> getDirContent () {
 		return dirContent;
 	}
-
-	public Path getPath () {
-		return super.getPath ();
-	}
-
 }

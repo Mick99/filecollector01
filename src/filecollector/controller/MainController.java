@@ -76,14 +76,14 @@ public class MainController {
 		// executor.executeWorker (collector.getCollectionView (CollectionViewSelectorEnum.TEST_FUTURE_GET));
 		// executor.shutdownExecutor ();
 		ExecutorSingleton.getInstance ().executeWorker (
-				collector.getCollectionView (CollectionViewSelectorEnum.TEST_FUTURE_GET));
+				collector.getCollectionView (CollectionViewSelectorEnum.TEST_FUTURE_GET, true));
 	}
 
 	private void callExecutor_Sleep () {
 		// ExecutorSingleton executor = new ExecutorSingleton (WhichExecutor.CACHEDPOOL);
 		// executor.executeWorker (collector.getCollectionView (CollectionViewSelectorEnum.TEST_SLEEP));
 		ExecutorSingleton.getInstance ().executeWorker (
-				collector.getCollectionView (CollectionViewSelectorEnum.TEST_SLEEP));
+				collector.getCollectionView (CollectionViewSelectorEnum.TEST_SLEEP, true));
 		/**
 		 * !!! Das ist nicht immer SICHER, allWorkerFinish kann 0 sein obwohl noch weitere Verzeichnissse da sind. Wird
 		 * nur ueber sleep 10 entschaerft, kann mit sleep 0 geprueft werden !!!
@@ -97,6 +97,6 @@ public class MainController {
 	}
 	private void callExecutor_Callable () {
 		ExecutorSingleton.getInstance ().executeWorker (
-				collector.getCollectionView (CollectionViewSelectorEnum.TEST_CALLABLE));
+				collector.getCollectionView (CollectionViewSelectorEnum.TEST_CALLABLE, true));
 	}
 }

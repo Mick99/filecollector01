@@ -3,12 +3,12 @@ package filecollector.model.filemember;
 import java.nio.file.Path;
 
 public class FileMember extends FileSystemMember {
-	private final String fileName;
+	private final String FILE_NAME;
 	private long fileSize;
 
 	public FileMember (final Path path) {
 		super (path);
-		this.fileName = path.getFileName ().toString ();
+		this.FILE_NAME = path.getFileName ().toString ();
 	}
 
 	public long getFileSize () {
@@ -18,8 +18,8 @@ public class FileMember extends FileSystemMember {
 	public void setFileSize (long fileSize) {
 		this.fileSize = fileSize;
 	}
-	public String getFileName () {
-		return fileName;
+	public String getFILE_NAME () {
+		return FILE_NAME;
 	}
 
 }

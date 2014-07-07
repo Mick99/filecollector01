@@ -13,7 +13,7 @@ public class Collector {
 
 	Logger log = Logger.getLogger ("MW_Level"); // Collector.class.getSimpleName ()
 
-	private final Path rootDirectory;
+	private final Path ROOT_DIRECTORY;
 	private DirectoryMember root;
 	private DirectoryMember current;
 	private DirectoryMember test_sleep;
@@ -25,25 +25,27 @@ public class Collector {
 			log.error ("No Directory.. exit now");
 			System.exit (1);
 		}
-		rootDirectory = rootDir;
+		ROOT_DIRECTORY = rootDir;
 	}
-	public DirectoryMember getCollectionView (CollectionViewSelectorEnum vs) {
+	public DirectoryMember getCollectionView (CollectionViewSelectorEnum vs, Boolean createNewEmptyStruct) {
 		DirectoryMember tmp = null;
 		switch (vs) {
 		case ORIG_UNSORTED:
-			root = new DirectoryMember (rootDirectory);
+			if (createNewEmptyStruct) {
+				root = new DirectoryMember (ROOT_DIRECTORY);
+			}
 			tmp = root;
 			break;
 		case TEST_SLEEP:
-			test_sleep = new DirectoryMember (rootDirectory);
+			test_sleep = new DirectoryMember (ROOT_DIRECTORY);
 			tmp = test_sleep;
 			break;
 		case TEST_FUTURE_GET:
-			test_futureGet = new DirectoryMember (rootDirectory);
+			test_futureGet = new DirectoryMember (ROOT_DIRECTORY);
 			tmp = test_futureGet;
 			break;
 		case TEST_CALLABLE:
-			test_callable = new DirectoryMember (rootDirectory);
+			test_callable = new DirectoryMember (ROOT_DIRECTORY);
 			tmp = test_callable;
 			break;
 
@@ -77,7 +79,7 @@ public class Collector {
 		for (FileSystemMember f : tmpPrint.getDirContent ()) {
 			if (f.getClass () == FileMember.class) {
 				FileMember m = (FileMember) f;
-				log.warn (m.getFileSize () + m.getFileName ());
+				log.warn (m.getFileSize () + m.getFILE_NAME ());
 			}
 			if (f.getClass () == DirectoryMember.class) {
 				DirectoryMember m = (DirectoryMember) f;
@@ -86,7 +88,7 @@ public class Collector {
 					DirectoryMember subDir = (DirectoryMember) f;
 					for (FileSystemMember f1 : subDir.getDirContent ()) {
 						FileMember m1 = (FileMember) f1;
-						log.warn (m1.getFileSize () + m1.getFileName ());
+						log.warn (m1.getFileSize () + m1.getFILE_NAME ());
 					}
 				}
 			}
