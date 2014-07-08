@@ -16,6 +16,8 @@ public class Collector {
 	private final Path ROOT_DIRECTORY;
 	private DirectoryMember root;
 	private DirectoryMember current;
+	private DirectoryMember dirSortByDirFirst;
+	
 	private DirectoryMember test_sleep;
 	private DirectoryMember test_futureGet;
 	private DirectoryMember test_callable;
@@ -28,35 +30,30 @@ public class Collector {
 		ROOT_DIRECTORY = rootDir;
 	}
 	public DirectoryMember getCollectionView (CollectionViewSelectorEnum vs, Boolean createNewEmptyStruct) {
-		DirectoryMember tmp = null;
 		switch (vs) {
 		case ORIG_UNSORTED:
 			if (createNewEmptyStruct) {
 				root = new DirectoryMember (ROOT_DIRECTORY);
 			}
-			tmp = root;
-			break;
+			return root;
+		case SORT_BY_DIR_FIRST:
+			if (createNewEmptyStruct) {
+				dirSortByDirFirst = new DirectoryMember (ROOT_DIRECTORY);
+			}
+			return dirSortByDirFirst;
 		case TEST_SLEEP:
 			test_sleep = new DirectoryMember (ROOT_DIRECTORY);
-			tmp = test_sleep;
-			break;
+			return test_sleep;
 		case TEST_FUTURE_GET:
 			test_futureGet = new DirectoryMember (ROOT_DIRECTORY);
-			tmp = test_futureGet;
-			break;
+			return test_futureGet;
 		case TEST_CALLABLE:
 			test_callable = new DirectoryMember (ROOT_DIRECTORY);
-			tmp = test_callable;
-			break;
+			return test_callable;
 
 		default:
-			break;
-		}
-		if (tmp == null) {
-			log.error ("NULL is nich wirklich gut???");
 			throw new NullPointerException ();
 		}
-		return tmp;
 	}
 	public void printTest () {
 		DirectoryMember tmpPrint = null;
