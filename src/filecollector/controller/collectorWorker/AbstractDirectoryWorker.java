@@ -5,6 +5,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.DosFileAttributes;
+import java.util.Iterator;
 import java.util.concurrent.Callable;
 
 import org.apache.log4j.Logger;
@@ -13,18 +14,31 @@ import filecollector.controller.ExecutorSingleton;
 import filecollector.model.filemember.DirectoryMember;
 import filecollector.model.filemember.FileMember;
 
-public class DirectoryWorker implements Runnable, Callable<DirectoryMember> {
+public abstract class AbstractDirectoryWorker { 
 	Logger log = Logger.getLogger ("MW_Level"); // DirectoryWorker.class.getSimpleName ()
 
-	protected final DirectoryMember directory;
-	protected DirectoryStream<Path> dirStream;
+	private final DirectoryMember directory;
+	private DirectoryStream<Path> dirStream;
 	private String workerName;
-	protected boolean isDirStreamOpen = false;
+	private boolean isDirStreamOpen = false;
 
-	public DirectoryWorker (DirectoryMember directory) {
+	protected AbstractDirectoryWorker (DirectoryMember directory) {
 		this.directory = directory;
 	}
-	protected void processNextDirectoryEntry (Path dirEntry) {
+	protected void doProcess () {
+		openDirectoryStreamInstance ();
+		Iterator<Path> it = null;
+		if (isDirStreamOpen)
+			it = dirStream.iterator ();
+		while (isDirStreamOpen) {
+			if (it.hasNext ()) {
+				processNextDirectoryEntry (it.next ());
+			} else {
+				closeDirectoryStreamInstance ();
+			}
+		}
+	}
+	private void processNextDirectoryEntry (Path dirEntry) {
 		DosFileAttributes dosFileAttributes = null;
 		try {
 			dosFileAttributes = Files.readAttributes (dirEntry, DosFileAttributes.class);
@@ -54,7 +68,7 @@ public class DirectoryWorker implements Runnable, Callable<DirectoryMember> {
 	private void createNewDirectoryWorker (DirectoryMember dm) {
 		ExecutorSingleton.getInstance ().executeWorker (dm);
 	}
-	protected void openDirectoryStreamInstance () {
+	private void openDirectoryStreamInstance () {
 		try {
 			dirStream = Files.newDirectoryStream (directory.getPath ());
 			isDirStreamOpen = true;
@@ -66,7 +80,7 @@ public class DirectoryWorker implements Runnable, Callable<DirectoryMember> {
 			e.printStackTrace ();
 		}
 	}
-	protected void closeDirectoryStreamInstance () {
+	private void closeDirectoryStreamInstance () {
 		try {
 			if (dirStream != null)
 				dirStream.close ();
@@ -78,15 +92,5 @@ public class DirectoryWorker implements Runnable, Callable<DirectoryMember> {
 			int tmp = WorkerCounter.releaseWorker ();
 			log.warn ("Release " + tmp + " for " + workerName);
 		}
-	}
-	@Override
-	public DirectoryMember call () throws Exception {
-		// Have to be override by subclass
-		return null;
-	}
-	@Override
-	public void run () {
-		// Have to be override by subclass
-
 	}
 }
