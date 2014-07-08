@@ -14,13 +14,11 @@ import filecollector.controller.collectorWorker.DirectoryWorkerRunnable;
 import filecollector.model.filemember.DirectoryMember;
 
 public class ExecutorSingleton {
-	Logger log = Logger.getLogger ("MW_Level"); // MainController.class.getSimpleName
-												// ()
+	Logger log = Logger.getLogger ("MW_Level"); 
 
 	enum WhichExecutor {
 		SINGLE, FIXEDPOOL, CACHEDPOOL
 	}
-
 	private ExecutorService executorService = null;
 	private static ExecutorSingleton instance = null;
 
@@ -44,14 +42,12 @@ public class ExecutorSingleton {
 		if (executorService != null)
 			instance = this;
 	}
-
 	public static ExecutorSingleton getInstance () {
 		if (instance == null) {
 			throw new NullPointerException ("instance cannot be null?");
 		}
 		return instance;
 	}
-
 	public void shutdownExecutor () {
 		executorService.shutdown ();
 		log.warn ("shutdown");
@@ -69,13 +65,11 @@ public class ExecutorSingleton {
 			Thread.currentThread ().interrupt ();
 		}
 	}
-
 	// Bsp. Ueberladene Methode um andere Runables auszufuehren... Parameter
 	// muss sein!
 	public void executeWorker () {
 		return;
 	}
-
 	public void executeWorker (DirectoryMember directoryMember) {
 		DirectoryWorkerRunnable workerRunnable;
 		DirectoryWorkerCallable workerCallable;
@@ -91,22 +85,18 @@ public class ExecutorSingleton {
 			break;
 		case CALLABLE_EXECUTOR:
 			workerCallable = new DirectoryWorkerCallable (directoryMember);
-			// TODO MW_140705: Not imlemented yet...
 			executeWorker_Callable (workerCallable);
-
 			break;
 
 		default:
 			break;
 		}
 	}
-
 	// private <T extends DirectoryWorker> void executeWorker_Sleep (T
 	// directoryWorker)
 	private void executeWorker_Sleep (DirectoryWorkerRunnable directoryWorker) {
 		executorService.execute (directoryWorker);
 	}
-
 	private void executeWorker_FutureGet (DirectoryWorkerRunnable directoryWorker) {
 		Future<?> future = executorService.submit ((Runnable) directoryWorker);
 		try {
@@ -134,6 +124,5 @@ public class ExecutorSingleton {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 	}
 }
