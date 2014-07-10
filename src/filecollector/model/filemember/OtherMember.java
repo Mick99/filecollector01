@@ -1,6 +1,6 @@
 package filecollector.model.filemember;
 
-import java.nio.file.Path;
+//import java.nio.file.Path;
 
 /*
  public class OtherMember extends FileSystemMember  {

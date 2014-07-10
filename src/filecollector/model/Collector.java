@@ -1,6 +1,5 @@
 package filecollector.model;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.apache.log4j.Logger;
@@ -8,27 +7,31 @@ import org.apache.log4j.Logger;
 import filecollector.model.filemember.DirectoryMember;
 import filecollector.model.filemember.FileMember;
 import filecollector.model.filemember.FileSystemMember;
+import filecollector.util.MyFileUtils;
 
 public class Collector {
 	private static final Logger msg = Logger.getLogger("Message");
 	private static final Logger exc = Logger.getLogger("Exception");
 
-	private final Path ROOT_DIRECTORY;
+	private final Path ROOT_DIRECTORY; // TODO DEL: Kann eigentlich wech. War vorher der Start-Pfad um root zu fuellen.
 	private DirectoryMember root;
-	private DirectoryMember current;
+//	private DirectoryMember current;
 	private DirectoryMember dirSortByDirFirst;
 	
 	private DirectoryMember test_sleep;
 	private DirectoryMember test_futureGet;
 	private DirectoryMember test_callable;
 
+	// Es wird einen anderer Weg eingeschlagen
+	@Deprecated
 	public Collector (final Path rootDir) {
-		if (!Files.isDirectory (rootDir)) {
+		if (!MyFileUtils.isDirectory (rootDir)) {
 			exc.fatal ("No Directory.. exit now");
 			System.exit (1);
 		}
 		ROOT_DIRECTORY = rootDir;
 	}
+	// Es wird einen anderer Weg eingeschlagen
 	public DirectoryMember getCollectionView (CollectionViewSelectorEnum vs, Boolean createNewEmptyStruct) {
 		switch (vs) {
 		case ORIG_UNSORTED:
