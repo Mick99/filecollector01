@@ -14,7 +14,8 @@ import filecollector.util.SleepUtils;
 
 public class MainController {
 
-	Logger log = Logger.getLogger ("MW_Level"); // MainController.class.getSimpleName
+	private static final Logger msg = Logger.getLogger("Message");
+//	private static final Logger exc = Logger.getLogger("Exception");
 
 	private Collector collector;
 
@@ -46,8 +47,8 @@ public class MainController {
 		endTime = System.currentTimeMillis ();
 		long sleepDiffTime = endTime - startTime;
 
-		log.error ("Sleep DIFF(ms) : " + sleepDiffTime);
-		log.error ("FutureGet DIFF(ms) : " + futureDiffTime);
+		msg.info ("Sleep DIFF(ms) : " + sleepDiffTime);
+		msg.info ("FutureGet DIFF(ms) : " + futureDiffTime);
 		collector.printTest ();
 
 		ExecutorSingleton.getInstance ().shutdownExecutor ();
@@ -91,7 +92,7 @@ public class MainController {
 
 		do {
 			SleepUtils.safeSleep (TimeUnit.MILLISECONDS, 10);
-			log.info ("ALIVE");
+			msg.trace ("ALIVE");
 		} while (!WorkerCounter.allWorkerFinish ());
 		// executor.shutdownExecutor ();
 	}

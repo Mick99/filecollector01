@@ -10,8 +10,8 @@ import filecollector.model.filemember.FileMember;
 import filecollector.model.filemember.FileSystemMember;
 
 public class Collector {
-
-	Logger log = Logger.getLogger ("MW_Level"); // Collector.class.getSimpleName ()
+	private static final Logger msg = Logger.getLogger("Message");
+	private static final Logger exc = Logger.getLogger("Exception");
 
 	private final Path ROOT_DIRECTORY;
 	private DirectoryMember root;
@@ -24,7 +24,7 @@ public class Collector {
 
 	public Collector (final Path rootDir) {
 		if (!Files.isDirectory (rootDir)) {
-			log.error ("No Directory.. exit now");
+			exc.fatal ("No Directory.. exit now");
 			System.exit (1);
 		}
 		ROOT_DIRECTORY = rootDir;
@@ -68,24 +68,23 @@ public class Collector {
 		}
 
 		if (tmpPrint == null) {
-			log.fatal ("Geht gar nich!!!");
+			exc.fatal ("Geht gar nich!!!");
 			System.exit (3);
 		}
 
-		log.debug (tmpPrint.getDirContent ().toString ());
 		for (FileSystemMember f : tmpPrint.getDirContent ()) {
 			if (f.getClass () == FileMember.class) {
 				FileMember m = (FileMember) f;
-				log.warn (m.getFileSize () + m.getFILE_NAME ());
+				msg.debug (m.getFileSize () + m.getFILE_NAME ());
 			}
 			if (f.getClass () == DirectoryMember.class) {
 				DirectoryMember m = (DirectoryMember) f;
-				log.warn (m.getPath ().toString ());
+				msg.debug (m.getPath ().toString ());
 				if (m.getPath ().endsWith ("FirstOrdner")) {
 					DirectoryMember subDir = (DirectoryMember) f;
 					for (FileSystemMember f1 : subDir.getDirContent ()) {
 						FileMember m1 = (FileMember) f1;
-						log.warn (m1.getFileSize () + m1.getFILE_NAME ());
+						msg.debug (m1.getFileSize () + m1.getFILE_NAME ());
 					}
 				}
 			}

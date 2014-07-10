@@ -12,7 +12,8 @@ import org.apache.log4j.Logger;
  * 
  */
 public class FileSystemMember {
-	Logger log = Logger.getLogger ("MW_Level");
+//	private static final Logger msg = Logger.getLogger("Message");
+	private static final Logger exc = Logger.getLogger("Exception");
 
 	private final String ABSOLUTE_PATH_NAME;
 	private Path path;
@@ -24,7 +25,7 @@ public class FileSystemMember {
 		if (path.isAbsolute ()) {
 			this.path = path;
 		} else {
-			log.error (String.format ("Only absolute paths are allowed %s:\n", path.toString ()),
+			exc.warn (String.format ("Only absolute paths are allowed %s:\n", path.toString ()),
 					new IllegalArgumentException ());
 		}
 	}

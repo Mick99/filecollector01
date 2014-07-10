@@ -14,7 +14,8 @@ import filecollector.controller.collectorWorker.DirectoryWorkerRunnable;
 import filecollector.model.filemember.DirectoryMember;
 
 public class ExecutorSingleton {
-	Logger log = Logger.getLogger ("MW_Level"); 
+	private static final Logger msg = Logger.getLogger("Message");
+	private static final Logger exc = Logger.getLogger("Exception");
 
 	enum WhichExecutor {
 		SINGLE, FIXEDPOOL, CACHEDPOOL
@@ -50,13 +51,13 @@ public class ExecutorSingleton {
 	}
 	public void shutdownExecutor () {
 		executorService.shutdown ();
-		log.warn ("shutdown");
+		msg.info ("shutdown");
 		try {
 			if (!executorService.awaitTermination (2, TimeUnit.SECONDS)) {
 				executorService.shutdownNow ();
-				log.error ("shutdownNow");
+				exc.warn ("shutdownNow");
 				if (!executorService.awaitTermination (2, TimeUnit.SECONDS)) {
-					log.error ("awaitTermination");
+					exc.error ("awaitTermination");
 				}
 			}
 		} catch (InterruptedException e) {

@@ -14,7 +14,8 @@ import filecollector.model.filemember.DirectoryMember;
 import filecollector.model.filemember.FileMember;
 
 public abstract class AbstractDirectoryWorker {
-	Logger log = Logger.getLogger ("MW_Level"); // DirectoryWorker.class.getSimpleName ()
+	private static final Logger msg = Logger.getLogger("Message");
+//	private static final Logger exc = Logger.getLogger("Exception");
 
 	private final DirectoryMember directory;
 	private DirectoryStream<Path> dirStream;
@@ -71,7 +72,7 @@ public abstract class AbstractDirectoryWorker {
 			int cw = WorkerCounter.createWorker ();
 			int wi = WorkerCounter.getWorkerId ();
 			workerName = "Worker [ " + wi + " ]";
-			log.info ("Create worker count " + cw + " : " + workerName);
+			msg.trace ("Create worker count " + cw + " : " + workerName);
 			return true;
 		} catch (IOException e) {
 			// TODO MW_140708: log e, path (e.g. security violation...)
@@ -86,7 +87,7 @@ public abstract class AbstractDirectoryWorker {
 			// ignore
 		} finally {
 			int rw = WorkerCounter.releaseWorker ();
-			log.warn ("Release " + rw + " for " + workerName);
+			msg.debug ("Release " + rw + " for " + workerName);
 		}
 	}
 }
