@@ -1,7 +1,5 @@
 package filecollector.controller.collectorWorker;
 
-import java.nio.file.Path;
-import java.util.Iterator;
 
 import filecollector.model.filemember.DirectoryMember;
 

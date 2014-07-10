@@ -40,7 +40,7 @@ public class MainController {
 //		futureDiffTime = endTime - startTime;
 
 		// Only for tests set Enum to get current test to run...
-		TestExecutorEnum.setCurrentEnum (TestExecutorEnum.CALLABLE_EXECUTOR);
+		TestExecutorEnum.setCurrentEnum (TestExecutorEnum.FUTURE_GET_EXECUTOR);
 		startTime = System.currentTimeMillis ();
 		testCallExecutor ();
 		endTime = System.currentTimeMillis ();

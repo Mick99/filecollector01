@@ -1,7 +1,5 @@
 package filecollector.controller.collectorWorker;
 
-import java.nio.file.Path;
-import java.util.Iterator;
 import java.util.concurrent.Callable;
 
 import filecollector.model.filemember.DirectoryMember;
@@ -14,6 +12,7 @@ public class DirectoryWorkerCallable extends AbstractDirectoryWorker implements 
 	@Override
 	public DirectoryMember call () throws Exception {
 		doProcess ();
-		return directory;
+		// TODO MW_140710: Noch nicht ganz klar wie... return directory;
+		return null;
 	}
 }

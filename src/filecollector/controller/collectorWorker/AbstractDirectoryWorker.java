@@ -6,7 +6,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.DosFileAttributes;
 import java.util.Iterator;
-import java.util.concurrent.Callable;
 
 import org.apache.log4j.Logger;
 
@@ -14,28 +13,26 @@ import filecollector.controller.ExecutorSingleton;
 import filecollector.model.filemember.DirectoryMember;
 import filecollector.model.filemember.FileMember;
 
-public abstract class AbstractDirectoryWorker { 
+public abstract class AbstractDirectoryWorker {
 	Logger log = Logger.getLogger ("MW_Level"); // DirectoryWorker.class.getSimpleName ()
 
 	private final DirectoryMember directory;
 	private DirectoryStream<Path> dirStream;
 	private String workerName;
-	private boolean isDirStreamOpen = false;
 
 	protected AbstractDirectoryWorker (DirectoryMember directory) {
 		this.directory = directory;
 	}
 	protected void doProcess () {
-		openDirectoryStreamInstance ();
 		Iterator<Path> it = null;
-		if (isDirStreamOpen)
+		if (openDirectoryStreamInstance ()) {
 			it = dirStream.iterator ();
-		while (isDirStreamOpen) {
-			if (it.hasNext ()) {
+			while (it.hasNext ()) {
 				processNextDirectoryEntry (it.next ());
-			} else {
-				closeDirectoryStreamInstance ();
 			}
+			closeDirectoryStreamInstance ();
+		} else {
+			// TODO MW_140708: How to handle it? throw, log or nothing
 		}
 	}
 	private void processNextDirectoryEntry (Path dirEntry) {
@@ -68,16 +65,17 @@ public abstract class AbstractDirectoryWorker {
 	private void createNewDirectoryWorker (DirectoryMember dm) {
 		ExecutorSingleton.getInstance ().executeWorker (dm);
 	}
-	private void openDirectoryStreamInstance () {
+	private boolean openDirectoryStreamInstance () {
 		try {
 			dirStream = Files.newDirectoryStream (directory.getPath ());
-			isDirStreamOpen = true;
-			int tmp = WorkerCounter.createWorker ();
-			workerName = "Worker [ " + WorkerCounter.getWorkerId () + " ]";
-			log.info ("Create worker count " + tmp + " : " + workerName);
+			int cw = WorkerCounter.createWorker ();
+			int wi = WorkerCounter.getWorkerId ();
+			workerName = "Worker [ " + wi + " ]";
+			log.info ("Create worker count " + cw + " : " + workerName);
+			return true;
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace ();
+			// TODO MW_140708: log e, path (e.g. security violation...)
+			return false;
 		}
 	}
 	private void closeDirectoryStreamInstance () {
@@ -85,12 +83,10 @@ public abstract class AbstractDirectoryWorker {
 			if (dirStream != null)
 				dirStream.close ();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace ();
+			// ignore
 		} finally {
-			isDirStreamOpen = false;
-			int tmp = WorkerCounter.releaseWorker ();
-			log.warn ("Release " + tmp + " for " + workerName);
+			int rw = WorkerCounter.releaseWorker ();
+			log.warn ("Release " + rw + " for " + workerName);
 		}
 	}
 }
