@@ -85,8 +85,8 @@ public class ExecutorSingleton {
 			executeWorker_FutureGet (workerRunnable);
 			break;
 		case CALLABLE_EXECUTOR:
-			workerCallable = new DirectoryWorkerCallable (directoryMember);
-			executeWorker_Callable (workerCallable);
+//			workerCallable = new DirectoryWorkerCallable (directoryMember);
+//			executeWorker_Callable (workerCallable);
 			break;
 
 		default:

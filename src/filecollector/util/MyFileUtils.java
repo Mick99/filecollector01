@@ -15,7 +15,7 @@ public final class MyFileUtils {
 	private MyFileUtils () {}  
 	
 	public static boolean isDirectory (final Path dir) {
-		if (!Files.isDirectory (dir)) {
+		if (Files.isDirectory (dir)) {
 			return true;
 		}
 		return false;
