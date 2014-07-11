@@ -80,9 +80,7 @@ public abstract class AbstractDirectoryWorker {
 		directory.addFileSystemMember (dm);
 		createNewDirectoryWorker (dm);
 	}
-	private void createNewDirectoryWorker (DirectoryMember dm) {
-		ExecutorSingleton.getInstance ().executeWorker (dm);
-	}
+	protected abstract void createNewDirectoryWorker (DirectoryMember dm);
 	private boolean openDirectoryStreamInstance () {
 		try {
 			dirStream = Files.newDirectoryStream (directory.getPath ());
