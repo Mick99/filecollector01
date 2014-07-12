@@ -6,23 +6,35 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
+
 /**
- * Helper class designed as singleton to get same instance for different threads
- *  
+ * Helper class designed as singleton <strong>(! Singleton is only per Classloader distinct !)</strong> to get same instance for different threads
+ * 
+ * Since 1.5 Singleton as one element enum possible:
+ * 
+ * <pre>
+ * public enum Singleton {
+ * 		INSTANCE;
+ * 		
+ * 		private attr;
+ * 		public methode();
+ * }
+ * </pre>
+ * 
  * @author Mick_02
- *
+ * 
  */
 public final class PoolManager {
-	private static final Logger exc = Logger.getLogger ("Exception");
+	private static final Logger exc = Logger.getLogger("Exception");
 
-	private static final PoolManager INSTANCE = new PoolManager ();
-	// TODO MW_140712: Idea? Both as collection with name or number to have for different WorkerThreads his own executor pool.  
+	private static final PoolManager INSTANCE = new PoolManager();
+	// TODO MW_140712: Idea? Both as collection with name or number to have for different WorkerThreads his own executor pool.
 	private ThreadPoolExecutor pool;
 	private ScheduledThreadPoolExecutor scheduled;
-	
-	private PoolManager () {
+
+	private PoolManager() {
 	}
-	public static PoolManager getInstance () {
+	public static PoolManager getInstance() {
 		return INSTANCE;
 	}
 	public ThreadPoolExecutor getPool() {
@@ -35,8 +47,8 @@ public final class PoolManager {
 		} // else do nothing
 		return false;
 	}
-	public void clearPoolWorker () {
-		if (shutdownPool (pool))
+	public void clearPoolWorker() {
+		if (shutdownPool(pool))
 			pool = null;
 	}
 	public ScheduledThreadPoolExecutor getScheduled() {
@@ -49,28 +61,28 @@ public final class PoolManager {
 		} // else do nothing
 		return false;
 	}
-	public void clearScheduledWorker () {
-		if (shutdownPool (scheduled))
+	public void clearScheduledWorker() {
+		if (shutdownPool(scheduled))
 			scheduled = null;
 	}
-	private boolean shutdownPool (ExecutorService es) {
+	private boolean shutdownPool(ExecutorService es) {
 		boolean isShutdown = true;
-		es.shutdown ();
+		es.shutdown();
 		try {
-			if (!es.awaitTermination (20, TimeUnit.MILLISECONDS)) {
-				es.shutdownNow ();
-				exc.warn ("shutdownNow () in 1 sec");
-				if (!es.awaitTermination (1, TimeUnit.SECONDS)) {
-					exc.error ("awaitTermination");
+			if (!es.awaitTermination(20, TimeUnit.MILLISECONDS)) {
+				es.shutdownNow();
+				exc.warn("shutdownNow () in 1 sec");
+				if (!es.awaitTermination(1, TimeUnit.SECONDS)) {
+					exc.error("awaitTermination");
 					isShutdown = false;
 				}
 			}
 		} catch (InterruptedException e) {
 			isShutdown = false;
-			exc.fatal ("Who interupt me: ", e);
-			es.shutdown ();
+			exc.fatal("Who interupt me: ", e);
+			es.shutdown();
 			// Preserve interrupt status
-			Thread.currentThread ().interrupt ();
+			Thread.currentThread().interrupt();
 		}
 		return isShutdown;
 	}
