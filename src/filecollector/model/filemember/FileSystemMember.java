@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
  * @author Mick_02
  * 
  */
-public class FileSystemMember {
+public abstract class FileSystemMember {
 //	private static final Logger msg = Logger.getLogger("Message");
 	private static final Logger exc = Logger.getLogger("Exception");
 
@@ -45,4 +45,5 @@ public class FileSystemMember {
 	protected void setFileAttributes (EnumSet<FileAttributesEnum> fileAttributes) {
 		this.fileAttributes = fileAttributes;
 	}
+	public abstract String toPrint();
 }

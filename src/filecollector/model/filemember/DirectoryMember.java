@@ -32,4 +32,10 @@ public class DirectoryMember extends FileSystemMember {
 	public List<FileSystemMember> getDirContent () {
 		return dirContent;
 	}
+
+	@Override
+	public String toPrint() {
+		// TODO Auto-generated method stub
+		return getABSOLUTE_PATH_NAME();
+	}
 }

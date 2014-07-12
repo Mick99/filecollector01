@@ -1,6 +1,7 @@
 package filecollector.model;
 
 import java.nio.file.Path;
+import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 
@@ -15,50 +16,50 @@ public class Collector {
 
 	private final Path ROOT_DIRECTORY; // TODO DEL: Kann eigentlich wech. War vorher der Start-Pfad um root zu fuellen.
 	private DirectoryMember root;
-//	private DirectoryMember current;
+	// private DirectoryMember current;
 	private DirectoryMember dirSortByDirFirst;
-	
+
 	private DirectoryMember test_sleep;
 	private DirectoryMember test_futureGet;
 	private DirectoryMember test_callable;
 
 	// Es wird einen anderer Weg eingeschlagen
 	@Deprecated
-	public Collector (final Path rootDir) {
-		if (!MyFileUtils.isDirectory (rootDir)) {
-			exc.fatal ("No Directory.. exit now");
-			System.exit (1);
+	public Collector(final Path rootDir) {
+		if (!MyFileUtils.isDirectory(rootDir)) {
+			exc.fatal("No Directory.. exit now");
+			System.exit(1);
 		}
 		ROOT_DIRECTORY = rootDir;
 	}
 	// Es wird einen anderer Weg eingeschlagen
-	public DirectoryMember getCollectionView (CollectionViewSelectorEnum vs, Boolean createNewEmptyStruct) {
+	public DirectoryMember getCollectionView(CollectionViewSelectorEnum vs, Boolean createNewEmptyStruct) {
 		switch (vs) {
 		case ORIG_UNSORTED:
 			if (createNewEmptyStruct) {
-				root = new DirectoryMember (ROOT_DIRECTORY);
+				root = new DirectoryMember(ROOT_DIRECTORY);
 			}
 			return root;
 		case SORT_BY_DIR_FIRST:
 			if (createNewEmptyStruct) {
-				dirSortByDirFirst = new DirectoryMember (ROOT_DIRECTORY);
+				dirSortByDirFirst = new DirectoryMember(ROOT_DIRECTORY);
 			}
 			return dirSortByDirFirst;
 		case TEST_SLEEP:
-			test_sleep = new DirectoryMember (ROOT_DIRECTORY);
+			test_sleep = new DirectoryMember(ROOT_DIRECTORY);
 			return test_sleep;
 		case TEST_FUTURE_GET:
-			test_futureGet = new DirectoryMember (ROOT_DIRECTORY);
+			test_futureGet = new DirectoryMember(ROOT_DIRECTORY);
 			return test_futureGet;
 		case TEST_CALLABLE:
-			test_callable = new DirectoryMember (ROOT_DIRECTORY);
+			test_callable = new DirectoryMember(ROOT_DIRECTORY);
 			return test_callable;
 
 		default:
-			throw new NullPointerException ();
+			throw new NullPointerException();
 		}
 	}
-	public void printTest () {
+	public void printTest() {
 		DirectoryMember tmpPrint = null;
 		if (root != null) {
 			tmpPrint = root;
@@ -71,25 +72,22 @@ public class Collector {
 		}
 
 		if (tmpPrint == null) {
-			exc.fatal ("Geht gar nich!!!");
-			System.exit (3);
+			exc.fatal("Geht gar nich!!!");
+			System.exit(3);
 		}
-
-		for (FileSystemMember f : tmpPrint.getDirContent ()) {
-			if (f.getClass () == FileMember.class) {
-				FileMember m = (FileMember) f;
-				msg.debug (m.getFileSize () + m.getFILE_NAME ());
-			}
-			if (f.getClass () == DirectoryMember.class) {
-				DirectoryMember m = (DirectoryMember) f;
-				msg.debug (m.getPath ().toString ());
-				if (m.getPath ().endsWith ("FirstOrdner")) {
-					DirectoryMember subDir = (DirectoryMember) f;
-					for (FileSystemMember f1 : subDir.getDirContent ()) {
-						FileMember m1 = (FileMember) f1;
-						msg.debug (m1.getFileSize () + m1.getFILE_NAME ());
-					}
-				}
+		recursivePrint(tmpPrint, 0);
+	}
+	private void recursivePrint(DirectoryMember dm,int indent) {
+		int localIndent = indent;
+		Iterator<FileSystemMember> iFsm = dm.getDirContent().iterator();
+		while (iFsm.hasNext()) {
+			FileSystemMember fileSystemMember = (FileSystemMember) iFsm.next();
+			StringBuilder sb = new StringBuilder(fileSystemMember.toPrint());
+			for (int i=0; i<localIndent; i++) sb.insert(0, ' ');
+			msg.debug(sb.toString());
+			if (fileSystemMember.getClass() == DirectoryMember.class) {
+				DirectoryMember newDm = (DirectoryMember) fileSystemMember;
+				recursivePrint(newDm, ++indent);
 			}
 		}
 	}

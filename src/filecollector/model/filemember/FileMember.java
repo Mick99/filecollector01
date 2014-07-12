@@ -22,4 +22,10 @@ public class FileMember extends FileSystemMember {
 		return FILE_NAME;
 	}
 
+	@Override
+	public String toPrint() {
+		// TODO Auto-generated method stub
+		return Long.toString(fileSize) + ":" + FILE_NAME;
+	}
+
 }
