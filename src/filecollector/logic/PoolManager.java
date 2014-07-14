@@ -1,5 +1,6 @@
 package filecollector.logic;
 
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -7,10 +8,12 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
 
+
 /**
- * Helper class designed as singleton <strong>(! Singleton is only per Classloader distinct !)</strong> to get same instance for different threads
+ * Helper class designed as singleton to get same instance for different threads.<br>
+ * <strong>(! Singleton is only per Classloader distinct !)</strong>
  * 
- * Since 1.5 Singleton as one element enum possible:
+ * <p>Since 1.5 Singleton as one element enum possible:</p>
  * 
  * <pre>
  * public enum Singleton {
@@ -28,7 +31,8 @@ public final class PoolManager {
 	private static final Logger exc = Logger.getLogger("Exception");
 
 	private static final PoolManager INSTANCE = new PoolManager();
-	// TODO MW_140712: Idea? Both as collection with name or number to have for different WorkerThreads his own executor pool.
+	// TODO MW_140712: Idea? Both as collection with name or number to have own executor pool for different WorkerThreads.
+//	private Set<ThreadPoolExec_My> poolSet;
 	private ThreadPoolExecutor pool;
 	private ScheduledThreadPoolExecutor scheduled;
 
@@ -47,9 +51,14 @@ public final class PoolManager {
 		} // else do nothing
 		return false;
 	}
+	public boolean isEmptyPoolAvailable() {
+		return (pool.getActiveCount() == 0) ? true : false;
+	}
 	public void clearPoolWorker() {
-		if (shutdownPool(pool))
-			pool = null;
+		if (shutdownPool(pool)) {
+			if (pool.isTerminated())
+				pool = null;
+		}
 	}
 	public ScheduledThreadPoolExecutor getScheduled() {
 		return scheduled;
