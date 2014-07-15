@@ -77,12 +77,12 @@ public class ExecutorSingleton {
 
 		switch (TestExecutorEnum.getCurrentEnum ()) {
 		case SLEEP_EXECUTOR:
-			workerRunnable = new DirectoryWorkerRunnable (directoryMember);
-			executeWorker_Sleep (workerRunnable);
+//			workerRunnable = new DirectoryWorkerRunnable (directoryMember);
+//			executeWorker_Sleep (workerRunnable);
 			break;
 		case FUTURE_GET_EXECUTOR:
-			workerRunnable = new DirectoryWorkerRunnable (directoryMember);
-			executeWorker_FutureGet (workerRunnable);
+//			workerRunnable = new DirectoryWorkerRunnable (directoryMember);
+//			executeWorker_FutureGet (workerRunnable);
 			break;
 		case CALLABLE_EXECUTOR:
 //			workerCallable = new DirectoryWorkerCallable (directoryMember);

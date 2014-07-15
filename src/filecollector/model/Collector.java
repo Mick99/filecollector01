@@ -32,6 +32,9 @@ public class Collector {
 		}
 		ROOT_DIRECTORY = rootDir;
 	}
+	public Path getROOT_DIRECTORY() {
+		return ROOT_DIRECTORY;
+	}
 	// Es wird einen anderer Weg eingeschlagen
 	public DirectoryMember getCollectionView(CollectionViewSelectorEnum vs, Boolean createNewEmptyStruct) {
 		switch (vs) {
