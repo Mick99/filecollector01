@@ -1,16 +1,27 @@
 package filecollector;
 
-import java.util.EnumSet;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 
-import filecollector.model.FileAttributesEnum;
+import filecollector.controller.MainController;
 
 public class Main {
+	/*
+	 * Log4j als sysout missbraucht Levels TRACE < DEBUG < INFO < WARN < ERROR < FATAL
+	 */
+//	static Logger log = Logger.getLogger ("MW_Level"); // MainController.class.getSimpleName ()
+//	private static final Logger log = Logger.getRootLogger();
+	private static final long RELOAD = 60000L; 
+	private static final Logger msg = Logger.getLogger("Message");
+//	private static final Logger exc = Logger.getLogger("Exception");
+	
 	public static void main (String[] args) {
-		EnumSet<FileAttributesEnum> fa = EnumSet.of (FileAttributesEnum.CAN_EXECUTE, FileAttributesEnum.IS_HIDDEN);
-		
-		System.out.println ("Bla" + fa.toString ());
-		for (FileAttributesEnum f : fa) {
-			System.out.println (f.ordinal () + f.name () + f.printAttributeDescription ());
-		}
+		if (args.length < 1)
+			System.exit (1);
+		PropertyConfigurator.configureAndWatch("config/Log4j.properties", RELOAD);
+		msg.info ("Start");
+		MainController mc = new MainController ();
+		mc.entryApplikation (args);
+		msg.info ("End");
 	}
 }
