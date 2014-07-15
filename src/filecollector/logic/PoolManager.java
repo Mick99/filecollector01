@@ -28,6 +28,7 @@ import org.apache.log4j.Logger;
  * 
  */
 public final class PoolManager {
+	private static final Logger msg = Logger.getLogger("Message");
 	private static final Logger exc = Logger.getLogger("Exception");
 
 	private static final PoolManager INSTANCE = new PoolManager();
@@ -77,6 +78,7 @@ public final class PoolManager {
 	private boolean shutdownPool(ExecutorService es) {
 		boolean isShutdown = true;
 		es.shutdown();
+		msg.debug("shutdownPool");
 		try {
 			if (!es.awaitTermination(20, TimeUnit.MILLISECONDS)) {
 				es.shutdownNow();
