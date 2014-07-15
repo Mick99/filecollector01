@@ -10,22 +10,17 @@ public class FileMember extends FileSystemMember {
 		super (path);
 		this.FILE_NAME = path.getFileName ().toString ();
 	}
-
 	public long getFileSize () {
 		return fileSize;
 	}
-
 	public void setFileSize (long fileSize) {
 		this.fileSize = fileSize;
 	}
 	public String getFILE_NAME () {
 		return FILE_NAME;
 	}
-
 	@Override
 	public String toPrint() {
-		// TODO Auto-generated method stub
 		return Long.toString(fileSize) + ":" + FILE_NAME;
 	}
-
 }

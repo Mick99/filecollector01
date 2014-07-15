@@ -23,19 +23,15 @@ public class DirectoryMember extends FileSystemMember {
 		super (path);
 		dirContent = new ArrayList<FileSystemMember> ();
 	}
-
 	public void addFileSystemMember (FileSystemMember fileSystemMember) {
 		dirContent.add (fileSystemMember);
 
 	}
-
 	public List<FileSystemMember> getDirContent () {
 		return dirContent;
 	}
-
 	@Override
 	public String toPrint() {
-		// TODO Auto-generated method stub
 		return getABSOLUTE_PATH_NAME();
 	}
 }

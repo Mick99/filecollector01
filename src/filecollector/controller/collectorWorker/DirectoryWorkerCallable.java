@@ -1,10 +1,8 @@
 package filecollector.controller.collectorWorker;
 
 import java.nio.file.Path;
-import java.nio.file.attribute.DosFileAttributes;
 import java.util.concurrent.Callable;
 
-import filecollector.controller.ExecutorSingleton;
 import filecollector.controller.IWorkerExecuteCallback;
 import filecollector.model.filemember.DirectoryMember;
 

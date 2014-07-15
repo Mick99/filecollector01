@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
 import filecollector.controller.collectorWorker.DirectoryWorkerCallable;
 import filecollector.controller.collectorWorker.DirectoryWorkerRunnable;
 import filecollector.model.filemember.DirectoryMember;
-
+@SuppressWarnings("unused")
 public class ExecutorSingleton {
 	private static final Logger msg = Logger.getLogger("Message");
 	private static final Logger exc = Logger.getLogger("Exception");
@@ -105,24 +105,22 @@ public class ExecutorSingleton {
 		} catch (InterruptedException e) {
 			Thread.currentThread ().interrupt ();
 		} catch (ExecutionException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace ();
 		}
 	}
 	private void executeWorker_Callable (DirectoryWorkerCallable directoryWorker) {
 		Future<DirectoryMember> future = executorService.submit ((Callable<DirectoryMember>) directoryWorker);
 		try {
-			/* TODO MW_140705: Have to redesign! dirMember is not really necessary, because DirectoryMember is in 
+			/* DO MW_140705: Have to redesign! dirMember is not really necessary, because DirectoryMember is in 
 			 * DirectoryWorker as member attribute defined. 
 			 */
 			DirectoryMember dirMember = future.get ();
-			if (true)
-				dirMember = dirMember;
+//			if (true)
+//				dirMember = dirMember;
 		} catch (InterruptedException e) {
 			Thread.currentThread ().interrupt ();
 			e.printStackTrace();
 		} catch (ExecutionException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
