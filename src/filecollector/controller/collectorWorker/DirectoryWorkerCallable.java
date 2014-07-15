@@ -1,6 +1,7 @@
 package filecollector.controller.collectorWorker;
 
 import java.nio.file.Path;
+import java.nio.file.attribute.DosFileAttributes;
 import java.util.concurrent.Callable;
 
 import filecollector.controller.ExecutorSingleton;
@@ -23,10 +24,8 @@ public class DirectoryWorkerCallable extends AbstractDirectoryWorker implements 
 		return directory;
 	}
 	@Override
-	protected void createNewDirectoryWorker(DirectoryMember dm) {
-		// comments look at ..Runnable
-		ExecutorSingleton.getInstance().executeWorker(dm);
-//		exeCallback.executeWorker(this, dm);
-
+	protected void addDirectoryMemberAndCreateNewWorker(Path dirEntry) {
+		// Runs another way for Callable-worker
+		exeCallback.executeWorker(dirEntry);
 	}
 }

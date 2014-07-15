@@ -1,11 +1,13 @@
 package filecollector.controller;
 
+import java.nio.file.Path;
+
 import filecollector.controller.collectorWorker.DirectoryWorkerCallable;
 import filecollector.controller.collectorWorker.DirectoryWorkerRunnable;
 import filecollector.model.filemember.DirectoryMember;
 
 public interface IWorkerExecuteCallback {
 
-	void executeWorker(DirectoryWorkerRunnable curWorkerType, DirectoryMember dirMember);
-	void executeWorker(DirectoryWorkerCallable curWorkerType, DirectoryMember dirMember);
+	void executeWorker(DirectoryMember dirMember);
+	void executeWorker(Path dir);
 }

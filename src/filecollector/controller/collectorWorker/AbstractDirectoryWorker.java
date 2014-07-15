@@ -5,13 +5,17 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.DosFileAttributes;
+import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 
-import filecollector.controller.ExecutorSingleton;
 import filecollector.model.filemember.DirectoryMember;
+import filecollector.model.filemember.FileAttributesEnum;
 import filecollector.model.filemember.FileMember;
+import filecollector.model.filemember.FileSystemMember;
 import filecollector.util.MyFileUtils;
 
 public abstract class AbstractDirectoryWorker {
@@ -22,17 +26,22 @@ public abstract class AbstractDirectoryWorker {
 	private DirectoryStream<Path> dirStream;
 	private String workerName;
 
+	// Runnable constructor
 	protected AbstractDirectoryWorker (final DirectoryMember directory) {
 		if (checkIfValidDirectory (directory.getPath ()))
 			this.directory = directory;
 		else
 			this.directory = null;
 	}
+	// Callable constructor
 	protected AbstractDirectoryWorker (final Path dir) {
-		if (checkIfValidDirectory (dir))
+		if (checkIfValidDirectory (dir)) {
 			directory = new DirectoryMember (dir);
-		else
+			appendAttributes(directory);
+		}
+		else {
 			directory = null;
+		}
 	}
 	protected void doProcess () {
 		Iterator<Path> it = null;
@@ -55,32 +64,56 @@ public abstract class AbstractDirectoryWorker {
 		}
 	}
 	private void processNextDirectoryEntry (Path dirEntry) {
-		DosFileAttributes dosFileAttributes = null;
-		try {
-			dosFileAttributes = Files.readAttributes (dirEntry, DosFileAttributes.class);
-		} catch (IOException e) {
-			exc.warn ("Files.readAttributes", e);
-		}
 		if (Files.isRegularFile (dirEntry)) {
-			addFileMember (dirEntry, dosFileAttributes);
+			addFileMember (dirEntry);
 			return;
 		}
 		if (Files.isDirectory (dirEntry)) {
-			addDirectoryMember (dirEntry, dosFileAttributes);
+			addDirectoryMemberAndCreateNewWorker (dirEntry);
 			return;
 		}
 	}
-	private void addFileMember (final Path dirEntry, final DosFileAttributes dosFileAttr) {
+	private void addFileMember (final Path dirEntry) {
 		FileMember fm = new FileMember (dirEntry);
-		fm.setFileSize (dosFileAttr.size ());
+		appendAttributes(fm);
 		directory.addFileSystemMember (fm);
 	}
-	private void addDirectoryMember (final Path dirEntry, final DosFileAttributes dosFileAttr) {
-		DirectoryMember dm = new DirectoryMember (dirEntry);
-		directory.addFileSystemMember (dm);
-		createNewDirectoryWorker (dm);
+	protected abstract void addDirectoryMemberAndCreateNewWorker (final Path dirEntry);
+	
+	private void appendAttributes(FileMember fm) {
+		DosFileAttributes dosFileAttr = getFileAttributes(fm.getPath());
+		if (dosFileAttr != null) {
+			fm.setFileSize (dosFileAttr.size ());
+			appendFileTimesAndFlags(fm, dosFileAttr);
+		}
 	}
-	protected abstract void createNewDirectoryWorker (DirectoryMember dm);
+	protected void appendAttributes(DirectoryMember dm) {
+		DosFileAttributes dosFileAttr = getFileAttributes(dm.getPath());
+		if (dosFileAttr != null) {
+			appendFileTimesAndFlags(dm, dosFileAttr);
+		}
+	}
+	private DosFileAttributes getFileAttributes(Path pathToReadAttr) {
+		try {
+			return Files.readAttributes (pathToReadAttr, DosFileAttributes.class);
+		} catch (IOException e) {
+			exc.warn ("Files.readAttributes", e);
+			return null;
+		}
+	}
+	private void appendFileTimesAndFlags(FileSystemMember fsm, DosFileAttributes dfa) {
+		fsm.new FileTimes(dfa.creationTime(), dfa.lastAccessTime(), dfa.lastModifiedTime());
+		appendFileFlags(fsm, dfa);
+	}
+	private void appendFileFlags(FileSystemMember fsm, DosFileAttributes dfa) {
+		Set<FileAttributesEnum> tmp = new HashSet<>();
+		if (dfa.isReadOnly()) tmp.add(FileAttributesEnum.READONLY_DOSATTR);
+		if (dfa.isHidden()) tmp.add(FileAttributesEnum.HIDDEN_DOSATTR);
+		if (dfa.isSystem()) tmp.add(FileAttributesEnum.SYSTEM_DOSATTR);
+		if (dfa.isArchive()) tmp.add(FileAttributesEnum.ARCHIVE_DOSATTR);
+		if (!tmp.isEmpty())
+			fsm.setFileAttributes(EnumSet.copyOf(tmp));
+	}
 	private boolean openDirectoryStreamInstance () {
 		try {
 			dirStream = Files.newDirectoryStream (directory.getPath ());
