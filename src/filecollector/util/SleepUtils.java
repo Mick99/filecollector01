@@ -20,7 +20,5 @@ public final class SleepUtils {
 			Thread.currentThread ().interrupt ();
 		}
 	}
-	private SleepUtils () {
-
-	}
+	private SleepUtils () {}
 }
