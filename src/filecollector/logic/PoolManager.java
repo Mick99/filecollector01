@@ -36,11 +36,28 @@ public final class PoolManager {
 //	private Set<ThreadPoolExec_My> poolSet;
 	private ThreadPoolExecutor pool;
 	private ScheduledThreadPoolExecutor scheduled;
+	private ThreadPoolExecutor miscalus;
 
 	private PoolManager() {
 	}
 	public static PoolManager getInstance() {
 		return INSTANCE;
+	}
+	public ThreadPoolExecutor getMiscalus() {
+		return miscalus;
+	}
+	public boolean setMiscalus(ThreadPoolExecutor miscalus) {
+		if (this.miscalus == null) {
+			this.miscalus = miscalus;
+			return true;
+		} // else do nothing
+		return false;
+	}
+	public void clearMiscalus() {
+		if (shutdownPool(miscalus)) {
+			if (miscalus.isTerminated())
+				miscalus = null;
+		}
 	}
 	public ThreadPoolExecutor getPool() {
 		return pool;

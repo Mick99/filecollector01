@@ -7,47 +7,40 @@ import java.util.concurrent.ThreadPoolExecutor;
 import org.apache.log4j.Logger;
 
 import filecollector.logic.PoolManager;
+import filecollector.logic.differentThreadsCollection.CollectorStarter;
+import filecollector.logic.differentThreadsCollection.KeyboardInput;
 import filecollector.model.CollectionViewSelectorEnum;
 import filecollector.model.Collector;
+import filecollector.util.MyFileUtils;
 
 public class MainController {
 
 	private static final Logger msg = Logger.getLogger("Message");
-//	private static final Logger exc = Logger.getLogger("Exception");
+	private static final Logger exc = Logger.getLogger("Exception");
 
-	private Collector collector;
 
 	public void entryApplikation (String[] args) {
+		if (!MyFileUtils.isDirectory(Paths.get (args[0])))
+			System.exit(1);
+		PoolManager.getInstance().setMiscalus((ThreadPoolExecutor) Executors.newFixedThreadPool(2));
+		KeyboardInput key = new KeyboardInput();
+		CollectorStarter cs = new CollectorStarter();
+		PoolManager.getInstance().getMiscalus().execute(key);
+//		PoolManager.getInstance().getMiscalus().execute(cs);
+		// Bis key stop or quit signaliesiert
+		while (key.isNotQuit()) {
+			try {
+				Thread.sleep(4000);
+//				System.out.println("Main");
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				exc.warn("MainController Interupted", e);
+				e.printStackTrace();
+				Thread.currentThread().interrupt();
+			}
+		}
+		PoolManager.getInstance().clearMiscalus();
 
-		collector = new Collector (Paths.get (args[0]));
-		PoolManager.getInstance().setPool((ThreadPoolExecutor) Executors.newCachedThreadPool());
 
-		// Differnz zur Zeitmessung
-		long endTime = 0;
-		long startTime = System.currentTimeMillis ();
-
-		long futureDiffTime = 0;
-
-		
-		newCallExecutor_FutureGet();
-//		newCallExecutor_Callable();
-		endTime = System.currentTimeMillis ();
-		long sleepDiffTime = endTime - startTime;
-
-
-		PoolManager.getInstance().clearPoolWorker();
-		msg.info ("Sleep DIFF(ms) : " + sleepDiffTime);
-		msg.info ("FutureGet DIFF(ms) : " + futureDiffTime);
-		collector.printTest ();
-	}
-	private void newCallExecutor_FutureGet () {
-//		collector.getCollectionView (CollectionViewSelectorEnum.TEST_FUTURE_GET, true));
-		WorkerExecutor workerExecutor = new WorkerExecutor();
-		workerExecutor.executeWorker(collector.getCollectionView (CollectionViewSelectorEnum.TEST_FUTURE_GET, true));
-	}
-	private void newCallExecutor_Callable () {
-		WorkerExecutor workerExecutor = new WorkerExecutor();
-		workerExecutor.executeWorker(collector.getROOT_DIRECTORY());
-		System.out.println("Callable finish");
 	}
 }
