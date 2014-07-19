@@ -8,14 +8,14 @@ import java.util.Scanner;
 
 import org.apache.log4j.Logger;
 
-import filecollector.controller.ITextViewControllerCallback;
+import filecollector.controller.IViewControllerCallback;
 import filecollector.util.StreamUtils;
 
 // Reading chars from console have to press enter- or return key. Another way is to use GUI with KeyListener see 'Getch.java'.
 public class KeyboardInput extends Thread {
 	private static final Logger exc = Logger.getLogger("Exception");
 
-	private ITextViewControllerCallback textViewController;
+	private IViewControllerCallback textViewController;
 	private boolean hasQuitNormal = false;
 	private String lastInput;
 	private int character;
@@ -24,7 +24,7 @@ public class KeyboardInput extends Thread {
 		this.setDaemon(true); // Cancel thread if JVM exit
 		this.setName("ConsoleInput");
 	}
-	public KeyboardInput(ITextViewControllerCallback textViewController) {
+	public KeyboardInput(IViewControllerCallback textViewController) {
 		this();
 		this.textViewController = textViewController;
 	}

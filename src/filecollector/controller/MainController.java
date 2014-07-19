@@ -15,6 +15,7 @@ import filecollector.util.MyFileUtils;
 import filecollector.view.MainFrame;
 
 public class MainController {
+	public static Boolean exitApp = false;
 
 	private static final Logger msg = Logger.getLogger("Message");
 	private static final Logger exc = Logger.getLogger("Exception");
@@ -23,28 +24,21 @@ public class MainController {
 	public void entryApplikation (String[] args) {
 		if (!MyFileUtils.isDirectory(Paths.get (args[0])))
 			System.exit(1);
-		TextViewController tvc = new TextViewController();
+		ViewController vc = new ViewController();
 		PoolManager.getInstance().setMiscalus((ThreadPoolExecutor) Executors.newFixedThreadPool(2));
-		KeyboardInput key = new KeyboardInput(tvc);
 		DirectoryCollectorStarter dcs = new DirectoryCollectorStarter();
-		PoolManager.getInstance().getMiscalus().execute(key);
-		MainFrame mf = new MainFrame();
-		mf.createMainFrame();
 //		PoolManager.getInstance().getMiscalus().execute(dcs);
 		// Bis key stop or quit signaliesiert
-		while (key.isNotQuit()) {
+		while (!exitApp) {
 			try {
-				Thread.sleep(4000);
-//				System.out.println("Main");
+				Thread.sleep(3000);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				exc.warn("MainController Interupted", e);
-				e.printStackTrace();
 				Thread.currentThread().interrupt();
 			}
 		}
 		PoolManager.getInstance().clearMiscalus();
-		mf.closeMainFrame();
+		
 
 
 	}
