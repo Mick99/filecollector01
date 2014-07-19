@@ -10,55 +10,43 @@ import filecollector.util.MyFileUtils;
 public class DirectoryPath {
 	private static final Logger exc = Logger.getLogger("Exception");
 
-	private Path DIRECTORY_PATH;
+	private Path directoryPath;
 
 	public DirectoryPath() {
 	}
-	public DirectoryPath(final String directoryPath) throws IllegalArgumentException {
-		if (directoryPath != null) {
-			Path tmp = Paths.get(directoryPath);
-			if (checkValidDirectoryPath(tmp))
-				DIRECTORY_PATH = tmp;
-		}
-		if (isPathNull())
-			throw new IllegalArgumentException("Directory path should be not null");
+	public DirectoryPath(final String directoryPath) throws My_IllegalArgumentException {
+		this(Paths.get(directoryPath));
 	}
-	public DirectoryPath(final Path directoryPath) throws IllegalArgumentException {
-		if (checkValidDirectoryPath(directoryPath))
-			DIRECTORY_PATH = directoryPath;
-		if (isPathNull())
-			throw new IllegalArgumentException("Directory path should be not null");
+	public DirectoryPath(final Path directoryPath) throws My_IllegalArgumentException {
+		checkValidDirectoryPath(directoryPath);
+		this.directoryPath = directoryPath;
 	}
-	public Path getDIRECTORY_PATH() throws IllegalArgumentException {
-		if (!isPathNull())
-			return DIRECTORY_PATH;
+	public Path getDirectoryPath() throws IllegalArgumentException {
+		if (!isDirectoryPathNull())
+			return directoryPath;
 		else
 			throw new IllegalArgumentException("Directory path should be not null");
 	}
-	public void setDIRECTORY_PATH(final Path directoryPath) throws IllegalArgumentException {
-		if (checkValidDirectoryPath(directoryPath))
-			DIRECTORY_PATH = directoryPath;
-		if (isPathNull())
-			throw new IllegalArgumentException("Directory path should be not null");
+	public void setDirectoryPath(final Path directoryPath) throws My_IllegalArgumentException {
+		checkValidDirectoryPath(directoryPath);
+		this.directoryPath = directoryPath;
 	}
-	private boolean isPathNull () {
-		return DIRECTORY_PATH == null;
+	public boolean isDirectoryPathNull() {
+		return directoryPath == null;
 	}
-	private boolean checkValidDirectoryPath(final Path pathToCheck) {
+	private void checkValidDirectoryPath(final Path pathToCheck) throws My_IllegalArgumentException {
 		if (pathToCheck != null) {
 			if (!MyFileUtils.isDirectory(pathToCheck)) {
-				System.out.println(String.format("'%s' is not a directory!!", pathToCheck.toString())); //exc.warn
-				return false;
+				exc.warn(String.format("'%s' is not a directory!!", pathToCheck.toString()));
+				throw new My_IllegalArgumentException(String.format("'%s' is not a directory!!", pathToCheck.toString()));
 			}
 		} else {
 			exc.warn(String.format("Path-obj NULL, make no sense!"));
-			return false;
+			throw new My_IllegalArgumentException(String.format("Path-obj NULL, make no sense!"));
 		}
-		return true;
 	}
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
-		return DIRECTORY_PATH.toString() + " : " + super.toString();
+		return (directoryPath != null) ? directoryPath.toString() + " : " + super.toString() : "directoryPath is NULL";
 	}
 }

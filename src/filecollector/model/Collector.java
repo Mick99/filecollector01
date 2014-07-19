@@ -1,20 +1,19 @@
 package filecollector.model;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 
 import filecollector.model.filemember.DirectoryMember;
-import filecollector.model.filemember.FileMember;
 import filecollector.model.filemember.FileSystemMember;
-import filecollector.util.MyFileUtils;
 
 public class Collector {
 	private static final Logger msg = Logger.getLogger("Message");
 	private static final Logger exc = Logger.getLogger("Exception");
 
-	private final Path ROOT_DIRECTORY; // TODO DEL: Kann eigentlich wech. War vorher der Start-Pfad um root zu fuellen.
+	Path ROOT_DIRECTORY = Paths.get("D:/dummyDirDontUseIt");
 	private DirectoryMember root;
 	// private DirectoryMember current;
 	private DirectoryMember dirSortByDirFirst;
@@ -26,17 +25,9 @@ public class Collector {
 	// Es wird einen anderer Weg eingeschlagen
 	@Deprecated
 	public Collector(final Path rootDir) {
-		if (!MyFileUtils.isDirectory(rootDir)) {
-			exc.fatal("No Directory.. exit now");
-			System.exit(1);
-		}
-		ROOT_DIRECTORY = rootDir;
-	}
-	public Path getROOT_DIRECTORY() {
-		return ROOT_DIRECTORY;
 	}
 	// Es wird einen anderer Weg eingeschlagen
-	public DirectoryMember getCollectionView(CollectionViewSelectorEnum vs, Boolean createNewEmptyStruct) {
+	public DirectoryMember getCollectionView_OLD(CollectionViewSelectorEnum vs, Boolean createNewEmptyStruct) {
 		switch (vs) {
 		case ORIG_UNSORTED:
 			if (createNewEmptyStruct) {
