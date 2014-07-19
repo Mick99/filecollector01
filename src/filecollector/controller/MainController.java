@@ -7,11 +7,12 @@ import java.util.concurrent.ThreadPoolExecutor;
 import org.apache.log4j.Logger;
 
 import filecollector.logic.PoolManager;
-import filecollector.logic.differentThreadsCollection.CollectorStarter;
+import filecollector.logic.differentThreadsCollection.DirectoryCollectorStarter;
 import filecollector.logic.differentThreadsCollection.KeyboardInput;
 import filecollector.model.CollectionViewSelectorEnum;
 import filecollector.model.Collector;
 import filecollector.util.MyFileUtils;
+import filecollector.view.MainFrame;
 
 public class MainController {
 
@@ -22,11 +23,14 @@ public class MainController {
 	public void entryApplikation (String[] args) {
 		if (!MyFileUtils.isDirectory(Paths.get (args[0])))
 			System.exit(1);
+		TextViewController tvc = new TextViewController();
 		PoolManager.getInstance().setMiscalus((ThreadPoolExecutor) Executors.newFixedThreadPool(2));
-		KeyboardInput key = new KeyboardInput();
-		CollectorStarter cs = new CollectorStarter();
+		KeyboardInput key = new KeyboardInput(tvc);
+		DirectoryCollectorStarter dcs = new DirectoryCollectorStarter();
 		PoolManager.getInstance().getMiscalus().execute(key);
-//		PoolManager.getInstance().getMiscalus().execute(cs);
+		MainFrame mf = new MainFrame();
+		mf.createMainFrame();
+//		PoolManager.getInstance().getMiscalus().execute(dcs);
 		// Bis key stop or quit signaliesiert
 		while (key.isNotQuit()) {
 			try {
@@ -40,6 +44,7 @@ public class MainController {
 			}
 		}
 		PoolManager.getInstance().clearMiscalus();
+		mf.closeMainFrame();
 
 
 	}

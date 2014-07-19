@@ -16,8 +16,8 @@ public class Main {
 //	private static final Logger exc = Logger.getLogger("Exception");
 	
 	public static void main (String[] args) {
-		if (args.length < 1)
-			System.exit (1);
+//		if (args.length < 1)
+//			System.exit (1);
 		PropertyConfigurator.configureAndWatch("config/Log4j.properties", RELOAD);
 		msg.info ("Start");
 		MainController mc = new MainController ();
