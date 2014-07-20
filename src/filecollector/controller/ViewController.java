@@ -1,12 +1,13 @@
 package filecollector.controller;
 
+import filecollector.model.DirectoryPath;
 import filecollector.view.MainFrame;
 
 public class ViewController implements IViewControllerCallback {
 
 //	private final TextView textView = new TextView();
 	boolean isShowMenu = true;
-	MainFrame mf = new MainFrame();
+	MainFrame mf = new MainFrame(this);
 	
 	
 	public ViewController() {
@@ -31,5 +32,9 @@ public class ViewController implements IViewControllerCallback {
 //			System.out.println("newDir: " + newDir);
 //		}
 //		showMenu();
+	}
+	@Override
+	public void startCollect(DirectoryPath dirPath) {
+		// Start DirCollStarter as Call- or Runnable
 	}
 }

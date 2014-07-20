@@ -10,6 +10,7 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -19,12 +20,20 @@ import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.JTree;
 
+import filecollector.controller.IViewControllerCallback;
+import filecollector.model.DirectoryPath;
+import filecollector.model.My_IllegalArgumentException;
+
 public class MainFrame {
 
 	private JFrame frame;
 	private ExitListener exitListener;
 	private JTextArea textArea;
+	private IViewControllerCallback viewCtrlCallback;
 	
+	public MainFrame(IViewControllerCallback viewCtrlCallback) {
+		this.viewCtrlCallback = viewCtrlCallback;
+	}
 	public void createMainFrame() {
 		frame = new JFrame("File Collector");
 		exitListener = new ExitListener(frame);
@@ -78,23 +87,36 @@ public class MainFrame {
         return splitPane;
 	}
 	private JPanel createInputPanel() {
-		final JTextField directoryInput = new JTextField("D:/test2", 30);
+		final JTextField directoryInput = new JTextField(30);
 		Font font = new Font(Font.DIALOG_INPUT, Font.ITALIC, 14);
 		directoryInput.setFont(font);
 		final JButton sendInput = new JButton("Send input");
 		sendInput.addActionListener(new ActionListener() {
 			
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(ActionEvent event) {
 				String in = directoryInput.getText();
 				textArea.append("\n" + in);
-				
 			}
 		});
-		
+		final JButton startCollect = new JButton("START");
+		startCollect.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				try {
+					DirectoryPath dir = new DirectoryPath(directoryInput.getText());
+					viewCtrlCallback.startCollect(dir);
+				} catch (My_IllegalArgumentException e) {
+					JOptionPane.showMessageDialog(frame, "Not a valid directory path", "Wrong Dir", JOptionPane.WARNING_MESSAGE);
+				}
+			}
+		});
 		final JPanel inputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		inputPanel.add(sendInput);
 		inputPanel.add(directoryInput);
+		inputPanel.add(startCollect);
+		
         // JPanel f�r Toolbar und Separator 
         final JPanel compoundPanel = new JPanel(new BorderLayout());
         compoundPanel.add(new JSeparator(), BorderLayout.NORTH);
