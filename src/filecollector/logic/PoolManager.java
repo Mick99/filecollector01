@@ -28,6 +28,10 @@ import org.apache.log4j.Logger;
  * 
  */
 public final class PoolManager {
+	//TODO MW_140721: Erstmal nur simpel.
+	public enum PoolExecutorType {
+		POOL, SCHEDULED, MISCALUS;
+	}
 	private static final Logger msg = Logger.getLogger("Message");
 	private static final Logger exc = Logger.getLogger("Exception");
 
@@ -42,6 +46,20 @@ public final class PoolManager {
 	}
 	public static PoolManager getInstance() {
 		return INSTANCE;
+	}
+	public void checkAndCleanPools() {
+		/*TODO MW_140721: Pruefen ob pools gewisse Zeit inaktiv sind und gegebenenfalls runter fahren?
+		 * Erstmal periodisch im MainController aufrufen.
+		 * 
+		 */
+	}
+	public void shutdownAllPools() {
+		if (scheduled != null)
+			clearScheduledWorker();
+		if (pool != null)
+		clearPoolWorker();
+		if (miscalus != null)
+		clearMiscalus();
 	}
 	public ThreadPoolExecutor getMiscalus() {
 		return miscalus;
@@ -69,14 +87,14 @@ public final class PoolManager {
 		} // else do nothing
 		return false;
 	}
-	public boolean isEmptyPoolAvailable() {
-		return (pool.getActiveCount() == 0) ? true : false;
-	}
 	public void clearPoolWorker() {
 		if (shutdownPool(pool)) {
 			if (pool.isTerminated())
 				pool = null;
 		}
+	}
+	public boolean isEmptyPoolAvailable() {
+		return (pool.getActiveCount() == 0) ? true : false;
 	}
 	public ScheduledThreadPoolExecutor getScheduled() {
 		return scheduled;

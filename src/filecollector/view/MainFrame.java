@@ -87,7 +87,7 @@ public class MainFrame {
         return splitPane;
 	}
 	private JPanel createInputPanel() {
-		final JTextField directoryInput = new JTextField(30);
+		final JTextField directoryInput = new JTextField("d:/test2", 30);
 		Font font = new Font(Font.DIALOG_INPUT, Font.ITALIC, 14);
 		directoryInput.setFont(font);
 		final JButton sendInput = new JButton("Send input");

@@ -2,7 +2,7 @@ package filecollector.controller;
 
 
 import java.nio.file.Path;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -15,7 +15,7 @@ import filecollector.model.filemember.DirectoryMember;
 
 public class WorkerExecutor implements IWorkerExecuteCallback {
 
-	public List<DirectoryMember> resultCallable = new LinkedList<>();
+	public List<DirectoryMember> resultCallable = new ArrayList<>();
 	
 	@Override
 	public void executeWorker(DirectoryMember dirMember) {

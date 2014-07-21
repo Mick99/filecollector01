@@ -26,6 +26,9 @@ public class Collector {
 	@Deprecated
 	public Collector(final Path rootDir) {
 	}
+	public Collector(DirectoryMember root) {
+		this.root = root;
+	}
 	// Es wird einen anderer Weg eingeschlagen
 	public DirectoryMember getCollectionView_OLD(CollectionViewSelectorEnum vs, Boolean createNewEmptyStruct) {
 		switch (vs) {
