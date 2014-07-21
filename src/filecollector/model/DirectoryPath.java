@@ -15,7 +15,7 @@ public class DirectoryPath {
 	public DirectoryPath() {
 	}
 	public DirectoryPath(final String directoryPath) throws My_IllegalArgumentException {
-		this(Paths.get(directoryPath));
+		this((directoryPath == null) ? null : (!directoryPath.isEmpty()) ? Paths.get(directoryPath) : null);
 	}
 	public DirectoryPath(final Path directoryPath) throws My_IllegalArgumentException {
 		checkValidDirectoryPath(directoryPath);
