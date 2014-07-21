@@ -10,4 +10,7 @@ public class My_IllegalArgumentException extends Exception {
 	public My_IllegalArgumentException(String message) {
 		super(message);
 	}
+	public My_IllegalArgumentException(String message, Exception e) {
+		super(message, e);
+	}
 }
