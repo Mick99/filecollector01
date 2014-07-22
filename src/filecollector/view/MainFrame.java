@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -21,6 +22,8 @@ import javax.swing.JToolBar;
 import javax.swing.JTree;
 
 import filecollector.controller.IViewControllerCallback;
+import filecollector.controller.MainController;
+import filecollector.controller.RunOrCallableEnum;
 import filecollector.model.DirectoryPath;
 import filecollector.model.My_IllegalArgumentException;
 
@@ -29,6 +32,8 @@ public class MainFrame {
 	private JFrame frame;
 	private ExitListener exitListener;
 	private JTextArea textArea;
+	private JCheckBox runOrCall;
+	
 	private IViewControllerCallback viewCtrlCallback;
 	
 	public MainFrame(IViewControllerCallback viewCtrlCallback) {
@@ -112,10 +117,28 @@ public class MainFrame {
 				}
 			}
 		});
+		runOrCall = new JCheckBox();
+		runOrCall.setText(MainController.runOrCallableEnum.getText());
+		runOrCall.setSelected(MainController.runOrCallableEnum.getRunOrCall());
+		runOrCall.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (MainController.runOrCallableEnum == RunOrCallableEnum.RUNNABLE) {
+					MainController.runOrCallableEnum = RunOrCallableEnum.CALLABLE;
+				} else {
+					MainController.runOrCallableEnum = RunOrCallableEnum.RUNNABLE;
+				}
+				runOrCall.setText(MainController.runOrCallableEnum.getText());
+				runOrCall.setSelected(MainController.runOrCallableEnum.getRunOrCall());
+			}
+		});
+		
 		final JPanel inputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		inputPanel.add(sendInput);
 		inputPanel.add(directoryInput);
 		inputPanel.add(startCollect);
+		inputPanel.add(runOrCall);
 		
         // JPanel f�r Toolbar und Separator 
         final JPanel compoundPanel = new JPanel(new BorderLayout());

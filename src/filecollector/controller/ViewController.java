@@ -13,11 +13,12 @@ import filecollector.view.MainFrame;
 public class ViewController implements IViewControllerCallback {
 
 //	private final TextView textView = new TextView();
-	boolean isShowMenu = true;
-	MainFrame mf = new MainFrame(this);
+	private boolean isShowMenu = true;
+	private MainFrame mf;
 	
 	
 	public ViewController() {
+		mf = new MainFrame(this);
 		mf.createMainFrame();
 	}
 	public void showMainFrame() {
