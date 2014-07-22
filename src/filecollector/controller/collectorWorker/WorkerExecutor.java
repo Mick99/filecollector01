@@ -1,4 +1,4 @@
-package filecollector.controller;
+package filecollector.controller.collectorWorker;
 
 
 import java.nio.file.Path;
@@ -8,8 +8,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import filecollector.controller.collectorWorker.DirectoryWorkerCallable;
-import filecollector.controller.collectorWorker.DirectoryWorkerRunnable;
 import filecollector.logic.PoolManager;
 import filecollector.model.filemember.DirectoryMember;
 

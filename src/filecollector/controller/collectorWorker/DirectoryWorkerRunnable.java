@@ -2,7 +2,6 @@ package filecollector.controller.collectorWorker;
 
 import java.nio.file.Path;
 
-import filecollector.controller.IWorkerExecuteCallback;
 import filecollector.model.filemember.DirectoryMember;
 
 public class DirectoryWorkerRunnable extends AbstractDirectoryWorker implements Runnable {

@@ -3,7 +3,6 @@ package filecollector.controller.collectorWorker;
 import java.nio.file.Path;
 import java.util.concurrent.Callable;
 
-import filecollector.controller.IWorkerExecuteCallback;
 import filecollector.model.filemember.DirectoryMember;
 
 public class DirectoryWorkerCallable extends AbstractDirectoryWorker implements Callable<DirectoryMember> {
