@@ -2,7 +2,7 @@ package filecollector.controller;
 
 import filecollector.model.DirectoryPath;
 
-public interface IViewControllerCallback {
+public interface IGuiCallback {
 
 	void sendInput(String input);
 	void startCollect(DirectoryPath dirPath);

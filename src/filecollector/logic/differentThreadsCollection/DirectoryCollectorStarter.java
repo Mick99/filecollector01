@@ -5,6 +5,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 
+import filecollector.controller.MainController;
 import filecollector.controller.collectorWorker.WorkerExecutor;
 import filecollector.logic.PoolManager;
 import filecollector.model.Collector;
@@ -14,17 +15,12 @@ import filecollector.model.filemember.DirectoryMember;
 
 public class DirectoryCollectorStarter extends Thread {
 
-	public enum WorkerType {
-		RUNNABLE, CALLABLE;
-	}
 	private Collector collector;
 	private DirectoryPath directoryPath;
-	private WorkerType workerType;
 
 	// No Default constructor
-	public DirectoryCollectorStarter(Path dirPath, WorkerType workerType) throws My_IllegalArgumentException {
+	public DirectoryCollectorStarter(Path dirPath) throws My_IllegalArgumentException {
 		directoryPath = new DirectoryPath(dirPath);
-		this.workerType = workerType;
 	}
 	// May be not useful
 	public DirectoryCollectorStarter(String dirString) throws My_IllegalArgumentException {
@@ -37,10 +33,10 @@ public class DirectoryCollectorStarter extends Thread {
 	public void run() {
 //		collector = new Collector ();
 		PoolManager.getInstance().setPool((ThreadPoolExecutor) Executors.newCachedThreadPool());
-		if (workerType != null) {
-			if (workerType == WorkerType.RUNNABLE) 
+		if (MainController.runOrCallableEnum != null) {
+			if (MainController.runOrCallableEnum == MainController.runOrCallableEnum.RUNNABLE) 
 				newCallExecutor_FutureGet();
-			if (workerType == WorkerType.CALLABLE)
+			if (MainController.runOrCallableEnum == MainController.runOrCallableEnum.CALLABLE)
 				newCallExecutor_Callable();
 		}
 		PoolManager.getInstance().clearPoolWorker();

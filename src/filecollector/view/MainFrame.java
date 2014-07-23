@@ -21,7 +21,7 @@ import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.JTree;
 
-import filecollector.controller.IViewControllerCallback;
+import filecollector.controller.IGuiCallback;
 import filecollector.controller.MainController;
 import filecollector.controller.RunOrCallableEnum;
 import filecollector.model.DirectoryPath;
@@ -34,9 +34,9 @@ public class MainFrame {
 	private JTextArea textArea;
 	private JCheckBox runOrCall;
 	
-	private IViewControllerCallback viewCtrlCallback;
+	private IGuiCallback viewCtrlCallback;
 	
-	public MainFrame(IViewControllerCallback viewCtrlCallback) {
+	public MainFrame(IGuiCallback viewCtrlCallback) {
 		this.viewCtrlCallback = viewCtrlCallback;
 	}
 	public void createMainFrame() {
