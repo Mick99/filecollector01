@@ -15,5 +15,10 @@ public final class PoolExecutorIdentifier {
 	public Integer getIdentifier() {
 		return identifier;
 	}
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return type.name() + "-" + identifier;
+	}
 }
 

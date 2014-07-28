@@ -6,6 +6,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 
 import filecollector.controller.MainController;
+import filecollector.controller.RunOrCallableEnum;
 import filecollector.controller.collectorWorker.WorkerExecutor;
 import filecollector.logic.PoolManager_OLD;
 import filecollector.model.Collector;
@@ -34,9 +35,9 @@ public class DirectoryCollectorStarter extends Thread {
 //		collector = new Collector ();
 		PoolManager_OLD.getInstance().setPool((ThreadPoolExecutor) Executors.newCachedThreadPool());
 		if (MainController.runOrCallableEnum != null) {
-			if (MainController.runOrCallableEnum == MainController.runOrCallableEnum.RUNNABLE) 
+			if (MainController.runOrCallableEnum == RunOrCallableEnum.RUNNABLE) 
 				newCallExecutor_FutureGet();
-			if (MainController.runOrCallableEnum == MainController.runOrCallableEnum.CALLABLE)
+			if (MainController.runOrCallableEnum == RunOrCallableEnum.CALLABLE)
 				newCallExecutor_Callable();
 		}
 		PoolManager_OLD.getInstance().clearPoolWorker();

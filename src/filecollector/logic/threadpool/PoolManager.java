@@ -1,11 +1,7 @@
 package filecollector.logic.threadpool;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -23,8 +19,8 @@ import filecollector.logic.threadpool.ExecutorsTypeEnum;
 public class PoolManager {
 //	private static final Logger msg = Logger.getLogger("Message");
 	private static final Logger exc = Logger.getLogger("Exception");
+	
 	private static final PoolManager INSTANCE = new PoolManager();
-
 	private Integer id = 0;
 	private Set<ListOfExecutorServices> executorSrvList = new HashSet<>(7);
 
@@ -45,9 +41,13 @@ public class PoolManager {
 		PoolExecutorIdentifier newId = null;
 		if (l != null && srv != null) {
 			newId = l.addExecutorService(type, srv);
-			System.out.println(executorSrvList.add(l));
+			executorSrvList.add(l);
 		}
 		return newId;
+	}
+	public PoolExecutorIdentifier usePool(PoolExecutorIdentifier poolIdentifier, Runnable runnable) {
+		
+		return new PoolExecutorIdentifier(poolIdentifier.getType(), poolIdentifier.getIdentifier());
 	}
 	private ExecutorService createService(ExecutorsTypeEnum type) {
 		ExecutorService tmp = null;
@@ -72,14 +72,14 @@ public class PoolManager {
 
 	private ListOfExecutorServices getListService(ExecutorsTypeEnum type) {
 		
-		if (executorSrvList.contains(type)) {
+//		if (executorSrvList.contains(type)) {
 			Iterator<ListOfExecutorServices> it = executorSrvList.iterator();
 			while (it.hasNext()) {
 				ListOfExecutorServices srv = it.next();
-				if (srv.equals(type))
+				if (srv.getUniqueType().equals(type))
 					return srv;
 			}
-		}
+//		}
 		return null;
 	}
 	@Override
