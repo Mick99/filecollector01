@@ -7,7 +7,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 import filecollector.controller.MainController;
 import filecollector.controller.collectorWorker.WorkerExecutor;
-import filecollector.logic.PoolManager;
+import filecollector.logic.PoolManager_OLD;
 import filecollector.model.Collector;
 import filecollector.model.DirectoryPath;
 import filecollector.model.My_IllegalArgumentException;
@@ -32,14 +32,14 @@ public class DirectoryCollectorStarter extends Thread {
 	@Override
 	public void run() {
 //		collector = new Collector ();
-		PoolManager.getInstance().setPool((ThreadPoolExecutor) Executors.newCachedThreadPool());
+		PoolManager_OLD.getInstance().setPool((ThreadPoolExecutor) Executors.newCachedThreadPool());
 		if (MainController.runOrCallableEnum != null) {
 			if (MainController.runOrCallableEnum == MainController.runOrCallableEnum.RUNNABLE) 
 				newCallExecutor_FutureGet();
 			if (MainController.runOrCallableEnum == MainController.runOrCallableEnum.CALLABLE)
 				newCallExecutor_Callable();
 		}
-		PoolManager.getInstance().clearPoolWorker();
+		PoolManager_OLD.getInstance().clearPoolWorker();
 	}
 	private void newCallExecutor_FutureGet () {
 //		collector.getCollectionView (CollectionViewSelectorEnum.TEST_FUTURE_GET, true));

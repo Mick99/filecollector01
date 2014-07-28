@@ -8,7 +8,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import filecollector.logic.PoolManager;
+import filecollector.logic.PoolManager_OLD;
 import filecollector.model.filemember.DirectoryMember;
 
 public class WorkerExecutor implements IWorkerExecuteCallback {
@@ -29,7 +29,7 @@ public class WorkerExecutor implements IWorkerExecuteCallback {
 		
 	}
 	private void executeWorker_FutureGet (DirectoryWorkerRunnable directoryWorker) {
-		Future<?> future = PoolManager.getInstance().getPool().submit ((Runnable) directoryWorker);
+		Future<?> future = PoolManager_OLD.getInstance().getPool().submit ((Runnable) directoryWorker);
 		try {
 			future.get ();
 		} catch (InterruptedException e) {
@@ -40,7 +40,7 @@ public class WorkerExecutor implements IWorkerExecuteCallback {
 		}
 	}
 	private void executeWorker_Callable (DirectoryWorkerCallable directoryWorker) {
-		Future<DirectoryMember> future = PoolManager.getInstance().getPool().submit ((Callable<DirectoryMember>) directoryWorker);
+		Future<DirectoryMember> future = PoolManager_OLD.getInstance().getPool().submit ((Callable<DirectoryMember>) directoryWorker);
 		try {
 			/* TODO MW_140705: Have to redesign! dirMember is not really necessary, because DirectoryMember is in 
 			 * DirectoryWorker as member attribute defined. 

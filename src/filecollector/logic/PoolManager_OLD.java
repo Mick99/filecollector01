@@ -27,7 +27,7 @@ import org.apache.log4j.Logger;
  * @author Mick_02
  * 
  */
-public final class PoolManager {
+public final class PoolManager_OLD {
 	//TODO MW_140721: Erstmal nur simpel.
 	public enum PoolExecutorType {
 		POOL, SCHEDULED, MISCALUS;
@@ -35,16 +35,16 @@ public final class PoolManager {
 	private static final Logger msg = Logger.getLogger("Message");
 	private static final Logger exc = Logger.getLogger("Exception");
 
-	private static final PoolManager INSTANCE = new PoolManager();
+	private static final PoolManager_OLD INSTANCE = new PoolManager_OLD();
 	// TODO MW_140712: Idea? Both as collection with name or number to have own executor pool for different WorkerThreads.
 //	private Set<ThreadPoolExec_My> poolSet;
 	private ThreadPoolExecutor pool;
 	private ScheduledThreadPoolExecutor scheduled;
 	private ThreadPoolExecutor miscalus;
 
-	private PoolManager() {
+	private PoolManager_OLD() {
 	}
-	public static PoolManager getInstance() {
+	public static PoolManager_OLD getInstance() {
 		return INSTANCE;
 	}
 	public void checkAndCleanPools() {

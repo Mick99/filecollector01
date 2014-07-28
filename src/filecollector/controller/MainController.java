@@ -4,7 +4,7 @@ import java.nio.file.Paths;
 
 import org.apache.log4j.Logger;
 
-import filecollector.logic.PoolManager;
+import filecollector.logic.PoolManager_OLD;
 import filecollector.util.MyFileUtils;
 
 public class MainController {
@@ -23,12 +23,12 @@ public class MainController {
 		while (!exitApp) {
 			try {
 				Thread.sleep(3000);
-				PoolManager.getInstance().checkAndCleanPools();
+				PoolManager_OLD.getInstance().checkAndCleanPools();
 			} catch (InterruptedException e) {
 				exc.warn("MainController Interupted", e);
 				Thread.currentThread().interrupt();
 			}
 		}
-		PoolManager.getInstance().shutdownAllPools();
+		PoolManager_OLD.getInstance().shutdownAllPools();
 	}
 }
