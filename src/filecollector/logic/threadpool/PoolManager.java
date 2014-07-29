@@ -17,9 +17,9 @@ import filecollector.logic.threadpool.ExecutorsTypeEnum;
  *   2. Mit Enum + Id der ExecutorService (newFixed.., newSingle.., usw) erzeugt und von den Threads später benutzt. 
  */
 public class PoolManager {
-//	private static final Logger msg = Logger.getLogger("Message");
+	private static final Logger msg = Logger.getLogger("Message");
 	private static final Logger exc = Logger.getLogger("Exception");
-	
+
 	private static final PoolManager INSTANCE = new PoolManager();
 	private Integer id = 0;
 	private Set<ListOfExecutorServices> executorSrvList = new HashSet<>(7);
@@ -41,12 +41,14 @@ public class PoolManager {
 		PoolExecutorIdentifier newId = null;
 		if (l != null && srv != null) {
 			newId = l.addExecutorService(type, srv);
-			executorSrvList.add(l);
+			boolean msgBool = executorSrvList.add(l);
+			if (msg.isTraceEnabled())
+				msg.trace("Add to Set(after)= " + msgBool);
 		}
 		return newId;
 	}
 	public PoolExecutorIdentifier usePool(PoolExecutorIdentifier poolIdentifier, Runnable runnable) {
-		
+
 		return new PoolExecutorIdentifier(poolIdentifier.getType(), poolIdentifier.getIdentifier());
 	}
 	private ExecutorService createService(ExecutorsTypeEnum type) {
@@ -65,21 +67,31 @@ public class PoolManager {
 		default:
 			String excMessage = String.format("No case block found for: '%s'", type.name());
 			exc.info(excMessage);
-//			throw new IllegalArgumentException(excMessage);
+			// throw new IllegalArgumentException(excMessage);
 		}
 		return tmp;
 	}
 
 	private ListOfExecutorServices getListService(ExecutorsTypeEnum type) {
-		
-//		if (executorSrvList.contains(type)) {
+		ListOfExecutorServices tmp = new ListOfExecutorServices(type);
+		boolean containsRes = executorSrvList.contains(tmp);
+		if (msg.isTraceEnabled()) {
+			String msgMessage = String.format("getListService (%s) contains(before)=%b", type.name(), containsRes);
+			msg.trace(msgMessage);
+		}
+		if (containsRes) {
 			Iterator<ListOfExecutorServices> it = executorSrvList.iterator();
 			while (it.hasNext()) {
 				ListOfExecutorServices srv = it.next();
-				if (srv.getUniqueType().equals(type))
+				boolean equalsRes = srv.equals(tmp);
+				if (msg.isTraceEnabled()) {
+					String msgMessage = String.format("getListService (%s) equals(before)=%b", type.name(), equalsRes);
+					msg.trace(msgMessage);
+				}
+				if (equalsRes)
 					return srv;
 			}
-//		}
+		}
 		return null;
 	}
 	@Override

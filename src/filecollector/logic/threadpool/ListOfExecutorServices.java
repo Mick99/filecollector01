@@ -4,8 +4,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
+import org.apache.log4j.Logger;
+
 public class ListOfExecutorServices {
 	// class ListOfExecutorServices implements Comparable<ListOfExecutorServices> {
+	private static final Logger msg = Logger.getLogger("Message");
+	// private static final Logger exc = Logger.getLogger("Exception");
 
 	private final ExecutorsTypeEnum uniqueType;
 	private List<ElementOfExecutorService> usedExecSrv = new LinkedList<>();
@@ -30,13 +34,19 @@ public class ListOfExecutorServices {
 	@Override
 	public int hashCode() {
 		int res = hash_3();
-//		System.out.println("hash= " + Integer.toHexString(res));
+		if (msg.isTraceEnabled()) {
+			String msgMessage = String.format("this(%s) hashCode=%s", this.toString(), Integer.toHexString(res));
+			msg.trace(msgMessage);
+		}
 		return res;
 	}
 	@Override
 	public boolean equals(Object obj) {
 		boolean res = equals_3(obj);
-//		System.out.println("equals= " + res);
+		if (msg.isTraceEnabled()) {
+			String msgMessage = String.format("this(%s) equals=%b", this.toString(), res);
+			msg.trace(msgMessage);
+		}
 		return res;
 	}
 	private int hash_3() {
@@ -78,9 +88,9 @@ public class ListOfExecutorServices {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		for (ElementOfExecutorService e : usedExecSrv) {
-			sb.append(e.toString() + "\n");
+			sb.append(e.toString());
 		}
-		return sb.toString();
+		return "ListOf: " + uniqueType.name() + " - " + sb.toString();
 	}
 }
 
@@ -108,4 +118,3 @@ class ElementOfExecutorService {
 		return "(" + identifier.getType().name() + " : " + identifier.getIdentifier().toString() + ")";
 	}
 }
-

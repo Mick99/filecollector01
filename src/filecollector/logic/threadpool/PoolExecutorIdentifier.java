@@ -1,11 +1,10 @@
 package filecollector.logic.threadpool;
 
-
 public final class PoolExecutorIdentifier {
 	private final ExecutorsTypeEnum type;
 	private final Integer identifier;
 
-	public PoolExecutorIdentifier(final ExecutorsTypeEnum type,final Integer identifier) {
+	public PoolExecutorIdentifier(final ExecutorsTypeEnum type, final Integer identifier) {
 		this.type = type;
 		this.identifier = identifier;
 	}
@@ -17,8 +16,6 @@ public final class PoolExecutorIdentifier {
 	}
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
 		return type.name() + "-" + identifier;
 	}
 }
-
