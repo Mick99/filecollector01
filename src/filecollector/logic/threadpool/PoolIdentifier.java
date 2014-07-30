@@ -1,10 +1,10 @@
 package filecollector.logic.threadpool;
 
-public final class PoolExecutorIdentifier {
+public final class PoolIdentifier {
 	private final ExecutorsTypeEnum type;
 	private final Integer identifier;
 
-	public PoolExecutorIdentifier(final ExecutorsTypeEnum type, final Integer identifier) {
+	public PoolIdentifier(final ExecutorsTypeEnum type, final Integer identifier) {
 		this.type = type;
 		this.identifier = identifier;
 	}

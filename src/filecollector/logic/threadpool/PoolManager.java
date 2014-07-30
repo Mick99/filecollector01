@@ -31,14 +31,14 @@ public class PoolManager {
 	public static PoolManager getInstance() {
 		return INSTANCE;
 	}
-	public PoolExecutorIdentifier needNew(ExecutorsTypeEnum type) {
+	public PoolIdentifier newPool(ExecutorsTypeEnum type) {
 
 		ListOfExecutorServices l = getListService(type);
 		if (l == null) // No pool, create empty one
 			l = new ListOfExecutorServices(type);
 		ExecutorService srv = null;
 		srv = createService(type);
-		PoolExecutorIdentifier newId = null;
+		PoolIdentifier newId = null;
 		if (l != null && srv != null) {
 			newId = l.addExecutorService(type, srv);
 			boolean msgBool = executorSrvList.add(l);
@@ -47,9 +47,9 @@ public class PoolManager {
 		}
 		return newId;
 	}
-	public PoolExecutorIdentifier usePool(PoolExecutorIdentifier poolIdentifier, Runnable runnable) {
+	public PoolIdentifier usePool(PoolIdentifier poolIdentifier, Runnable runnable) {
 
-		return new PoolExecutorIdentifier(poolIdentifier.getType(), poolIdentifier.getIdentifier());
+		return new PoolIdentifier(poolIdentifier.getType(), poolIdentifier.getIdentifier());
 	}
 	private ExecutorService createService(ExecutorsTypeEnum type) {
 		ExecutorService tmp = null;

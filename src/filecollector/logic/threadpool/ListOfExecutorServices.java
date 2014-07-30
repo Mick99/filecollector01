@@ -17,12 +17,12 @@ public class ListOfExecutorServices {
 	ListOfExecutorServices(final ExecutorsTypeEnum uniqueType) {
 		this.uniqueType = uniqueType;
 	}
-	PoolExecutorIdentifier addExecutorService(ExecutorsTypeEnum type, ExecutorService executorService) {
+	PoolIdentifier addExecutorService(ExecutorsTypeEnum type, ExecutorService executorService) {
 		ElementOfExecutorService el = new ElementOfExecutorService(type, getUnusedIdentifier(), executorService);
 		usedExecSrv.add(el);
 		return el.getIdentifier();
 	}
-	void removeElementOfExecutorService(PoolExecutorIdentifier identifier) {
+	void removeElementOfExecutorService(PoolIdentifier identifier) {
 		// Not impl yet
 	}
 	// List<ElementOfExecutorService> getElementList() {
@@ -97,19 +97,19 @@ public class ListOfExecutorServices {
 class ElementOfExecutorService {
 
 	private final ExecutorService executorService;
-	private final PoolExecutorIdentifier identifier;
+	private final PoolIdentifier identifier;
 
 	ElementOfExecutorService(ExecutorsTypeEnum type, Integer unusedIdentifier, ExecutorService executorService) {
-		identifier = new PoolExecutorIdentifier(type, unusedIdentifier);
+		identifier = new PoolIdentifier(type, unusedIdentifier);
 		this.executorService = executorService;
 	}
 	ExecutorService getExecutorService() {
 		return executorService;
 	}
-	PoolExecutorIdentifier getIdentifier() {
+	PoolIdentifier getIdentifier() {
 		return identifier;
 	}
-	boolean remove(PoolExecutorIdentifier identifier) {
+	boolean remove(PoolIdentifier identifier) {
 		// if ExecSrv shutdown() it can removed from List
 		return false;
 	}
