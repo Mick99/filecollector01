@@ -58,14 +58,14 @@ public class PoolManager {
 	private ExecutorService createService(ExecutorsTypeEnum type) {
 		ExecutorService tmp = null;
 		switch (type) {
-		case POOL:
+		case CACHED:
 			tmp = Executors.newCachedThreadPool();
 			break;
 		case SINGLE:
 			tmp = Executors.newSingleThreadExecutor();
 			break;
 		case MISCALUS:
-			tmp = Executors.newFixedThreadPool(4);
+			tmp = Executors.newFixedThreadPool(2);
 			break;
 
 		default:
