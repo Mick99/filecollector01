@@ -9,15 +9,18 @@ import filecollector.controller.MainController;
 import filecollector.controller.RunOrCallableEnum;
 import filecollector.controller.collectorWorker.WorkerExecutor;
 import filecollector.logic.PoolManager_OLD;
+import filecollector.logic.threadpool.IPoolIdentifier;
+import filecollector.logic.threadpool.PoolIdentifier;
 import filecollector.model.Collector;
 import filecollector.model.DirectoryPath;
 import filecollector.model.My_IllegalArgumentException;
 import filecollector.model.filemember.DirectoryMember;
 
-public class DirectoryCollectorStarter extends Thread {
+public class DirectoryCollectorStarter extends Thread implements IPoolIdentifier {
 
 	private Collector collector;
 	private DirectoryPath directoryPath;
+	private PoolIdentifier poolIdentifier;
 
 	// No Default constructor
 	public DirectoryCollectorStarter(Path dirPath) throws My_IllegalArgumentException {
@@ -58,6 +61,10 @@ public class DirectoryCollectorStarter extends Thread {
 	}
 	@Override
 	public String toString() {
-		return directoryPath.toString() + " :: " + super.toString();
+		return directoryPath.toString()+" :: "+poolIdentifier.toString();
+	}
+	@Override
+	public void transferNewIdentifier(PoolIdentifier poolId) {
+		poolIdentifier = poolId.newIdentifier();
 	}
 }

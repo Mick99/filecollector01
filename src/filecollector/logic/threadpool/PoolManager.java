@@ -47,9 +47,13 @@ public class PoolManager {
 		}
 		return newId;
 	}
-	public PoolIdentifier usePool(PoolIdentifier poolIdentifier, Runnable runnable) {
-
-		return new PoolIdentifier(poolIdentifier.getType(), poolIdentifier.getIdentifier());
+	public ExecutorService usePool(IPoolIdentifier runnable, PoolIdentifier poolIdentifier) {
+		runnable.transferNewIdentifier(poolIdentifier);
+		ListOfExecutorServices l = getListService(poolIdentifier.getType());
+		if (l != null){
+			return l.getExecutorService(poolIdentifier);
+		}
+		return null;
 	}
 	private ExecutorService createService(ExecutorsTypeEnum type) {
 		ExecutorService tmp = null;

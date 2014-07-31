@@ -6,7 +6,7 @@ import java.util.concurrent.ExecutorService;
 
 import org.apache.log4j.Logger;
 
-public class ListOfExecutorServices {
+class ListOfExecutorServices {
 	// class ListOfExecutorServices implements Comparable<ListOfExecutorServices> {
 	private static final Logger msg = Logger.getLogger("Message");
 	// private static final Logger exc = Logger.getLogger("Exception");
@@ -21,6 +21,13 @@ public class ListOfExecutorServices {
 		ElementOfExecutorService el = new ElementOfExecutorService(type, getUnusedIdentifier(), executorService);
 		usedExecSrv.add(el);
 		return el.getIdentifier();
+	}
+	ExecutorService getExecutorService(PoolIdentifier poolId) {
+		ElementOfExecutorService el = getElement(poolId);
+		if (el == null) {
+			throw new IllegalArgumentException("PoolIdentifier not found: " + poolId.getType() + poolId.getIdentifier());
+		}
+		return el.getExecutorService();
 	}
 	void removeElementOfExecutorService(PoolIdentifier identifier) {
 		// Not impl yet
@@ -73,6 +80,14 @@ public class ListOfExecutorServices {
 		else
 			return -1;
 	}
+	private ElementOfExecutorService getElement(PoolIdentifier poolId) {
+		for (ElementOfExecutorService el : usedExecSrv) {
+			if (el.getIdentifier().equals(poolId)) {
+				return el;
+			}
+		}
+		return null;
+	}
 	private Integer getUnusedIdentifier() {
 		int freeNumber = 0;
 		for (ElementOfExecutorService el : usedExecSrv) {
@@ -90,7 +105,7 @@ public class ListOfExecutorServices {
 		for (ElementOfExecutorService e : usedExecSrv) {
 			sb.append(e.toString());
 		}
-		return "ListOf: " + uniqueType.name() + " - " + sb.toString();
+		return "ListOf: "+uniqueType.name()+" ("+ sb.toString()+")";
 	}
 }
 
@@ -115,6 +130,7 @@ class ElementOfExecutorService {
 	}
 	@Override
 	public String toString() {
-		return "(" + identifier.getType().name() + " : " + identifier.getIdentifier().toString() + ")";
+//		return "(" + identifier.getType().name() + " : " + identifier.getIdentifier().toString() + ")";
+		return identifier.toString()+" ";
 	}
 }
