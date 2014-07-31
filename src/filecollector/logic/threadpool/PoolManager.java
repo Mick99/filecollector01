@@ -153,6 +153,7 @@ public class PoolManager {
 		}
 		return isShutdown;
 	}
+	// !!! Nicht korrekt impl, isOk muss auf false bleiben wenn einmal gesetzt !!! Nur wg testen
 	public void shutdownAllPools() {
 		boolean isOk = true;
 		// 1. Call shutdown for all ExecutorServices

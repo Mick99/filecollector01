@@ -5,6 +5,7 @@ import java.nio.file.Paths;
 import org.apache.log4j.Logger;
 
 import filecollector.logic.PoolManager_OLD;
+import filecollector.logic.threadpool.PoolManager;
 import filecollector.util.MyFileUtils;
 
 public class MainController {
@@ -16,19 +17,21 @@ public class MainController {
 
 
 	public void entryApplikation (String[] args) {
-		if (!MyFileUtils.isDirectory(Paths.get (args[0])))
-			System.exit(1);
+//		if (!MyFileUtils.isDirectory(Paths.get (args[0])))
+//			System.exit(1);
 		ViewController vc = new ViewController();
 		// Bis key stop or quit signaliesiert
 		while (!exitApp) {
 			try {
 				Thread.sleep(3000);
-				PoolManager_OLD.getInstance().checkAndCleanPools();
+//				PoolManager_OLD.getInstance().checkAndCleanPools();
+				PoolManager.getInstance().checkAndCleanPools();
 			} catch (InterruptedException e) {
 				exc.warn("MainController Interupted", e);
 				Thread.currentThread().interrupt();
 			}
 		}
-		PoolManager_OLD.getInstance().shutdownAllPools();
+//		PoolManager_OLD.getInstance().shutdownAllPools();
+		PoolManager.getInstance().shutdownAllPools();
 	}
 }

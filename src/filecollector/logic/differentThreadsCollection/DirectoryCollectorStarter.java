@@ -46,7 +46,8 @@ public class DirectoryCollectorStarter extends Thread implements IPoolIdentifier
 			if (MainController.runOrCallableEnum == RunOrCallableEnum.CALLABLE)
 				newCallExecutor_Callable(poolId);
 		}
-		PoolManager_OLD.getInstance().clearPoolWorker();
+//		PoolManager_OLD.getInstance().clearPoolWorker();
+		PoolManager.getInstance().clearPool(poolId);
 	}
 	private void newCallExecutor_FutureGet (PoolIdentifier poolId) {
 //		collector.getCollectionView (CollectionViewSelectorEnum.TEST_FUTURE_GET, true));
