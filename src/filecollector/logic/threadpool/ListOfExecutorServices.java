@@ -29,12 +29,19 @@ class ListOfExecutorServices {
 		}
 		return el.getExecutorService();
 	}
-	void removeElementOfExecutorService(PoolIdentifier identifier) {
-		// Not impl yet
+	boolean removeElementOfExecutorService(PoolIdentifier poolId) {
+		ElementOfExecutorService el = getElement(poolId);
+		if (el == null) {
+			throw new IllegalArgumentException("PoolIdentifier not found: " + poolId.getType() + poolId.getIdentifier());
+		}
+		return usedExecSrv.remove(el);
 	}
-	// List<ElementOfExecutorService> getElementList() {
-	// return usedExecSrv;
-	// }
+	boolean removeAllElements() {
+		return usedExecSrv.removeAll(usedExecSrv);
+	}
+	List<ElementOfExecutorService> getElementList() {
+		return usedExecSrv;
+	}
 	ExecutorsTypeEnum getUniqueType() {
 		return uniqueType;
 	}
@@ -126,6 +133,7 @@ class ElementOfExecutorService {
 	}
 	boolean remove(PoolIdentifier identifier) {
 		// if ExecSrv shutdown() it can removed from List
+		// set null for final not possible
 		return false;
 	}
 	@Override
