@@ -13,9 +13,11 @@ import filecollector.logic.threadpool.ExecutorsTypeEnum;
 import filecollector.logic.threadpool.IPoolIdentifier;
 import filecollector.logic.threadpool.PoolIdentifier;
 import filecollector.logic.threadpool.PoolManager;
+import filecollector.model.CollectionViewSelectorEnum;
 import filecollector.model.Collector;
 import filecollector.model.DirectoryPath;
 import filecollector.model.My_IllegalArgumentException;
+import filecollector.model.PrintTest;
 import filecollector.model.filemember.DirectoryMember;
 
 public class DirectoryCollectorStarter extends Thread implements IPoolIdentifier {
@@ -56,7 +58,7 @@ public class DirectoryCollectorStarter extends Thread implements IPoolIdentifier
 		workerExecutor.executeWorker(dirMember, poolId);
 		System.out.println("newCallExecutor_FutureGet");
 		Collector col = new Collector(dirMember);
-		col.printTest();
+		new PrintTest(Collector.getCollector().getCollectionView(CollectionViewSelectorEnum.ORIG_UNSORTED));
 	}
 	private void newCallExecutor_Callable (PoolIdentifier poolId) {
 		WorkerExecutor workerExecutor = new WorkerExecutor();
