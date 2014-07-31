@@ -23,6 +23,6 @@ public class DirectoryWorkerCallable extends AbstractDirectoryWorker implements 
 	@Override
 	protected void addDirectoryMemberAndCreateNewWorker(Path dirEntry) {
 		// Runs another way for Callable-worker
-		exeCallback.executeWorker(dirEntry);
+		exeCallback.executeWorker(dirEntry, poolIdentifier);
 	}
 }

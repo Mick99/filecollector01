@@ -23,6 +23,6 @@ public class DirectoryWorkerRunnable extends AbstractDirectoryWorker implements 
 		DirectoryMember dm = new DirectoryMember (dirEntry);
 		appendAttributes(dm);
 		directory.addFileSystemMember (dm);
-		exeCallback.executeWorker(dm);
+		exeCallback.executeWorker(dm, poolIdentifier);
 	}
 }

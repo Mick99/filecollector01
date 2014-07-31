@@ -12,19 +12,22 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 
+import filecollector.logic.threadpool.IPoolIdentifier;
+import filecollector.logic.threadpool.PoolIdentifier;
 import filecollector.model.filemember.DirectoryMember;
 import filecollector.model.filemember.FileAttributesEnum;
 import filecollector.model.filemember.FileMember;
 import filecollector.model.filemember.FileSystemMember;
 import filecollector.util.MyFileUtils;
 
-public abstract class AbstractDirectoryWorker {
+public abstract class AbstractDirectoryWorker implements IPoolIdentifier {
 	private static final Logger msg = Logger.getLogger("Message");
 	private static final Logger exc = Logger.getLogger("Exception");
 
 	protected final DirectoryMember directory;
 	private DirectoryStream<Path> dirStream;
 	private String workerName;
+	protected PoolIdentifier poolIdentifier;
 
 	// Runnable constructor
 	protected AbstractDirectoryWorker (final DirectoryMember directory) {
@@ -139,5 +142,9 @@ public abstract class AbstractDirectoryWorker {
 			int rw = WorkerCounter.releaseWorker ();
 			msg.debug ("Release " + rw + " for " + workerName);
 		}
+	}
+	@Override
+	public void transferNewIdentifier(PoolIdentifier poolId) {
+		poolIdentifier = poolId.newIdentifier();
 	}
 }
