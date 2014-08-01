@@ -1,6 +1,8 @@
 package filecollector.logic.differentThreadsCollection;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -42,6 +44,7 @@ public class DirectoryCollectorStarter extends Thread implements IPoolIdentifier
 //		collector = new Collector ();
 //		PoolManager_OLD.getInstance().setPool((ThreadPoolExecutor) Executors.newCachedThreadPool());
 		PoolIdentifier poolId = PoolManager.getInstance().newPool(ExecutorsTypeEnum.CACHED);
+		System.out.println(PoolManager.getInstance().toString());
 		if (MainController.runOrCallableEnum != null) {
 			if (MainController.runOrCallableEnum == RunOrCallableEnum.RUNNABLE) 
 				newCallExecutor_FutureGet(poolId);
@@ -56,14 +59,22 @@ public class DirectoryCollectorStarter extends Thread implements IPoolIdentifier
 		WorkerExecutor workerExecutor = new WorkerExecutor();
 		DirectoryMember dirMember = new DirectoryMember(directoryPath.getDirectoryPath());
 		workerExecutor.executeWorker(dirMember, poolId);
-		System.out.println("newCallExecutor_FutureGet");
-		Collector col = new Collector(dirMember);
-		new PrintTest(Collector.getCollector().getCollectionView(CollectionViewSelectorEnum.ORIG_UNSORTED));
+		System.out.println("FutureGet finish");
+		// Only for TEST
+		new Collector(dirMember);
+		PrintTest p = new PrintTest();
+		p.printTest(Collector.getCollector().getCollectionView(CollectionViewSelectorEnum.ORIG_UNSORTED));
 	}
 	private void newCallExecutor_Callable (PoolIdentifier poolId) {
-		WorkerExecutor workerExecutor = new WorkerExecutor();
-//		workerExecutor.executeWorker(collector.getROOT_DIRECTORY());
+		List<DirectoryMember> dmList = new ArrayList<>(100);
+		WorkerExecutor workerExecutor = new WorkerExecutor(dmList);
+		workerExecutor.executeWorker(directoryPath.getDirectoryPath(), poolId);
 		System.out.println("Callable finish");
+		// Only for TEST
+		new Collector(dmList);
+		
+//		PrintTest p = new PrintTest();
+//		p.printTest(Collector.getCollector().getCollectionView(CollectionViewSelectorEnum.ORIG_UNSORTED));
 	}
 	@Override
 	public String toString() {

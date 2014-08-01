@@ -29,6 +29,15 @@ class ListOfExecutorServices {
 		}
 		return el.getExecutorService();
 	}
+	PoolIdentifier getFirstPoolIdentifier(ExecutorsTypeEnum type) {
+		try {
+			ElementOfExecutorService el = usedExecSrv.get(0);
+			return el.getIdentifier();
+		} catch (IndexOutOfBoundsException e) {
+			// Do nothing
+		}
+		return null;
+	}
 	boolean removeElementOfExecutorService(PoolIdentifier poolId) {
 		ElementOfExecutorService el = getElement(poolId);
 		if (el == null) {

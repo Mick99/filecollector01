@@ -15,8 +15,13 @@ import filecollector.model.filemember.DirectoryMember;
 
 public class WorkerExecutor implements IWorkerExecuteCallback {
 
-	public List<DirectoryMember> resultCallable = new ArrayList<>();
+	public List<DirectoryMember> resultCallable;
 	
+	public WorkerExecutor() {
+	}
+	public WorkerExecutor(List<DirectoryMember> resultList) {
+		resultCallable = resultList;
+	}
 	@Override
 	public void executeWorker(DirectoryMember dirMember, PoolIdentifier poolId) {
 		System.out.println("Runnable");

@@ -18,7 +18,9 @@ public class DirectoryWorkerController {
 		// Start DirCollStarter as Call- or Runnable
 //		PoolManager.getInstance().setMiscalus((ThreadPoolExecutor) Executors.newFixedThreadPool(2));
 //		PoolManager_OLD.getInstance().setMiscalus((ThreadPoolExecutor) Executors.newSingleThreadExecutor());
-		PoolIdentifier poolId = PoolManager.getInstance().newPool(ExecutorsTypeEnum.SINGLE);
+		PoolIdentifier poolId;
+		if ((poolId = PoolManager.getInstance().isPoolAvailable(ExecutorsTypeEnum.SINGLE)) == null)
+			poolId = PoolManager.getInstance().newPool(ExecutorsTypeEnum.SINGLE);
 		DirectoryCollectorStarter dcs;
 		try {
 			dcs = new DirectoryCollectorStarter(dirPath.getDirectoryPath());

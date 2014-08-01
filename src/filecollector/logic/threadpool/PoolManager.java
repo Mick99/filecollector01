@@ -2,6 +2,7 @@ package filecollector.logic.threadpool;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -51,12 +52,10 @@ public class PoolManager {
 		return INSTANCE;
 	}
 	public PoolIdentifier newPool(ExecutorsTypeEnum type) {
-
 		ListOfExecutorServices l = getListService(type);
 		if (l == null) // No pool, create empty one
 			l = new ListOfExecutorServices(type);
-		ExecutorService srv = null;
-		srv = createService(type);
+		ExecutorService srv = createService(type);
 		PoolIdentifier newId = null;
 		if (l != null && srv != null) {
 			newId = l.addExecutorService(type, srv);
@@ -78,6 +77,7 @@ public class PoolManager {
 	public void clearPool(PoolIdentifier poolIdentifier) {
 		ListOfExecutorServices l = getListService(poolIdentifier.getType());
 		if (l != null){
+			msg.debug("shutdown PoolIdentifier: "+poolIdentifier.toString());
 			if (shutdownPool(l.getExecutorService(poolIdentifier))) {
 				if (!l.removeElementOfExecutorService(poolIdentifier)) {
 					exc.info("Remove failed for PoolIdentifier: "+poolIdentifier.toString());
@@ -134,7 +134,6 @@ public class PoolManager {
 	private boolean shutdownPool(ExecutorService es) {
 		boolean isShutdown = true;
 		es.shutdown();
-		msg.debug("shutdownPool");
 		try {
 			if (!es.awaitTermination(200, TimeUnit.MILLISECONDS)) {
 				es.shutdownNow();
@@ -175,5 +174,12 @@ public class PoolManager {
 	}
 	public void checkAndCleanPools() {
 		// TODO MW_140731: Some stuff eg. how long not active, how many runnables in queue, ... 
+	}
+	// If you need nothing none new pool
+	public PoolIdentifier isPoolAvailable(ExecutorsTypeEnum type) {
+		ListOfExecutorServices l = getListService(type);
+		if (l != null) 
+			return l.getFirstPoolIdentifier(type);
+		return null;
 	}
 }
