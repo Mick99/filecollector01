@@ -89,13 +89,13 @@ class ListOfExecutorServices {
 		return this.getUniqueType().equals(otherList.getUniqueType());
 	}
 	// not used, only equals compare is needful, other (< or >) will return always -1
-	private int compareTo_My(ListOfExecutorServices otherList) {
-		boolean compareResult = (this.uniqueType == otherList.uniqueType) && (this.usedExecSrv == otherList.usedExecSrv);
-		if (compareResult)
-			return 0;
-		else
-			return -1;
-	}
+//	private int compareTo_My(ListOfExecutorServices otherList) {
+//		boolean compareResult = (this.uniqueType == otherList.uniqueType) && (this.usedExecSrv == otherList.usedExecSrv);
+//		if (compareResult)
+//			return 0;
+//		else
+//			return -1;
+//	}
 	private ElementOfExecutorService getElement(PoolIdentifier poolId) {
 		for (ElementOfExecutorService el : usedExecSrv) {
 			if (el.getIdentifier().equals(poolId)) {

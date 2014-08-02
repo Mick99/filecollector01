@@ -52,7 +52,6 @@ public class MainFrame {
 
 		frame.setSize(600, 300);
 		frame.setVisible(true);
-
 	}
 	public void closeMainFrame() {
 		exitListener.closeApp();
@@ -82,7 +81,6 @@ public class MainFrame {
 		compoundPanel.add(new JSeparator(), BorderLayout.SOUTH);
 
 		return compoundPanel;
-
 	}
 	private JComponent createCenterPanel() {
 		final JSplitPane splitPane = new JSplitPane();

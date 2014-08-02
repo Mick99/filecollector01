@@ -5,7 +5,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
 import org.apache.log4j.Logger;
 
 
@@ -27,8 +26,9 @@ import org.apache.log4j.Logger;
  * @author Mick_02
  * 
  */
+@SuppressWarnings("unused")
 public final class PoolManager_OLD {
-	//TODO MW_140721: Erstmal nur simpel.
+	//MW_140721: Erstmal nur simpel.
 	public enum PoolExecutorType {
 		POOL, SCHEDULED, MISCALUS;
 	}
@@ -36,7 +36,7 @@ public final class PoolManager_OLD {
 	private static final Logger exc = Logger.getLogger("Exception");
 
 	private static final PoolManager_OLD INSTANCE = new PoolManager_OLD();
-	// TODO MW_140712: Idea? Both as collection with name or number to have own executor pool for different WorkerThreads.
+	// MW_140712: Idea? Both as collection with name or number to have own executor pool for different WorkerThreads.
 //	private Set<ThreadPoolExec_My> poolSet;
 	private ThreadPoolExecutor pool;
 	private ScheduledThreadPoolExecutor scheduled;
@@ -48,7 +48,7 @@ public final class PoolManager_OLD {
 		return INSTANCE;
 	}
 	public void checkAndCleanPools() {
-		/*TODO MW_140721: Pruefen ob pools gewisse Zeit inaktiv sind und gegebenenfalls runter fahren?
+		/*MW_140721: Pruefen ob pools gewisse Zeit inaktiv sind und gegebenenfalls runter fahren?
 		 * Erstmal periodisch im MainController aufrufen.
 		 * 
 		 */

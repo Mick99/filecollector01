@@ -24,7 +24,7 @@ public class ThreadPoolExec_My extends ThreadPoolExecutor {
 	}
 	public ThreadPoolExec_My(int corePoolSize, int maximumPoolSize, long keepAlive, TimeUnit unit, BlockingQueue<Runnable> workQueue) {
 		super(corePoolSize, maximumPoolSize, keepAlive, unit, workQueue);
-		// TODO Auto-generated constructor stub
+		// Auto-generated constructor stub
 	}
 
 }
