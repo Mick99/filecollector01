@@ -19,15 +19,15 @@ public class DirectoryMember extends FileSystemMember {
 	 */
 	private long cumulatedCapacitySize = -1L;
 
-	public DirectoryMember (final Path path) {
-		super (path);
-		dirContent = new ArrayList<FileSystemMember> ();
+	public DirectoryMember(final Path path) {
+		super(path);
+		dirContent = new ArrayList<FileSystemMember>();
 	}
-	public void addFileSystemMember (FileSystemMember fileSystemMember) {
-		dirContent.add (fileSystemMember);
+	public void addFileSystemMember(FileSystemMember fileSystemMember) {
+		dirContent.add(fileSystemMember);
 
 	}
-	public List<FileSystemMember> getDirContent () {
+	public List<FileSystemMember> getDirContent() {
 		return dirContent;
 	}
 	@Override

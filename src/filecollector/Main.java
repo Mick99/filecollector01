@@ -9,19 +9,17 @@ public class Main {
 	/*
 	 * Log4j als sysout missbraucht Levels TRACE < DEBUG < INFO < WARN < ERROR < FATAL
 	 */
-//	static Logger log = Logger.getLogger ("MW_Level"); // MainController.class.getSimpleName ()
-//	private static final Logger log = Logger.getRootLogger();
-	private static final long RELOAD = 60000L; 
+	// static Logger log = Logger.getLogger ("MW_Level"); // MainController.class.getSimpleName ()
+	// private static final Logger log = Logger.getRootLogger();
+	private static final long RELOAD = 60000L;
 	private static final Logger msg = Logger.getLogger("Message");
-//	private static final Logger exc = Logger.getLogger("Exception");
-	
-	public static void main (String[] args) {
-//		if (args.length < 1)
-//			System.exit (1);
+	// private static final Logger exc = Logger.getLogger("Exception");
+
+	public static void main(String[] args) {
 		PropertyConfigurator.configureAndWatch("config/Log4j.properties", RELOAD);
-		msg.info ("Start");
-		MainController mc = new MainController ();
-		mc.entryApplikation (args);
-		msg.info ("End");
+		msg.info("Start");
+		MainController mc = new MainController();
+		mc.entryApplikation(args);
+		msg.info("End");
 	}
 }

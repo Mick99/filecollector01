@@ -1,6 +1,6 @@
 package filecollector.logic.threadpool;
 
-public final class PoolIdentifier { //implements IPoolIdentifier {
+public final class PoolIdentifier {
 	private final ExecutorsTypeEnum type;
 	private final Integer identifier;
 
@@ -21,7 +21,7 @@ public final class PoolIdentifier { //implements IPoolIdentifier {
 	public boolean equals(Object obj) {
 		if (obj == null)
 			return false;
-		if (this == obj) 
+		if (this == obj)
 			return true;
 		if (this.getClass() != obj.getClass())
 			return false;
@@ -30,6 +30,6 @@ public final class PoolIdentifier { //implements IPoolIdentifier {
 	}
 	@Override
 	public String toString() {
-		return type.name()+"-"+identifier+" => "+super.toString();
+		return type.name() + "-" + identifier + " => " + super.toString();
 	}
 }

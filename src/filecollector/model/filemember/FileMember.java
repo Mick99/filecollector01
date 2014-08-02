@@ -6,17 +6,17 @@ public class FileMember extends FileSystemMember {
 	private final String FILE_NAME;
 	private long fileSize;
 
-	public FileMember (final Path path) {
-		super (path);
-		this.FILE_NAME = path.getFileName ().toString ();
+	public FileMember(final Path path) {
+		super(path);
+		this.FILE_NAME = path.getFileName().toString();
 	}
-	public long getFileSize () {
+	public long getFileSize() {
 		return fileSize;
 	}
-	public void setFileSize (long fileSize) {
+	public void setFileSize(long fileSize) {
 		this.fileSize = fileSize;
 	}
-	public String getFILE_NAME () {
+	public String getFILE_NAME() {
 		return FILE_NAME;
 	}
 	@Override

@@ -2,7 +2,6 @@ package filecollector.logic.threadpool;
 
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -16,7 +15,9 @@ import filecollector.logic.threadpool.ExecutorsTypeEnum;
  * Helper class designed as singleton to get same instance for different threads.<br>
  * <strong>(! Singleton is only per Classloader distinct !)</strong>
  * 
- * <p>Since 1.5 Singleton as one element enum possible:</p>
+ * <p>
+ * Since 1.5 Singleton as one element enum possible:
+ * </p>
  * 
  * <pre>
  * public enum Singleton {
@@ -32,19 +33,17 @@ import filecollector.logic.threadpool.ExecutorsTypeEnum;
  */
 
 /*
- *  MW_140724: Derzeit zeige ich nur dass Prinzip, wie es laufen könnte. Erstmal noch alten PoolManager nutzen.
- *   needNew(): 
- *   1. Identifier wird mit Enum + einer nicht benutzten Id erzeugt die hier verwaltet wird.
- *   2. Mit Enum + Id der ExecutorService (newFixed.., newSingle.., usw) erzeugt und von den Threads später benutzt. 
+ * MW_140724: Derzeit zeige ich nur dass Prinzip, wie es laufen könnte. Erstmal noch alten PoolManager nutzen. needNew(): 1. Identifier wird mit Enum
+ * + einer nicht benutzten Id erzeugt die hier verwaltet wird. 2. Mit Enum + Id der ExecutorService (newFixed.., newSingle.., usw) erzeugt und von den
+ * Threads später benutzt.
  */
 public class PoolManager {
 	private static final Logger msg = Logger.getLogger("Message");
 	private static final Logger exc = Logger.getLogger("Exception");
 
 	private static final PoolManager INSTANCE = new PoolManager();
-	private Set<ListOfExecutorServices> executorSrvList = new HashSet<>(7);
-
 	// private EnumSet<ExecutorsTypeEnum> executorSrvList = EnumSet.noneOf(ExecutorsTypeEnum.class);
+	private Set<ListOfExecutorServices> executorSrvList = new HashSet<>(7);
 
 	private PoolManager() {
 	}
@@ -68,7 +67,7 @@ public class PoolManager {
 	public ExecutorService usePool(IPoolIdentifier runnable, PoolIdentifier poolIdentifier) {
 		runnable.transferNewIdentifier(poolIdentifier);
 		ListOfExecutorServices l = getListService(poolIdentifier.getType());
-		if (l != null){
+		if (l != null) {
 			return l.getExecutorService(poolIdentifier);
 		}
 		return null;
@@ -76,11 +75,11 @@ public class PoolManager {
 	// Need a boolean result for shutdownAllPools ...
 	public void clearPool(PoolIdentifier poolIdentifier) {
 		ListOfExecutorServices l = getListService(poolIdentifier.getType());
-		if (l != null){
-			msg.debug("shutdown PoolIdentifier: "+poolIdentifier.toString());
+		if (l != null) {
+			msg.debug("shutdown PoolIdentifier: " + poolIdentifier.toString());
 			if (shutdownPool(l.getExecutorService(poolIdentifier))) {
 				if (!l.removeElementOfExecutorService(poolIdentifier)) {
-					exc.info("Remove failed for PoolIdentifier: "+poolIdentifier.toString());
+					exc.info("Remove failed for PoolIdentifier: " + poolIdentifier.toString());
 				}
 			}
 		}
@@ -101,7 +100,6 @@ public class PoolManager {
 		default:
 			String excMessage = String.format("No case block found for: '%s'", type.name());
 			exc.info(excMessage);
-			// throw new IllegalArgumentException(excMessage);
 		}
 		return tmp;
 	}
@@ -173,12 +171,12 @@ public class PoolManager {
 		}
 	}
 	public void checkAndCleanPools() {
-		// TODO MW_140731: Some stuff eg. how long not active, how many runnables in queue, ... 
+		// TODO MW_140731: Some stuff eg. how long not active, how many runnables in queue, ...
 	}
 	// If you need nothing none new pool
 	public PoolIdentifier isPoolAvailable(ExecutorsTypeEnum type) {
 		ListOfExecutorServices l = getListService(type);
-		if (l != null) 
+		if (l != null)
 			return l.getFirstPoolIdentifier(type);
 		return null;
 	}

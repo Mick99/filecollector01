@@ -6,10 +6,10 @@ public enum CollectionViewSelectorEnum {
 
 	private String description;
 
-	private CollectionViewSelectorEnum (String description) {
+	private CollectionViewSelectorEnum(String description) {
 		this.description = description;
 	}
-	public String printDescription () {
+	public String printDescription() {
 		return description;
 	}
 }

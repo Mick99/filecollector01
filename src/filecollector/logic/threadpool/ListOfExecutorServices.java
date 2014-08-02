@@ -88,14 +88,14 @@ class ListOfExecutorServices {
 		final ListOfExecutorServices otherList = (ListOfExecutorServices) obj;
 		return this.getUniqueType().equals(otherList.getUniqueType());
 	}
-	private int compareTo_My(ListOfExecutorServices otherList) {
-		// Only equals compare is needful, other (< or >) will return always -1
-		boolean compareResult = (this.uniqueType == otherList.uniqueType) && (this.usedExecSrv == otherList.usedExecSrv);
-		if (compareResult)
-			return 0;
-		else
-			return -1;
-	}
+	// not used, only equals compare is needful, other (< or >) will return always -1
+//	private int compareTo_My(ListOfExecutorServices otherList) {
+//		boolean compareResult = (this.uniqueType == otherList.uniqueType) && (this.usedExecSrv == otherList.usedExecSrv);
+//		if (compareResult)
+//			return 0;
+//		else
+//			return -1;
+//	}
 	private ElementOfExecutorService getElement(PoolIdentifier poolId) {
 		for (ElementOfExecutorService el : usedExecSrv) {
 			if (el.getIdentifier().equals(poolId)) {
@@ -121,12 +121,11 @@ class ListOfExecutorServices {
 		for (ElementOfExecutorService e : usedExecSrv) {
 			sb.append(e.toString());
 		}
-		return "ListOf: "+uniqueType.name()+" ("+ sb.toString()+")";
+		return "ListOf: " + uniqueType.name() + " (" + sb.toString() + ")";
 	}
 }
 
 class ElementOfExecutorService {
-
 	private final ExecutorService executorService;
 	private final PoolIdentifier identifier;
 
@@ -147,7 +146,6 @@ class ElementOfExecutorService {
 	}
 	@Override
 	public String toString() {
-//		return "(" + identifier.getType().name() + " : " + identifier.getIdentifier().toString() + ")";
-		return identifier.toString()+" ";
+		return identifier.toString() + " ";
 	}
 }

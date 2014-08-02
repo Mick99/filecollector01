@@ -33,9 +33,9 @@ public class MainFrame {
 	private ExitListener exitListener;
 	private JTextArea textArea;
 	private JCheckBox runOrCall;
-	
+
 	private IGuiCallback viewCtrlCallback;
-	
+
 	public MainFrame(IGuiCallback viewCtrlCallback) {
 		this.viewCtrlCallback = viewCtrlCallback;
 	}
@@ -43,53 +43,51 @@ public class MainFrame {
 		frame = new JFrame("File Collector");
 		exitListener = new ExitListener(frame);
 		frame.addWindowListener(exitListener);
-        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-        // Das Hauptfenster wird in drei Bereiche unterteilt 
-        frame.add(createToolBarPanel(), BorderLayout.NORTH);
-        frame.add(createCenterPanel(), BorderLayout.CENTER);
-        frame.add(createInputPanel(), BorderLayout.SOUTH);
+		// Das Hauptfenster wird in drei Bereiche unterteilt
+		frame.add(createToolBarPanel(), BorderLayout.NORTH);
+		frame.add(createCenterPanel(), BorderLayout.CENTER);
+		frame.add(createInputPanel(), BorderLayout.SOUTH);
 
-        frame.setSize(600, 300);
-        frame.setVisible(true);
-		
+		frame.setSize(600, 300);
+		frame.setVisible(true);
 	}
 	public void closeMainFrame() {
 		exitListener.closeApp();
 	}
 	private JPanel createToolBarPanel() {
-        // Zwei Toolbars erzeugen 
-        final JToolBar zoomToolBar = new JToolBar();
-        zoomToolBar.add(new JButton("+"));
-        zoomToolBar.add(new JButton("-"));
-        zoomToolBar.addSeparator();
-        zoomToolBar.add(new JButton("100%"));
+		// Zwei Toolbars erzeugen
+		final JToolBar zoomToolBar = new JToolBar();
+		zoomToolBar.add(new JButton("+"));
+		zoomToolBar.add(new JButton("-"));
+		zoomToolBar.addSeparator();
+		zoomToolBar.add(new JButton("100%"));
 
-        final JToolBar skipToolBar = new JToolBar();
-        skipToolBar.add(new JButton("|<-"));
-        skipToolBar.add(new JButton("<<"));
-        skipToolBar.add(new JButton(">>"));
-        skipToolBar.add(new JButton("->|"));
+		final JToolBar skipToolBar = new JToolBar();
+		skipToolBar.add(new JButton("|<-"));
+		skipToolBar.add(new JButton("<<"));
+		skipToolBar.add(new JButton(">>"));
+		skipToolBar.add(new JButton("->|"));
 
-        // Ausrichtung LEFT ist wichtig, da die Toolbars sonst mittig sind. 
-        final JPanel toolbarPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        toolbarPanel.add(zoomToolBar);
-        toolbarPanel.add(skipToolBar);
+		// Ausrichtung LEFT ist wichtig, da die Toolbars sonst mittig sind.
+		final JPanel toolbarPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		toolbarPanel.add(zoomToolBar);
+		toolbarPanel.add(skipToolBar);
 
-        // JPanel f�r Toolbar und Separator 
-        final JPanel compoundPanel = new JPanel(new BorderLayout());
-        compoundPanel.add(toolbarPanel, BorderLayout.NORTH);
-        compoundPanel.add(new JSeparator(), BorderLayout.SOUTH);
+		// JPanel f�r Toolbar und Separator
+		final JPanel compoundPanel = new JPanel(new BorderLayout());
+		compoundPanel.add(toolbarPanel, BorderLayout.NORTH);
+		compoundPanel.add(new JSeparator(), BorderLayout.SOUTH);
 
-        return compoundPanel;
-		
+		return compoundPanel;
 	}
 	private JComponent createCenterPanel() {
-        final JSplitPane splitPane = new JSplitPane();
-        splitPane.setLeftComponent(new JScrollPane(new JTree()));
-        textArea = new JTextArea("TextArea");
-        splitPane.setRightComponent(textArea);
-        return splitPane;
+		final JSplitPane splitPane = new JSplitPane();
+		splitPane.setLeftComponent(new JScrollPane(new JTree()));
+		textArea = new JTextArea("TextArea");
+		splitPane.setRightComponent(textArea);
+		return splitPane;
 	}
 	private JPanel createInputPanel() {
 		final JTextField directoryInput = new JTextField("d:/test2", 30);
@@ -97,7 +95,7 @@ public class MainFrame {
 		directoryInput.setFont(font);
 		final JButton sendInput = new JButton("Send input");
 		sendInput.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				String in = directoryInput.getText();
@@ -106,7 +104,7 @@ public class MainFrame {
 		});
 		final JButton startCollect = new JButton("START");
 		startCollect.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				try {
@@ -121,7 +119,7 @@ public class MainFrame {
 		runOrCall.setText(MainController.runOrCallableEnum.getText());
 		runOrCall.setSelected(MainController.runOrCallableEnum.getRunOrCall());
 		runOrCall.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if (MainController.runOrCallableEnum == RunOrCallableEnum.RUNNABLE) {
@@ -133,37 +131,37 @@ public class MainFrame {
 				runOrCall.setSelected(MainController.runOrCallableEnum.getRunOrCall());
 			}
 		});
-		
+
 		final JPanel inputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		inputPanel.add(sendInput);
 		inputPanel.add(directoryInput);
 		inputPanel.add(startCollect);
 		inputPanel.add(runOrCall);
-		
-        // JPanel f�r Toolbar und Separator 
-        final JPanel compoundPanel = new JPanel(new BorderLayout());
-        compoundPanel.add(new JSeparator(), BorderLayout.NORTH);
-        compoundPanel.add(inputPanel, BorderLayout.SOUTH);
-        
-        return compoundPanel;
+
+		// JPanel f�r Toolbar und Separator
+		final JPanel compoundPanel = new JPanel(new BorderLayout());
+		compoundPanel.add(new JSeparator(), BorderLayout.NORTH);
+		compoundPanel.add(inputPanel, BorderLayout.SOUTH);
+
+		return compoundPanel;
 	}
-	private JPanel createStatusBarPanel() {
-        final JPanel statusbarPanel = new JPanel();
-        statusbarPanel.setLayout(new BorderLayout());
-
-        final JPanel leftPanel = new JPanel();
-        final JPanel rightPanel = new JPanel();
-
-//        final JLabel info1 = new JLabel("Left aligned info");
-        final JTextField directoryInput = new JTextField("Directory Input:");
-        final JLabel info2 = new JLabel("Right aligned info");
-        leftPanel.add(directoryInput);
-        rightPanel.add(info2);
-
-        statusbarPanel.add(new JSeparator(), BorderLayout.NORTH);
-        statusbarPanel.add(leftPanel, BorderLayout.WEST);
-        statusbarPanel.add(rightPanel, BorderLayout.EAST);
-
-        return statusbarPanel;
-	}
+//	private JPanel createStatusBarPanel() {
+//		final JPanel statusbarPanel = new JPanel();
+//		statusbarPanel.setLayout(new BorderLayout());
+//
+//		final JPanel leftPanel = new JPanel();
+//		final JPanel rightPanel = new JPanel();
+//
+//		// final JLabel info1 = new JLabel("Left aligned info");
+//		final JTextField directoryInput = new JTextField("Directory Input:");
+//		final JLabel info2 = new JLabel("Right aligned info");
+//		leftPanel.add(directoryInput);
+//		rightPanel.add(info2);
+//
+//		statusbarPanel.add(new JSeparator(), BorderLayout.NORTH);
+//		statusbarPanel.add(leftPanel, BorderLayout.WEST);
+//		statusbarPanel.add(rightPanel, BorderLayout.EAST);
+//
+//		return statusbarPanel;
+//	}
 }

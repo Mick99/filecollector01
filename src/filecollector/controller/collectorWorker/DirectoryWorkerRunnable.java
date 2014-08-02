@@ -19,10 +19,10 @@ public class DirectoryWorkerRunnable extends AbstractDirectoryWorker implements 
 		}
 	}
 	@Override
-	protected void addDirectoryMemberAndCreateNewWorker (final Path dirEntry) {
-		DirectoryMember dm = new DirectoryMember (dirEntry);
+	protected void addDirectoryMemberAndCreateNewWorker(final Path dirEntry) {
+		DirectoryMember dm = new DirectoryMember(dirEntry);
 		appendAttributes(dm);
-		directory.addFileSystemMember (dm);
+		directory.addFileSystemMember(dm);
 		exeCallback.executeWorker(dm, poolIdentifier);
 	}
 }
