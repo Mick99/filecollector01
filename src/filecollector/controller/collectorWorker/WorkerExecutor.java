@@ -1,22 +1,21 @@
 package filecollector.controller.collectorWorker;
 
-
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import filecollector.logic.PoolManager_OLD;
+import org.apache.log4j.Logger;
+
 import filecollector.logic.threadpool.PoolIdentifier;
 import filecollector.logic.threadpool.PoolManager;
 import filecollector.model.filemember.DirectoryMember;
 
 public class WorkerExecutor implements IWorkerExecuteCallback {
+	private static final Logger exc = Logger.getLogger("Exception");
 
 	public List<DirectoryMember> resultCallable;
-	
+
 	public WorkerExecutor() {
 	}
 	public WorkerExecutor(List<DirectoryMember> resultList) {
@@ -24,45 +23,37 @@ public class WorkerExecutor implements IWorkerExecuteCallback {
 	}
 	@Override
 	public void executeWorker(DirectoryMember dirMember, PoolIdentifier poolId) {
-		System.out.println("Runnable");
-		DirectoryWorkerRunnable workerRunnable = new DirectoryWorkerRunnable (dirMember,this);
-		executeWorker_FutureGet (workerRunnable, poolId);
+		DirectoryWorkerRunnable workerRunnable = new DirectoryWorkerRunnable(dirMember, this);
+		executeWorker_FutureGet(workerRunnable, poolId);
 	}
 	@Override
 	public void executeWorker(Path dir, PoolIdentifier poolId) {
-		System.out.println("Callable");
-		DirectoryWorkerCallable workerCallable = new DirectoryWorkerCallable (dir, this);
-		executeWorker_Callable (workerCallable, poolId);
-		
+		DirectoryWorkerCallable workerCallable = new DirectoryWorkerCallable(dir, this);
+		executeWorker_Callable(workerCallable, poolId);
+
 	}
-	private void executeWorker_FutureGet (DirectoryWorkerRunnable directoryWorker, PoolIdentifier poolId) {
-//		Future<?> future = PoolManager_OLD.getInstance().getPool().submit ((Runnable) directoryWorker);
+	private void executeWorker_FutureGet(DirectoryWorkerRunnable directoryWorker, PoolIdentifier poolId) {
 		Future<?> future = PoolManager.getInstance().usePool(directoryWorker, poolId).submit(directoryWorker);
 		try {
-			future.get ();
+			future.get();
 		} catch (InterruptedException e) {
-			Thread.currentThread ().interrupt ();
+			Thread.currentThread().interrupt();
+			exc.info("FuturGet Interrupt", e);
 		} catch (ExecutionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace ();
+			exc.error("FuturGet Execution", e);
 		}
 	}
-	private void executeWorker_Callable (DirectoryWorkerCallable directoryWorker, PoolIdentifier poolId) {
-//		Future<DirectoryMember> future = PoolManager_OLD.getInstance().getPool().submit ((Callable<DirectoryMember>) directoryWorker);
+	private void executeWorker_Callable(DirectoryWorkerCallable directoryWorker, PoolIdentifier poolId) {
 		Future<DirectoryMember> future = PoolManager.getInstance().usePool(directoryWorker, poolId).submit(directoryWorker);
 		try {
-			/* TODO MW_140705: Have to redesign! dirMember is not really necessary, because DirectoryMember is in 
-			 * DirectoryWorker as member attribute defined. 
-			 */
-			DirectoryMember dirMember = future.get ();
+			DirectoryMember dirMember = future.get();
 			if (dirMember != null)
 				resultCallable.add(dirMember);
 		} catch (InterruptedException e) {
-			Thread.currentThread ().interrupt ();
-			e.printStackTrace();
+			Thread.currentThread().interrupt();
+			exc.info("Callable Interrupt", e);
 		} catch (ExecutionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			exc.error("Callable Execution", e);
 		}
 	}
 }

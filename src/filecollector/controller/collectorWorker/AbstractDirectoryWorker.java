@@ -30,63 +30,62 @@ public abstract class AbstractDirectoryWorker implements IPoolIdentifier {
 	protected PoolIdentifier poolIdentifier;
 
 	// Runnable constructor
-	protected AbstractDirectoryWorker (final DirectoryMember directory) {
-		if (checkIfValidDirectory (directory.getPath ()))
+	protected AbstractDirectoryWorker(final DirectoryMember directory) {
+		if (checkIfValidDirectory(directory.getPath()))
 			this.directory = directory;
 		else
 			this.directory = null;
 	}
 	// Callable constructor
-	protected AbstractDirectoryWorker (final Path dir) {
-		if (checkIfValidDirectory (dir)) {
-			directory = new DirectoryMember (dir);
+	protected AbstractDirectoryWorker(final Path dir) {
+		if (checkIfValidDirectory(dir)) {
+			directory = new DirectoryMember(dir);
 			appendAttributes(directory);
-		}
-		else {
+		} else {
 			directory = null;
 		}
 	}
-	protected void doProcess () {
+	protected void doProcess() {
 		Iterator<Path> it = null;
-		if (openDirectoryStreamInstance ()) {
-			it = dirStream.iterator ();
-			while (it.hasNext ()) {
-				processNextDirectoryEntry (it.next ());
+		if (openDirectoryStreamInstance()) {
+			it = dirStream.iterator();
+			while (it.hasNext()) {
+				processNextDirectoryEntry(it.next());
 			}
-			closeDirectoryStreamInstance ();
+			closeDirectoryStreamInstance();
 		} else {
 			// TODO MW_140708: How to handle it? throw, log or nothing
 		}
 	}
-	private boolean checkIfValidDirectory (Path dir) {
-		if (MyFileUtils.isDirectory (dir)) {
+	private boolean checkIfValidDirectory(Path dir) {
+		if (MyFileUtils.isDirectory(dir)) {
 			return true;
 		} else {
-			exc.error (String.format ("Path parmeter is not a valid directory: '%s'\n", dir.toString ()));
+			exc.error(String.format("Path parmeter is not a valid directory: '%s'\n", dir.toString()));
 			return false;
 		}
 	}
-	private void processNextDirectoryEntry (Path dirEntry) {
-		if (Files.isRegularFile (dirEntry)) {
-			addFileMember (dirEntry);
+	private void processNextDirectoryEntry(Path dirEntry) {
+		if (Files.isRegularFile(dirEntry)) {
+			addFileMember(dirEntry);
 			return;
 		}
-		if (Files.isDirectory (dirEntry)) {
-			addDirectoryMemberAndCreateNewWorker (dirEntry);
+		if (Files.isDirectory(dirEntry)) {
+			addDirectoryMemberAndCreateNewWorker(dirEntry);
 			return;
 		}
 	}
-	private void addFileMember (final Path dirEntry) {
-		FileMember fm = new FileMember (dirEntry);
+	private void addFileMember(final Path dirEntry) {
+		FileMember fm = new FileMember(dirEntry);
 		appendAttributes(fm);
-		directory.addFileSystemMember (fm);
+		directory.addFileSystemMember(fm);
 	}
-	protected abstract void addDirectoryMemberAndCreateNewWorker (final Path dirEntry);
-	
+	protected abstract void addDirectoryMemberAndCreateNewWorker(final Path dirEntry);
+
 	private void appendAttributes(FileMember fm) {
 		DosFileAttributes dosFileAttr = getFileAttributes(fm.getPath());
 		if (dosFileAttr != null) {
-			fm.setFileSize (dosFileAttr.size ());
+			fm.setFileSize(dosFileAttr.size());
 			appendFileTimesAndFlags(fm, dosFileAttr);
 		}
 	}
@@ -98,9 +97,9 @@ public abstract class AbstractDirectoryWorker implements IPoolIdentifier {
 	}
 	private DosFileAttributes getFileAttributes(Path pathToReadAttr) {
 		try {
-			return Files.readAttributes (pathToReadAttr, DosFileAttributes.class);
+			return Files.readAttributes(pathToReadAttr, DosFileAttributes.class);
 		} catch (IOException e) {
-			exc.warn ("Files.readAttributes", e);
+			exc.warn("Files.readAttributes", e);
 			return null;
 		}
 	}
@@ -110,37 +109,41 @@ public abstract class AbstractDirectoryWorker implements IPoolIdentifier {
 	}
 	private void appendFileFlags(FileSystemMember fsm, DosFileAttributes dfa) {
 		Set<FileAttributesEnum> tmp = new HashSet<>();
-		if (dfa.isReadOnly()) tmp.add(FileAttributesEnum.READONLY_DOSATTR);
-		if (dfa.isHidden()) tmp.add(FileAttributesEnum.HIDDEN_DOSATTR);
-		if (dfa.isSystem()) tmp.add(FileAttributesEnum.SYSTEM_DOSATTR);
-		if (dfa.isArchive()) tmp.add(FileAttributesEnum.ARCHIVE_DOSATTR);
+		if (dfa.isReadOnly())
+			tmp.add(FileAttributesEnum.READONLY_DOSATTR);
+		if (dfa.isHidden())
+			tmp.add(FileAttributesEnum.HIDDEN_DOSATTR);
+		if (dfa.isSystem())
+			tmp.add(FileAttributesEnum.SYSTEM_DOSATTR);
+		if (dfa.isArchive())
+			tmp.add(FileAttributesEnum.ARCHIVE_DOSATTR);
 		if (!tmp.isEmpty())
 			fsm.setFileAttributes(EnumSet.copyOf(tmp));
 	}
-	private boolean openDirectoryStreamInstance () {
+	private boolean openDirectoryStreamInstance() {
 		try {
-			dirStream = Files.newDirectoryStream (directory.getPath ());
-			int cw = WorkerCounter.createWorker ();
-			int wi = WorkerCounter.getWorkerId ();
+			dirStream = Files.newDirectoryStream(directory.getPath());
+			int cw = WorkerCounter.createWorker();
+			int wi = WorkerCounter.getWorkerId();
 			workerName = "Worker [ " + wi + " ]";
-			msg.trace ("Create worker count " + cw + " : " + workerName);
+			msg.trace("Create worker count " + cw + " : " + workerName);
 			return true;
 		} catch (IOException e) {
 			// TODO MW_140710: Take a closer look. log e, path (e.g. security violation...)
-			exc.error (String.format ("Files.newDirectoryStream is not a valid directory: '%s'\n", directory.getPath ().toString ()));
-			exc.error (e.getMessage (), e);
+			exc.error(String.format("Files.newDirectoryStream is not a valid directory: '%s'\n", directory.getPath().toString()));
+			exc.error(e.getMessage(), e);
 			return false;
 		}
 	}
-	private void closeDirectoryStreamInstance () {
+	private void closeDirectoryStreamInstance() {
 		try {
 			if (dirStream != null)
-				dirStream.close ();
+				dirStream.close();
 		} catch (IOException e) {
 			// ignore
 		} finally {
-			int rw = WorkerCounter.releaseWorker ();
-			msg.debug ("Release " + rw + " for " + workerName);
+			int rw = WorkerCounter.releaseWorker();
+			msg.debug("Release " + rw + " for " + workerName);
 		}
 	}
 	@Override

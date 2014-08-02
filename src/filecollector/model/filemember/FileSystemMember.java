@@ -13,12 +13,12 @@ import org.apache.log4j.Logger;
  * 
  */
 public abstract class FileSystemMember {
-//	private static final Logger msg = Logger.getLogger("Message");
+	// private static final Logger msg = Logger.getLogger("Message");
 	private static final Logger exc = Logger.getLogger("Exception");
 
 	private final String ABSOLUTE_PATH_NAME;
 	private Path path;
-	private EnumSet<FileAttributesEnum> fileAttributes = EnumSet.noneOf (FileAttributesEnum.class);
+	private EnumSet<FileAttributesEnum> fileAttributes = EnumSet.noneOf(FileAttributesEnum.class);
 	private FileTimes fileTimes = null;
 
 	// Inner class only for FileTimes
@@ -26,7 +26,7 @@ public abstract class FileSystemMember {
 		private FileTime creationTime = null;
 		private FileTime lastAccessTime = null;
 		private FileTime lastModifiedTime = null;
-		
+
 		public FileTimes(FileTime creationTime, FileTime lastAccessTime, FileTime lastModifiedTime) {
 			this.creationTime = creationTime;
 			this.lastAccessTime = lastAccessTime;
@@ -42,29 +42,29 @@ public abstract class FileSystemMember {
 			return lastModifiedTime;
 		}
 	}
-	protected FileSystemMember (final Path path) {
+
+	protected FileSystemMember(final Path path) {
 		// Inside "if else" through final not possible
-		this.ABSOLUTE_PATH_NAME = path.toString ();
-		if (path.isAbsolute ()) {
+		this.ABSOLUTE_PATH_NAME = path.toString();
+		if (path.isAbsolute()) {
 			this.path = path;
 		} else {
-			exc.warn (String.format ("Only absolute paths are allowed %s:\n", path.toString ()),
-					new IllegalArgumentException ());
+			exc.warn(String.format("Only absolute paths are allowed %s:\n", path.toString()), new IllegalArgumentException());
 		}
 	}
-	public String getABSOLUTE_PATH_NAME () {
+	public String getABSOLUTE_PATH_NAME() {
 		return ABSOLUTE_PATH_NAME;
 	}
-	public Path getPath () {
+	public Path getPath() {
 		return path;
 	}
-	protected void setPath (Path path) {
+	protected void setPath(Path path) {
 		this.path = path;
 	}
-	public EnumSet<FileAttributesEnum> getFileAttributes () {
+	public EnumSet<FileAttributesEnum> getFileAttributes() {
 		return fileAttributes;
 	}
-	public void setFileAttributes (EnumSet<FileAttributesEnum> fileAttributes) {
+	public void setFileAttributes(EnumSet<FileAttributesEnum> fileAttributes) {
 		this.fileAttributes = fileAttributes;
 	}
 	public FileTimes getFileTimes() {
@@ -75,4 +75,3 @@ public abstract class FileSystemMember {
 	}
 	public abstract String toPrint();
 }
-

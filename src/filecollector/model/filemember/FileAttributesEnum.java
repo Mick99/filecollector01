@@ -7,19 +7,19 @@ package filecollector.model.filemember;
  * 
  */
 public enum FileAttributesEnum {
-	READONLY_DOSATTR("readonly Flag from DosFileAttributeView"), HIDDEN_DOSATTR("hidden Flag from DosFileAttributeView"),
-	SYSTEM_DOSATTR("system Flag from DosFileAttributeView"), ARCHIVE_DOSATTR("archive Flag from DosFileAttributeView");
+	READONLY_DOSATTR("readonly Flag from DosFileAttributeView"), HIDDEN_DOSATTR("hidden Flag from DosFileAttributeView"), SYSTEM_DOSATTR(
+			"system Flag from DosFileAttributeView"), ARCHIVE_DOSATTR("archive Flag from DosFileAttributeView");
 
 	private final String attributeDescription;
 
-	private FileAttributesEnum (String attr) {
+	private FileAttributesEnum(String attr) {
 		attributeDescription = attr;
 	}
-	public String printAttributeDescription () {
+	public String printAttributeDescription() {
 		return attributeDescription;
 	}
 	@Override
-	public String toString () {
-		return super.toString () + " " + attributeDescription;
+	public String toString() {
+		return super.toString() + " " + attributeDescription;
 	}
 }

@@ -12,7 +12,7 @@ public class DirectoryPath {
 	private static final Logger exc = Logger.getLogger("Exception");
 
 	private Path directoryPath;
-	
+
 	// No Default constructor
 	public DirectoryPath(final String directoryPath) throws My_IllegalArgumentException {
 		this.directoryPath = checkValidDirectoryPath(checkStringDirectoryPath(directoryPath));
