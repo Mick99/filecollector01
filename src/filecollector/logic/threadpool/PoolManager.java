@@ -65,10 +65,13 @@ public class PoolManager {
 		return newId;
 	}
 	public ExecutorService usePool(IPoolIdentifier runnable, PoolIdentifier poolIdentifier) {
-		runnable.transferNewIdentifier(poolIdentifier);
 		ListOfExecutorServices l = getListService(poolIdentifier.getType());
 		if (l != null) {
-			return l.getExecutorService(poolIdentifier);
+			ExecutorService exeSrv = l.getExecutorService(poolIdentifier);
+			if (exeSrv != null) {
+				runnable.transferNewIdentifier(poolIdentifier);
+				return exeSrv;
+			}
 		}
 		return null;
 	}
