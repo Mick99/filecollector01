@@ -20,6 +20,10 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.JTree;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreeModel;
 
 import filecollector.controller.IGuiCallback;
 import filecollector.controller.MainController;
@@ -33,7 +37,11 @@ public class MainFrame {
 	private ExitListener exitListener;
 	private JTextArea textArea;
 	private JCheckBox runOrCall;
+	private JScrollPane directoryScrollPane;
+	private JTree directoryTree;
 
+	private TreeModel treeModel;
+	private DefaultMutableTreeNode dirRootNode;
 	private IGuiCallback viewCtrlCallback;
 
 	public MainFrame(IGuiCallback viewCtrlCallback) {
@@ -55,6 +63,22 @@ public class MainFrame {
 	}
 	public void closeMainFrame() {
 		exitListener.closeApp();
+	}
+	public void emptyTreeNode() {
+		DefaultMutableTreeNode dirRootNode = new DefaultMutableTreeNode("Empty");
+		MutableTreeNode firstChild = new DefaultMutableTreeNode("First");
+//		MutableTreeNode firstChild1 = new DefaultMutableTreeNode("Sec");
+		dirRootNode.add(firstChild);
+//		dirRootNode.add(firstChild1);
+		directoryTree = buildJTree(dirRootNode, true);
+	}
+	public void newCollectedTreeNode() {
+		DefaultMutableTreeNode dirRootNode = new DefaultMutableTreeNode("NEW");
+		MutableTreeNode firstChild = new DefaultMutableTreeNode("NEWWWW");
+		MutableTreeNode firstChild1 = new DefaultMutableTreeNode("NEEEEEEEEEWWWWWWWWWWW");
+		dirRootNode.add(firstChild);
+		dirRootNode.add(firstChild1);
+		directoryTree = buildJTree(dirRootNode, false);
 	}
 	private JPanel createToolBarPanel() {
 		// Zwei Toolbars erzeugen
@@ -84,10 +108,32 @@ public class MainFrame {
 	}
 	private JComponent createCenterPanel() {
 		final JSplitPane splitPane = new JSplitPane();
-		splitPane.setLeftComponent(new JScrollPane(new JTree()));
+//		directoryScrollPane = new JScrollPane();
+		emptyTreeNode();
+//		directoryScrollPane.add(directoryTree);
+//		directoryScrollPane.updateUI();
+		directoryScrollPane = new JScrollPane(directoryTree);
+
+		splitPane.setLeftComponent(directoryScrollPane);
 		textArea = new JTextArea("TextArea");
 		splitPane.setRightComponent(textArea);
 		return splitPane;
+	}
+	private JTree buildJTree(DefaultMutableTreeNode rootNodeAttr, boolean isNew) {
+		dirRootNode = rootNodeAttr;
+		System.out.println(dirRootNode.toString());
+		if (isNew) {
+	        treeModel = new DefaultTreeModel(dirRootNode);
+		} else {
+//			treeModel.addTreeModelListener(arg0)
+		}
+		if (isNew) {
+	        directoryTree = new JTree(treeModel);
+		}
+		
+        treeModel = new DefaultTreeModel(dirRootNode);
+	
+		return directoryTree;
 	}
 	private JPanel createInputPanel() {
 		final JTextField directoryInput = new JTextField("d:/test2", 30);
@@ -100,6 +146,13 @@ public class MainFrame {
 			public void actionPerformed(ActionEvent event) {
 				String in = directoryInput.getText();
 				textArea.append("\n" + in);
+				newCollectedTreeNode();
+//				directoryTree.repaint();
+//				directoryTree.updateUI();
+//				directoryScrollPane.repaint();
+				frame.repaint();
+				DefaultTreeModel defaultModel = (DefaultTreeModel) directoryTree.getModel();
+				defaultModel.reload();
 			}
 		});
 		final JButton startCollect = new JButton("START");
