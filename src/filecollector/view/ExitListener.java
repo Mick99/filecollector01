@@ -23,7 +23,8 @@ public final class ExitListener extends WindowAdapter {
 		this.parentFrame = parentFrame;
 	}
 	public void closeApp() {
-		final int answer = JOptionPane.showConfirmDialog(parentFrame, "Wollen Sie das Programm beenden?");
+//		final int answer = JOptionPane.showConfirmDialog(parentFrame, "Wollen Sie das Programm beenden?");
+		final int answer = JOptionPane.YES_OPTION;
 		if (answer == JOptionPane.YES_OPTION) {
 			MainController.exitApp = true;
 			// Fenster unsichtbar machen und (bei Bedarf) Ressourcen freigeben

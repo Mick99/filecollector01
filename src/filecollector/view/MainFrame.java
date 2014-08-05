@@ -31,9 +31,11 @@ import filecollector.controller.RunOrCallableEnum;
 import filecollector.model.DirectoryPath;
 import filecollector.model.My_IllegalArgumentException;
 import filecollector.view.tree.DefaultTreeModel_My;
+import filecollector.view.tree.TreeExpansionListener_My;
 import filecollector.view.tree.TreeModelListener_My;
 import filecollector.view.tree.TreeSelectionListener_My;
 import filecollector.view.tree.TreeStructure_My;
+import filecollector.view.tree.TreeWillExpandListener_My;
 
 public class MainFrame {
 
@@ -61,7 +63,7 @@ public class MainFrame {
 		frame.add(createCenterPanel(), BorderLayout.CENTER);
 		frame.add(createInputPanel(), BorderLayout.SOUTH);
 
-		frame.setSize(600, 300);
+		frame.setSize(900, 600);
 		frame.setVisible(true);
 	}
 	public void closeMainFrame() {
@@ -105,8 +107,14 @@ public class MainFrame {
 	private JTree buildJTree(MutableTreeNode rootNodeAttr, boolean isNew) {
 		dirTreeModel = new DefaultTreeModel_My(rootNodeAttr);
 		JTree newDirectoryTree = new JTree(dirTreeModel);
+		// Model Listener 
 		dirTreeModel.addTreeModelListener(new TreeModelListener_My());
+		// Selection Listener 
 		newDirectoryTree.addTreeSelectionListener(new TreeSelectionListener_My());
+		// Selection WillExpand 
+		newDirectoryTree.addTreeWillExpandListener(new TreeWillExpandListener_My());
+		// Selection Listener 
+		newDirectoryTree.addTreeExpansionListener(new TreeExpansionListener_My());
 
 		return newDirectoryTree;
 	}
