@@ -30,6 +30,10 @@ import filecollector.controller.MainController;
 import filecollector.controller.RunOrCallableEnum;
 import filecollector.model.DirectoryPath;
 import filecollector.model.My_IllegalArgumentException;
+import filecollector.view.tree.DefaultTreeModel_My;
+import filecollector.view.tree.TreeModelListener_My;
+import filecollector.view.tree.TreeSelectionListener_My;
+import filecollector.view.tree.TreeStructure_My;
 
 public class MainFrame {
 
@@ -37,11 +41,10 @@ public class MainFrame {
 	private ExitListener exitListener;
 	private JTextArea textArea;
 	private JCheckBox runOrCall;
-	private JScrollPane directoryScrollPane;
-	private JTree directoryTree;
+	private JScrollPane dirScrollPane;
+	private JTree dirTree;
 
-	private TreeModel treeModel;
-	private DefaultMutableTreeNode dirRootNode;
+	private TreeModel dirTreeModel;
 	private IGuiCallback viewCtrlCallback;
 
 	public MainFrame(IGuiCallback viewCtrlCallback) {
@@ -63,22 +66,6 @@ public class MainFrame {
 	}
 	public void closeMainFrame() {
 		exitListener.closeApp();
-	}
-	public void emptyTreeNode() {
-		DefaultMutableTreeNode dirRootNode = new DefaultMutableTreeNode("Empty");
-		MutableTreeNode firstChild = new DefaultMutableTreeNode("First");
-//		MutableTreeNode firstChild1 = new DefaultMutableTreeNode("Sec");
-		dirRootNode.add(firstChild);
-//		dirRootNode.add(firstChild1);
-		directoryTree = buildJTree(dirRootNode, true);
-	}
-	public void newCollectedTreeNode() {
-		DefaultMutableTreeNode dirRootNode = new DefaultMutableTreeNode("NEW");
-		MutableTreeNode firstChild = new DefaultMutableTreeNode("NEWWWW");
-		MutableTreeNode firstChild1 = new DefaultMutableTreeNode("NEEEEEEEEEWWWWWWWWWWW");
-		dirRootNode.add(firstChild);
-		dirRootNode.add(firstChild1);
-		directoryTree = buildJTree(dirRootNode, false);
 	}
 	private JPanel createToolBarPanel() {
 		// Zwei Toolbars erzeugen
@@ -107,33 +94,21 @@ public class MainFrame {
 		return compoundPanel;
 	}
 	private JComponent createCenterPanel() {
+		dirTree = buildJTree(TreeStructure_My.createEmptyTreeStructure(), true);
+		dirScrollPane = new JScrollPane(dirTree);
 		final JSplitPane splitPane = new JSplitPane();
-//		directoryScrollPane = new JScrollPane();
-		emptyTreeNode();
-//		directoryScrollPane.add(directoryTree);
-//		directoryScrollPane.updateUI();
-		directoryScrollPane = new JScrollPane(directoryTree);
-
-		splitPane.setLeftComponent(directoryScrollPane);
+		splitPane.setLeftComponent(dirScrollPane);
 		textArea = new JTextArea("TextArea");
 		splitPane.setRightComponent(textArea);
 		return splitPane;
 	}
-	private JTree buildJTree(DefaultMutableTreeNode rootNodeAttr, boolean isNew) {
-		dirRootNode = rootNodeAttr;
-		System.out.println(dirRootNode.toString());
-		if (isNew) {
-	        treeModel = new DefaultTreeModel(dirRootNode);
-		} else {
-//			treeModel.addTreeModelListener(arg0)
-		}
-		if (isNew) {
-	        directoryTree = new JTree(treeModel);
-		}
-		
-        treeModel = new DefaultTreeModel(dirRootNode);
-	
-		return directoryTree;
+	private JTree buildJTree(MutableTreeNode rootNodeAttr, boolean isNew) {
+		dirTreeModel = new DefaultTreeModel_My(rootNodeAttr);
+		JTree newDirectoryTree = new JTree(dirTreeModel);
+		dirTreeModel.addTreeModelListener(new TreeModelListener_My());
+		newDirectoryTree.addTreeSelectionListener(new TreeSelectionListener_My());
+
+		return newDirectoryTree;
 	}
 	private JPanel createInputPanel() {
 		final JTextField directoryInput = new JTextField("d:/test2", 30);
@@ -146,13 +121,10 @@ public class MainFrame {
 			public void actionPerformed(ActionEvent event) {
 				String in = directoryInput.getText();
 				textArea.append("\n" + in);
-				newCollectedTreeNode();
-//				directoryTree.repaint();
-//				directoryTree.updateUI();
-//				directoryScrollPane.repaint();
-				frame.repaint();
-				DefaultTreeModel defaultModel = (DefaultTreeModel) directoryTree.getModel();
-				defaultModel.reload();
+				DefaultTreeModel_My model = (DefaultTreeModel_My) dirTree.getModel();
+				MutableTreeNode newRoot = TreeStructure_My.createDemoTree();
+				model.setRoot(newRoot);
+				model.reload(newRoot);
 			}
 		});
 		final JButton startCollect = new JButton("START");
@@ -198,23 +170,23 @@ public class MainFrame {
 
 		return compoundPanel;
 	}
-//	private JPanel createStatusBarPanel() {
-//		final JPanel statusbarPanel = new JPanel();
-//		statusbarPanel.setLayout(new BorderLayout());
-//
-//		final JPanel leftPanel = new JPanel();
-//		final JPanel rightPanel = new JPanel();
-//
-//		// final JLabel info1 = new JLabel("Left aligned info");
-//		final JTextField directoryInput = new JTextField("Directory Input:");
-//		final JLabel info2 = new JLabel("Right aligned info");
-//		leftPanel.add(directoryInput);
-//		rightPanel.add(info2);
-//
-//		statusbarPanel.add(new JSeparator(), BorderLayout.NORTH);
-//		statusbarPanel.add(leftPanel, BorderLayout.WEST);
-//		statusbarPanel.add(rightPanel, BorderLayout.EAST);
-//
-//		return statusbarPanel;
-//	}
+	// private JPanel createStatusBarPanel() {
+	// final JPanel statusbarPanel = new JPanel();
+	// statusbarPanel.setLayout(new BorderLayout());
+	//
+	// final JPanel leftPanel = new JPanel();
+	// final JPanel rightPanel = new JPanel();
+	//
+	// // final JLabel info1 = new JLabel("Left aligned info");
+	// final JTextField directoryInput = new JTextField("Directory Input:");
+	// final JLabel info2 = new JLabel("Right aligned info");
+	// leftPanel.add(directoryInput);
+	// rightPanel.add(info2);
+	//
+	// statusbarPanel.add(new JSeparator(), BorderLayout.NORTH);
+	// statusbarPanel.add(leftPanel, BorderLayout.WEST);
+	// statusbarPanel.add(rightPanel, BorderLayout.EAST);
+	//
+	// return statusbarPanel;
+	// }
 }
