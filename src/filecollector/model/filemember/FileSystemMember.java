@@ -45,12 +45,12 @@ public abstract class FileSystemMember {
 
 	protected FileSystemMember(final Path path) {
 		// Inside "if else" through final not possible
-		this.ABSOLUTE_PATH_NAME = path.toString();
 		if (path.isAbsolute()) {
 			this.path = path;
 		} else {
 			exc.warn(String.format("Only absolute paths are allowed %s:\n", path.toString()), new IllegalArgumentException());
 		}
+		this.ABSOLUTE_PATH_NAME = path.toString();
 	}
 	public String getABSOLUTE_PATH_NAME() {
 		return ABSOLUTE_PATH_NAME;
@@ -72,6 +72,9 @@ public abstract class FileSystemMember {
 	}
 	public void setFileTimes(FileTimes fileTimes) {
 		this.fileTimes = fileTimes;
+	}
+	public String getFileName() {
+		return path.getFileName().toString();
 	}
 	public abstract String toPrint();
 }
