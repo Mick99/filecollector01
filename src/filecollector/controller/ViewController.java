@@ -30,5 +30,6 @@ public class ViewController implements IGuiCallback, IDirectoryWorkerCallback {
 	@Override
 	public void finishCollect() {
 		// Wenn alle Threads fertig sind, hier melden...
+		mf.newDirectoryStructure();
 	}
 }

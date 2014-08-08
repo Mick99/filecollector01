@@ -28,6 +28,7 @@ import javax.swing.tree.TreeModel;
 import filecollector.controller.IGuiCallback;
 import filecollector.controller.MainController;
 import filecollector.controller.RunOrCallableEnum;
+import filecollector.model.Collector;
 import filecollector.model.DirectoryPath;
 import filecollector.model.My_IllegalArgumentException;
 import filecollector.view.tree.DefaultTreeModel_My;
@@ -63,11 +64,17 @@ public class MainFrame {
 		frame.add(createCenterPanel(), BorderLayout.CENTER);
 		frame.add(createInputPanel(), BorderLayout.SOUTH);
 
-		frame.setSize(900, 600);
+		frame.setSize(700, 350);
 		frame.setVisible(true);
 	}
 	public void closeMainFrame() {
 		exitListener.closeApp();
+	}
+	public void newDirectoryStructure() {
+		DefaultTreeModel_My model = (DefaultTreeModel_My) dirTree.getModel();
+		MutableTreeNode rootNode = Collector.getCollector().newRootNodeStructure();
+		model.setRoot(rootNode);
+		model.reload(rootNode);
 	}
 	private JPanel createToolBarPanel() {
 		// Zwei Toolbars erzeugen
@@ -99,9 +106,9 @@ public class MainFrame {
 		dirTree = buildJTree(TreeStructure_My.createEmptyTreeStructure(), true);
 		dirScrollPane = new JScrollPane(dirTree);
 		final JSplitPane splitPane = new JSplitPane();
-		splitPane.setLeftComponent(dirScrollPane);
-		textArea = new JTextArea("TextArea");
-		splitPane.setRightComponent(textArea);
+		textArea = new JTextArea("TextArea etwas breiter");
+		splitPane.setLeftComponent(textArea);
+		splitPane.setRightComponent(dirScrollPane);
 		return splitPane;
 	}
 	private JTree buildJTree(MutableTreeNode rootNodeAttr, boolean isNew) {
@@ -130,7 +137,8 @@ public class MainFrame {
 				String in = directoryInput.getText();
 				textArea.append("\n" + in);
 				DefaultTreeModel_My model = (DefaultTreeModel_My) dirTree.getModel();
-				MutableTreeNode newRoot = TreeStructure_My.createDemoTree();
+//				MutableTreeNode newRoot = TreeStructure_My.createDemoTree();
+				MutableTreeNode newRoot = TreeStructure_My.startTreeStructure_TEST();
 				model.setRoot(newRoot);
 				model.reload(newRoot);
 			}

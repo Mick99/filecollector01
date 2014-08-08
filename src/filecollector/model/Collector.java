@@ -5,9 +5,13 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.MutableTreeNode;
+
 import org.apache.log4j.Logger;
 
 import filecollector.model.filemember.DirectoryMember;
+import filecollector.model.filemember.FileSystemMember;
 
 public class Collector {
 	// private static final Logger msg = Logger.getLogger("Message");
@@ -40,6 +44,28 @@ public class Collector {
 			return dirSortByFileFirst;
 		default:
 			throw new NullPointerException();
+		}
+	}
+	public MutableTreeNode newRootNodeStructure() {
+        // Wurzelknoten erstellen 
+        MutableTreeNode rootNode = new DefaultMutableTreeNode(dirOrigUnsorted.getFileName());
+        recursiveDirectoryLevel(dirOrigUnsorted, rootNode, 2);
+		
+		return rootNode;
+	}
+	private void recursiveDirectoryLevel(final DirectoryMember dm, MutableTreeNode resultTreeNode, int level) {
+		int j=0;
+		if (level > 0) {
+			Iterator<FileSystemMember> iFsm = dm.getDirContent().iterator();
+			while (iFsm.hasNext()) {
+				FileSystemMember fileSystemMember = (FileSystemMember) iFsm.next();
+				DefaultMutableTreeNode tmp = new DefaultMutableTreeNode(fileSystemMember.getFileName());
+				resultTreeNode.insert(tmp, j++);
+				if (fileSystemMember.getClass() == DirectoryMember.class) {
+					DirectoryMember newDm = (DirectoryMember) fileSystemMember;
+					recursiveDirectoryLevel(newDm, resultTreeNode, --level);
+				}
+			}
 		}
 	}
 	// TODO MW_140802: Eher mist, sollte leichter gehen??? Dazu DirMem.., FileMem.. equals,... have to impl
