@@ -77,4 +77,8 @@ public abstract class FileSystemMember {
 		return path.getFileName().toString();
 	}
 	public abstract String toPrint();
+	@Override
+	public String toString() {
+		return this.getClass().getSimpleName()+" : "+path.toString();
+	}
 }

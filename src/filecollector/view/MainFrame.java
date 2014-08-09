@@ -10,7 +10,6 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -20,17 +19,15 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.JTree;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeModel;
 
 import filecollector.controller.IGuiCallback;
 import filecollector.controller.MainController;
 import filecollector.controller.RunOrCallableEnum;
-import filecollector.model.Collector;
 import filecollector.model.DirectoryPath;
 import filecollector.model.My_IllegalArgumentException;
+import filecollector.view.tree.DefaultTreeCellRenderer_My;
 import filecollector.view.tree.DefaultTreeModel_My;
 import filecollector.view.tree.TreeExpansionListener_My;
 import filecollector.view.tree.TreeModelListener_My;
@@ -71,10 +68,11 @@ public class MainFrame {
 		exitListener.closeApp();
 	}
 	public void newDirectoryStructure() {
-		DefaultTreeModel_My model = (DefaultTreeModel_My) dirTree.getModel();
-		MutableTreeNode rootNode = Collector.getCollector().newRootNodeStructure();
-		model.setRoot(rootNode);
-		model.reload(rootNode);
+		// Wrong
+//		DefaultTreeModel_My model = (DefaultTreeModel_My) dirTree.getModel();
+//		MutableTreeNode rootNode = Collector.getCollector().newRootNodeStructure();
+//		model.setRoot(rootNode);
+//		model.reload(rootNode);
 	}
 	private JPanel createToolBarPanel() {
 		// Zwei Toolbars erzeugen
@@ -114,6 +112,8 @@ public class MainFrame {
 	private JTree buildJTree(MutableTreeNode rootNodeAttr, boolean isNew) {
 		dirTreeModel = new DefaultTreeModel_My(rootNodeAttr);
 		JTree newDirectoryTree = new JTree(dirTreeModel);
+		// TreeCellRenderer
+		newDirectoryTree.setCellRenderer(new DefaultTreeCellRenderer_My());
 		// Model Listener 
 		dirTreeModel.addTreeModelListener(new TreeModelListener_My());
 		// Selection Listener 
@@ -126,7 +126,7 @@ public class MainFrame {
 		return newDirectoryTree;
 	}
 	private JPanel createInputPanel() {
-		final JTextField directoryInput = new JTextField("d:/test2", 30);
+		final JTextField directoryInput = new JTextField("d:/test1", 30);
 		Font font = new Font(Font.DIALOG_INPUT, Font.ITALIC, 14);
 		directoryInput.setFont(font);
 		final JButton sendInput = new JButton("Send input");
