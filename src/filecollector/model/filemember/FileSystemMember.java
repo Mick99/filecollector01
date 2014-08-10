@@ -22,24 +22,58 @@ public abstract class FileSystemMember {
 	private FileTimes fileTimes = null;
 
 	// Inner class only for FileTimes
-	public class FileTimes {
-		private FileTime creationTime = null;
-		private FileTime lastAccessTime = null;
-		private FileTime lastModifiedTime = null;
+	public class FileTimes implements Comparable<FileTimes>{
+		private FileTime[] creAccModTime = new FileTime[3];
 
 		public FileTimes(FileTime creationTime, FileTime lastAccessTime, FileTime lastModifiedTime) {
-			this.creationTime = creationTime;
-			this.lastAccessTime = lastAccessTime;
-			this.lastModifiedTime = lastModifiedTime;
+			creAccModTime[0] = creationTime;
+			creAccModTime[1] = lastAccessTime;
+			creAccModTime[2] = lastModifiedTime;
 		}
 		public FileTime getCreationTime() {
-			return creationTime;
+			return creAccModTime[0];
 		}
 		public FileTime getLastAccessTime() {
-			return lastAccessTime;
+			return creAccModTime[1];
 		}
 		public FileTime getLastModifiedTime() {
-			return lastModifiedTime;
+			return creAccModTime[2];
+		}
+		@Override
+		public int hashCode() {
+			final int prime = 37;
+			int res = 1;
+			res = prime * res + getOuterType().hashCode();
+			for (FileTime t : creAccModTime) {
+				res = prime * res + ((t == null) ? 0 : t.hashCode());
+			}
+			return res;
+		}
+		@Override
+		public boolean equals(Object obj) {
+			if (obj == null)
+				return false;
+			if (this == obj)
+				return true;
+			if (getClass() != obj.getClass())
+				return false;
+			FileTimes otherFileTimes = (FileTimes) obj;
+			return compareTo(otherFileTimes) == 0;
+		}
+		// Compare only lastModifiedTime, other must impl separate compare methods
+		@Override
+		public int compareTo(FileTimes other) {
+			// javadocs for Comparable: Note that null is not an instance of any class, and e.compareTo(null) should throw a NullPointerException even though e.equals(null) returns false.
+			if (other == null) {
+				String s = "FileTime.compareTo('null'): Null is not an instance of any class and not compareable!";
+				NullPointerException e = new NullPointerException(s);
+				exc.warn(s, e);
+				throw e;
+			}
+			return this.getLastModifiedTime().compareTo(other.getLastModifiedTime());
+		}
+		private FileSystemMember getOuterType() {
+			return FileSystemMember.this;
 		}
 	}
 
