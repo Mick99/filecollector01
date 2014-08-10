@@ -12,7 +12,7 @@ import org.apache.log4j.Logger;
  * @author Mick_02
  * 
  */
-public abstract class FileSystemMember {
+public abstract class FileSystemMember implements Comparable<FileSystemMember> {
 	// private static final Logger msg = Logger.getLogger("Message");
 	private static final Logger exc = Logger.getLogger("Exception");
 
@@ -57,8 +57,8 @@ public abstract class FileSystemMember {
 				return true;
 			if (getClass() != obj.getClass())
 				return false;
-			FileTimes otherFileTimes = (FileTimes) obj;
-			return compareTo(otherFileTimes) == 0;
+			FileTimes other = (FileTimes) obj;
+			return compareTo(other) == 0;
 		}
 		// Compare only lastModifiedTime, other must impl separate compare methods
 		@Override
@@ -114,5 +114,41 @@ public abstract class FileSystemMember {
 	@Override
 	public String toString() {
 		return this.getClass().getSimpleName()+" : "+path.toString();
+	}
+	@Override
+	public int hashCode() {
+		final int prime = 37;
+		int res = 1;
+		res = prime * res + path.hashCode();
+		res = prime * res + fileAttributes.hashCode();
+		res = prime * res + fileTimes.hashCode();
+		return res;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null)
+			return false;
+		if (this == obj)
+			return true;
+		if (getClass() != obj.getClass())
+			return false;
+		FileSystemMember other = (FileSystemMember) obj;
+		return compareTo(other) == 0;
+	}
+	@Override
+	public int compareTo(FileSystemMember other) {
+		// javadocs for Comparable: Note that null is not an instance of any class, and e.compareTo(null) should throw a NullPointerException even though e.equals(null) returns false.
+		if (other == null) {
+			String s = "FileSystemMember.compareTo('null'): Null is not an instance of any class and not compareable!";
+			NullPointerException e = new NullPointerException(s);
+			exc.warn(s, e);
+			throw e;
+		}
+		// Most important ordering is path attribute
+		int res = getPath().compareTo(other.getPath());
+		if (res == 0) {
+			res = getFileTimes().compareTo(other.getFileTimes());
+		}
+		return res;
 	}
 }
