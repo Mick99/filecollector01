@@ -7,15 +7,15 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class DirectoryMember extends FileSystemMember {
 	/**
-	 * List of subdirectory content
+	 * List of sub directory content
 	 */
 	private List<FileSystemMember> dirContent;
 	/**
-	 * Sum of file sizes without subdirectory's
+	 * Sum of file sizes without sub directory's
 	 */
 	private long capacitySize = -1L;
 	/**
-	 * Sum of file and subdirectory's sizes
+	 * Sum of file and sub directory's sizes
 	 */
 	private long cumulatedCapacitySize = -1L;
 

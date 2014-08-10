@@ -46,28 +46,6 @@ public class Collector {
 			throw new NullPointerException();
 		}
 	}
-	public MutableTreeNode newRootNodeStructure() {
-        // Wurzelknoten erstellen 
-        MutableTreeNode rootNode = new DefaultMutableTreeNode(dirOrigUnsorted.getFileName());
-        recursiveDirectoryLevel(dirOrigUnsorted, rootNode, 2);
-		
-		return rootNode;
-	}
-	private void recursiveDirectoryLevel(final DirectoryMember dm, MutableTreeNode resultTreeNode, int level) {
-		int j=0;
-		if (level > 0) {
-			Iterator<FileSystemMember> iFsm = dm.getDirContent().iterator();
-			while (iFsm.hasNext()) {
-				FileSystemMember fileSystemMember = (FileSystemMember) iFsm.next();
-				DefaultMutableTreeNode tmp = new DefaultMutableTreeNode(fileSystemMember.getFileName());
-				resultTreeNode.insert(tmp, j++);
-				if (fileSystemMember.getClass() == DirectoryMember.class) {
-					DirectoryMember newDm = (DirectoryMember) fileSystemMember;
-					recursiveDirectoryLevel(newDm, resultTreeNode, --level);
-				}
-			}
-		}
-	}
 	// TODO MW_140802: Eher mist, sollte leichter gehen??? Dazu DirMem.., FileMem.. equals,... have to impl
 	private DirectoryMember makeListToDirectoryMemberStructure(List<DirectoryMember> list) {
 		MyDirectoryMember_Comparator comp = new MyDirectoryMember_Comparator();
@@ -90,4 +68,31 @@ public class Collector {
 			}
 		}
 	}
+	
+	
+	
+	//TODO MW_140810: !!! To DELETE, nur wg. Recursion erst mal noch lassen !!!
+	public MutableTreeNode newRootNodeStructure() {
+        // Wurzelknoten erstellen 
+        MutableTreeNode rootNode = new DefaultMutableTreeNode(dirOrigUnsorted.getFileName());
+        recursiveDirectoryLevel(dirOrigUnsorted, rootNode, 2);
+		
+		return rootNode;
+	}
+	private void recursiveDirectoryLevel(final DirectoryMember dm, MutableTreeNode resultTreeNode, int level) {
+		int j=0;
+		if (level > 0) {
+			Iterator<FileSystemMember> iFsm = dm.getDirContent().iterator();
+			while (iFsm.hasNext()) {
+				FileSystemMember fileSystemMember = (FileSystemMember) iFsm.next();
+				DefaultMutableTreeNode tmp = new DefaultMutableTreeNode(fileSystemMember.getFileName());
+				resultTreeNode.insert(tmp, j++);
+				if (fileSystemMember.getClass() == DirectoryMember.class) {
+					DirectoryMember newDm = (DirectoryMember) fileSystemMember;
+					recursiveDirectoryLevel(newDm, resultTreeNode, --level);
+				}
+			}
+		}
+	}
+	//MW_140810: !!! To DELETE, nur wg. Recursion erst mal noch lassen !!!
 }
