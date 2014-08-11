@@ -6,6 +6,8 @@ import java.util.concurrent.ExecutorService;
 
 import org.apache.log4j.Logger;
 
+import filecollector.util.HashUtils;
+
 class ListOfExecutorServices {
 	// class ListOfExecutorServices implements Comparable<ListOfExecutorServices> {
 	private static final Logger msg = Logger.getLogger("Message");
@@ -56,29 +58,28 @@ class ListOfExecutorServices {
 	}
 	@Override
 	public int hashCode() {
-		int res = hash_3();
+		// MW_140811: Ersetzt durch HashUtils.
+//		final int prime = 113;
+//		int res = 1;
+//		res = prime * res + ((uniqueType == null) ? 0 : uniqueType.hashCode());
+		int hash = 73;
+		hash = HashUtils.calcHashCode(hash, (uniqueType == null) ? 0 : uniqueType.hashCode());
 		if (msg.isTraceEnabled()) {
-			String msgMessage = String.format("this(%s) hashCode=%s", this.toString(), Integer.toHexString(res));
+			String msgMessage = String.format("this(%s) hashCode=%s", toString(), Integer.toHexString(hash));
 			msg.trace(msgMessage);
 		}
-		return res;
+		return hash;
 	}
 	@Override
 	public boolean equals(Object obj) {
-		boolean res = equals_3(obj);
+		boolean equ = isEqual(obj);
 		if (msg.isTraceEnabled()) {
-			String msgMessage = String.format("this(%s) equals=%b", this.toString(), res);
+			String msgMessage = String.format("this(%s) equals=%b", toString(), equ);
 			msg.trace(msgMessage);
 		}
-		return res;
+		return equ;
 	}
-	private int hash_3() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((uniqueType == null) ? 0 : uniqueType.hashCode());
-		return result;
-	}
-	private boolean equals_3(Object obj) {
+	private boolean isEqual(Object obj) {
 		if (obj == null)
 			return false;
 		if (this == obj)

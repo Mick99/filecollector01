@@ -6,6 +6,8 @@ import java.util.EnumSet;
 
 import org.apache.log4j.Logger;
 
+import filecollector.util.HashUtils;
+
 /**
  * Only absolute paths are allowed. No relative paths like "./../Test"
  * 
@@ -13,7 +15,7 @@ import org.apache.log4j.Logger;
  * 
  */
 public abstract class FileSystemMember implements Comparable<FileSystemMember> {
-	// private static final Logger msg = Logger.getLogger("Message");
+	private static final Logger msg = Logger.getLogger("Message");
 	private static final Logger exc = Logger.getLogger("Exception");
 
 	private final String ABSOLUTE_PATH_NAME;
@@ -41,16 +43,34 @@ public abstract class FileSystemMember implements Comparable<FileSystemMember> {
 		}
 		@Override
 		public int hashCode() {
-			final int prime = 37;
-			int res = 1;
-//			res = prime * res + getOuterType().hashCode(); !Rekursion, nicht möglich was Eclipse generiert
+			// MW_140811: Ersetzt durch HashUtils.
+//			final int prime = 113;
+//			int res = 1;
+////			res = prime * res + getOuterType().hashCode(); !Rekursion, nicht möglich was Eclipse generiert
+//			for (FileTime t : creAccModTime) {
+//				res = prime * res + ((t == null) ? 0 : t.hashCode());
+//			}
+//			return res;
+			int hash = 31;
 			for (FileTime t : creAccModTime) {
-				res = prime * res + ((t == null) ? 0 : t.hashCode());
+				hash = HashUtils.calcHashCode(hash, (t == null) ? 0 : t.hashCode());
 			}
-			return res;
+			if (msg.isTraceEnabled()) {
+				String msgMessage = String.format("this(%s) hashCode=%s", toString(), Integer.toHexString(hash));
+				msg.trace(msgMessage);
+			}
+			return hash;
 		}
 		@Override
 		public boolean equals(Object obj) {
+			boolean equ = isEqual(obj);
+			if (msg.isTraceEnabled()) {
+				String msgMessage = String.format("this(%s) equals=%b", toString(), equ);
+				msg.trace(msgMessage);
+			}
+			return equ;
+		}
+		private boolean isEqual(Object obj) {
 			if (obj == null)
 				return false;
 			if (this == obj)
@@ -87,6 +107,7 @@ public abstract class FileSystemMember implements Comparable<FileSystemMember> {
 		}
 		this.ABSOLUTE_PATH_NAME = path.toString();
 	}
+	
 	public String getABSOLUTE_PATH_NAME() {
 		return ABSOLUTE_PATH_NAME;
 	}
@@ -118,16 +139,34 @@ public abstract class FileSystemMember implements Comparable<FileSystemMember> {
 	}
 	@Override
 	public int hashCode() {
-		final int prime = 37;
-		int res = 1;
-		res = prime * res + path.hashCode();
-		res = prime * res + fileAttributes.hashCode();
-		// 
-		res = prime * res + ((fileTimes == null) ? 0 : fileTimes.hashCode());
-		return res;
+		// MW_140811: Ersetzt durch HashUtils.
+//		final int prime = 113;
+//		int res = 1;
+//		res = prime * res + path.hashCode();
+//		res = prime * res + fileAttributes.hashCode();
+//		// 
+//		res = prime * res + ((fileTimes == null) ? 0 : fileTimes.hashCode());
+//		return res;
+		int hash = 17; // Start value
+		hash = HashUtils.calcHashCode(hash, path.hashCode());
+		hash = HashUtils.calcHashCode(hash, fileAttributes.hashCode());
+		hash = HashUtils.calcHashCode(hash, (fileTimes == null) ? 0 : fileTimes.hashCode());
+		if (msg.isTraceEnabled()) {
+			String msgMessage = String.format("this(%s) hashCode=%s", toString(), Integer.toHexString(hash));
+			msg.trace(msgMessage);
+		}
+		return hash;
 	}
 	@Override
 	public boolean equals(Object obj) {
+		boolean equ = isEqual(obj);
+		if (msg.isTraceEnabled()) {
+			String msgMessage = String.format("this(%s) equals=%b", toString(), equ);
+			msg.trace(msgMessage);
+		}
+		return equ;
+	}
+	private boolean isEqual(Object obj) {
 		if (obj == null)
 			return false;
 		if (this == obj)
