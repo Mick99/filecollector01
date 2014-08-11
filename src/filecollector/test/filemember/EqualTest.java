@@ -37,40 +37,40 @@ public class EqualTest {
 	@Test
 	public void equalsContent() {
 		// same
-		d1.setFileTimes(d1.new FileTimes(ft1, ft1, ft1));
-		d2.setFileTimes(d2.new FileTimes(ft1, ft1, ft1));
+		d1.setFileTimes_OnlyForJUnitTests(ft1, ft1, ft1);
+		d2.setFileTimes_OnlyForJUnitTests(ft1, ft1, ft1);
 		assertTrue(d1.equals(d2));
 		// diff path
-		d3.setFileTimes(d3.new FileTimes(ft1, ft1, ft1));
+		d3.setFileTimes_OnlyForJUnitTests(ft1, ft1, ft1);
 		assertFalse(d1.equals(d3));
 		// diff time
-		d2.setFileTimes(d2.new FileTimes(ft1, ft1, ft2));
+		d2.setFileTimes_OnlyForJUnitTests(ft1, ft1, ft2);
 		assertFalse(d1.equals(d2));
 	}
 //	@Test
 	public void notSameContentEquals() {
 		// diff path
-		d1.setFileTimes(d1.new FileTimes(ft1, ft1, ft1));
-		d3.setFileTimes(d3.new FileTimes(ft1, ft1, ft1));
+		d1.setFileTimes_OnlyForJUnitTests(ft1, ft1, ft1);
+		d3.setFileTimes_OnlyForJUnitTests(ft1, ft1, ft1);
 		assertFalse(d1.equals(d3));
 		// diff time
-		d2.setFileTimes(d2.new FileTimes(ft1, ft1, ft2));
+		d2.setFileTimes_OnlyForJUnitTests(ft1, ft1, ft2);
 		assertFalse(d1.equals(d2));
 	}
 	@Test
 	public void compareContent() {
 		// gleich
-		d1.setFileTimes(d1.new FileTimes(ft1, ft1, ft1));
-		d2.setFileTimes(d2.new FileTimes(ft1, ft1, ft1));
+		d1.setFileTimes_OnlyForJUnitTests(ft1, ft1, ft1);
+		d2.setFileTimes_OnlyForJUnitTests(ft1, ft1, ft1);
 		assertEquals(0, d1.compareTo(d2));
 		// time 5 > 2
-		d2.setFileTimes(d2.new FileTimes(ft1, ft1, ft2));
+		d2.setFileTimes_OnlyForJUnitTests(ft1, ft1, ft2);
 		assertEquals(1, d1.compareTo(d2));
 		// path test > other
-		d3.setFileTimes(d3.new FileTimes(ft1, ft1, ft1));
+		d3.setFileTimes_OnlyForJUnitTests(ft1, ft1, ft1);
 		assertEquals(1, d1.compareTo(d2));
 		// only lastModifiedTime will compared
-		d2.setFileTimes(d2.new FileTimes(ft2, ft2, ft1));
+		d2.setFileTimes_OnlyForJUnitTests(ft2, ft2, ft1);
 		assertEquals(0, d1.compareTo(d2));
 	}
 	@Test
@@ -78,14 +78,14 @@ public class EqualTest {
 		// FileTimes = null
 		assertTrue(d1.hashCode() == d2.hashCode());
 		// same content
-		d1.setFileTimes(d1.new FileTimes(ft1, ft1, ft1));
-		d2.setFileTimes(d2.new FileTimes(ft1, ft1, ft1));
+		d1.setFileTimes_OnlyForJUnitTests(ft1, ft1, ft1);
+		d2.setFileTimes_OnlyForJUnitTests(ft1, ft1, ft1);
 		assertTrue(d1.hashCode() == d2.hashCode());
 		// diff Path
-		d3.setFileTimes(d3.new FileTimes(ft1, ft1, ft1));
+		d3.setFileTimes_OnlyForJUnitTests(ft1, ft1, ft1);
 		assertFalse(d1.hashCode() == d3.hashCode());
 		// diff Times
-		d2.setFileTimes(d2.new FileTimes(ft1, ft2, ft1));
+		d2.setFileTimes_OnlyForJUnitTests(ft1, ft2, ft1);
 		assertFalse(d1.hashCode() == d2.hashCode());
 	}
 }
