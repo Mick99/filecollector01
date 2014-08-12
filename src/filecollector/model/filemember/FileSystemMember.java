@@ -1,6 +1,8 @@
 package filecollector.model.filemember;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.DosFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.util.EnumSet;
 
@@ -18,7 +20,7 @@ public abstract class FileSystemMember implements Comparable<FileSystemMember> {
 	private static final Logger msg = Logger.getLogger("Message");
 	private static final Logger exc = Logger.getLogger("Exception");
 
-	private final String ABSOLUTE_PATH_NAME;
+//	private final String ABSOLUTE_PATH_NAME; //TODO MW_140811: Not necessary, maybe delete
 	private Path path;
 	private EnumSet<FileAttributesEnum> fileAttributes = EnumSet.noneOf(FileAttributesEnum.class);
 	private FileTimes fileTimes = null;
@@ -27,10 +29,17 @@ public abstract class FileSystemMember implements Comparable<FileSystemMember> {
 	public class FileTimes implements Comparable<FileTimes>{
 		private FileTime[] creAccModTime = new FileTime[3];
 
-		public FileTimes(FileTime creationTime, FileTime lastAccessTime, FileTime lastModifiedTime) {
+		FileTimes(FileTime creationTime, FileTime lastAccessTime, FileTime lastModifiedTime) {
 			creAccModTime[0] = creationTime;
 			creAccModTime[1] = lastAccessTime;
 			creAccModTime[2] = lastModifiedTime;
+		}
+		/**
+		 * Copy-constructor for deep object copy.
+		 * @param original: Object
+		 */
+		FileTimes(final FileTimes original) {
+			this(original.getCreationTime(), original.getLastAccessTime(), original.getLastModifiedTime());
 		}
 		public FileTime getCreationTime() {
 			return creAccModTime[0];
@@ -97,7 +106,7 @@ public abstract class FileSystemMember implements Comparable<FileSystemMember> {
 		// return FileSystemMember.this;
 		// }
 	}
-
+	
 	protected FileSystemMember(final Path path) {
 		// Inside "if else" through final not possible
 		if (path.isAbsolute()) {
@@ -105,11 +114,15 @@ public abstract class FileSystemMember implements Comparable<FileSystemMember> {
 		} else {
 			exc.warn(String.format("Only absolute paths are allowed %s:\n", path.toString()), new IllegalArgumentException());
 		}
-		this.ABSOLUTE_PATH_NAME = path.toString();
 	}
-	
-	public String getABSOLUTE_PATH_NAME() {
-		return ABSOLUTE_PATH_NAME;
+	/**
+	 * Copy-constructor for deep object copy.
+	 * @param original: Object
+	 */
+	protected FileSystemMember(final FileSystemMember original) {
+		this(Paths.get(original.getPath().toString()));
+		fileAttributes = EnumSet.copyOf(original.fileAttributes);
+		fileTimes = new FileTimes(original.getFileTimes());
 	}
 	public Path getPath() {
 		return path;
@@ -126,8 +139,17 @@ public abstract class FileSystemMember implements Comparable<FileSystemMember> {
 	public FileTimes getFileTimes() {
 		return fileTimes;
 	}
-	public void setFileTimes(FileTimes fileTimes) {
-		this.fileTimes = fileTimes;
+	public void setFileTimes(DosFileAttributes dfa) {
+		fileTimes = new FileTimes(dfa.creationTime(), dfa.lastAccessTime(), dfa.lastModifiedTime());
+	}
+	/**
+	 *  Attention only JUnit Tests !</br>
+	 *  </br>
+	 *  setFileTimes_OnlyForJUnitTests(..)
+	 *  
+	 */
+	public void setFileTimes_OnlyForJUnitTests(FileTime testCreation, FileTime testAccess, FileTime testModified) {
+		fileTimes = new FileTimes(testCreation, testAccess, testModified);
 	}
 	public String getFileName() {
 		return path.getFileName().toString();
