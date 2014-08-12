@@ -104,7 +104,8 @@ public abstract class AbstractDirectoryWorker implements IPoolIdentifier {
 		}
 	}
 	private void appendFileTimesAndFlags(FileSystemMember fsm, DosFileAttributes dfa) {
-		fsm.new FileTimes(dfa.creationTime(), dfa.lastAccessTime(), dfa.lastModifiedTime());
+//		fsm.new FileTimes(dfa.creationTime(), dfa.lastAccessTime(), dfa.lastModifiedTime());
+		fsm.setFileTimes(dfa);
 		appendFileFlags(fsm, dfa);
 	}
 	private void appendFileFlags(FileSystemMember fsm, DosFileAttributes dfa) {
@@ -126,7 +127,7 @@ public abstract class AbstractDirectoryWorker implements IPoolIdentifier {
 			int cw = WorkerCounter.createWorker();
 			int wi = WorkerCounter.getWorkerId();
 			workerName = "Worker [ " + wi + " ]";
-			msg.trace("Create worker count " + cw + " : " + workerName);
+			msg.trace("Create worker count " + cw + " : " + workerName + " on Path " + directory.getPath().toString());
 			return true;
 		} catch (IOException e) {
 			// TODO MW_140710: Take a closer look. log e, path (e.g. security violation...)
@@ -143,7 +144,7 @@ public abstract class AbstractDirectoryWorker implements IPoolIdentifier {
 			// ignore
 		} finally {
 			int rw = WorkerCounter.releaseWorker();
-			msg.debug("Release " + rw + " for " + workerName);
+			msg.debug("Release " + rw + " for " + workerName + " on Path " + directory.getPath().toString());
 		}
 	}
 	@Override

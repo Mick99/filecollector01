@@ -27,13 +27,14 @@ public class DefaultTreeCellRenderer_My extends DefaultTreeCellRenderer {
 	private void setMetaAttributes(final JTree tree, final DefaultMutableTreeNode node) {
 		if (node.getUserObject() instanceof FileSystemMember) {
 			FileSystemMember fsm = (FileSystemMember) node.getUserObject();
-			if (fsm.getClass() == FileMember.class) {
-				FileMember fm = (FileMember) fsm;
-				setText(String.format("%05d: %s",fm.getFileSize(), fm.getFileName()));
-				
-			} else {
-				setText(fsm.getFileName());
-			}
+			setText(fsm.toPrint());
+//			if (fsm.getClass() == FileMember.class) {
+//				FileMember fm = (FileMember) fsm;
+//				setText(String.format("%05d: %s",fm.getFileSize(), fm.getFileName()));
+//				
+//			} else {
+//				setText(fsm.getFileName());
+//			}
 		} else {
 			setText("NOOOO");
 		}

@@ -51,7 +51,7 @@ public class PoolManager {
 		return INSTANCE;
 	}
 	public PoolIdentifier newPool(ExecutorsTypeEnum type) {
-		ListOfExecutorServices l = getListService(type);
+		ListOfExecutorServices l = getListService(type, "NEWPool");
 		if (l == null) // No pool, create empty one
 			l = new ListOfExecutorServices(type);
 		ExecutorService srv = createService(type);
@@ -60,12 +60,12 @@ public class PoolManager {
 			newId = l.addExecutorService(type, srv);
 			boolean msgBool = executorSrvList.add(l);
 			if (msg.isTraceEnabled())
-				msg.trace("Add to Set(after)= " + msgBool);
+				msg.trace("Add to Set= " + msgBool);
 		}
 		return newId;
 	}
 	public ExecutorService usePool(IPoolIdentifier runnable, PoolIdentifier poolIdentifier) {
-		ListOfExecutorServices l = getListService(poolIdentifier.getType());
+		ListOfExecutorServices l = getListService(poolIdentifier.getType(), "USEPool");
 		if (l != null) {
 			ExecutorService exeSrv = l.getExecutorService(poolIdentifier);
 			if (exeSrv != null) {
@@ -77,7 +77,7 @@ public class PoolManager {
 	}
 	// Need a boolean result for shutdownAllPools ...
 	public void clearPool(PoolIdentifier poolIdentifier) {
-		ListOfExecutorServices l = getListService(poolIdentifier.getType());
+		ListOfExecutorServices l = getListService(poolIdentifier.getType(), "CLEARPool");
 		if (l != null) {
 			msg.debug("shutdown PoolIdentifier: " + poolIdentifier.toString());
 			if (shutdownPool(l.getExecutorService(poolIdentifier))) {
@@ -106,11 +106,14 @@ public class PoolManager {
 		}
 		return tmp;
 	}
-	private ListOfExecutorServices getListService(ExecutorsTypeEnum type) {
+	private ListOfExecutorServices getListService(ExecutorsTypeEnum type, String... optDebugStr) {
+		String callerMethode = "";
+		if (optDebugStr.length > 0)
+			callerMethode = optDebugStr[0];
 		ListOfExecutorServices tmp = new ListOfExecutorServices(type);
 		boolean containsRes = executorSrvList.contains(tmp);
 		if (msg.isTraceEnabled()) {
-			String msgMessage = String.format("getListService (%s) contains(before)=%b", type.name(), containsRes);
+			String msgMessage = String.format("%s-> getListService (%s) contains=%b", callerMethode, type.name(), containsRes);
 			msg.trace(msgMessage);
 		}
 		if (containsRes) {
@@ -119,7 +122,7 @@ public class PoolManager {
 				ListOfExecutorServices srv = it.next();
 				boolean equalsRes = srv.equals(tmp);
 				if (msg.isTraceEnabled()) {
-					String msgMessage = String.format("getListService (%s) equals(before)=%b", type.name(), equalsRes);
+					String msgMessage = String.format("%s-> getListService (%s) equals=%b", callerMethode, type.name(), equalsRes);
 					msg.trace(msgMessage);
 				}
 				if (equalsRes)
@@ -178,7 +181,7 @@ public class PoolManager {
 	}
 	// If you need nothing none new pool
 	public PoolIdentifier isPoolAvailable(ExecutorsTypeEnum type) {
-		ListOfExecutorServices l = getListService(type);
+		ListOfExecutorServices l = getListService(type, "ISPool");
 		if (l != null)
 			return l.getFirstPoolIdentifier(type);
 		return null;
