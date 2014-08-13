@@ -24,7 +24,6 @@ public class FileMember extends FileSystemMember {
 	}
 	@Override
 	public String toPrint() {
-		return String.format("%05d: %s",getFileSize(), getFileName());
-//		return Long.toString(fileSize) + " :" + getFileName();
+		return String.format("%05d: %s   [%3$tF %3$tT]",getFileSize(), getFileName(), getFileTimes().getDaylightZoneOffsetTime(FileTimesEnum.LASTMODIFIED).getTime());
 	}
 }

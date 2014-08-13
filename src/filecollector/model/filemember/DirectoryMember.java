@@ -2,6 +2,7 @@ package filecollector.model.filemember;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 
@@ -63,7 +64,6 @@ public class DirectoryMember extends FileSystemMember {
 	}
 	@Override
 	public String toPrint() {
-		return getPath().getFileName().toString();
-//		return getABSOLUTE_PATH_NAME();
+		return String.format("%s   [%2$tF %2$tT]", getPath().getFileName().toString(), getFileTimes().getDaylightZoneOffsetTime(FileTimesEnum.LASTMODIFIED).getTime());
 	}
 }
