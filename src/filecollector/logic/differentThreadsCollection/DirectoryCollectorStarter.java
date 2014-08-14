@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 
 import filecollector.controller.MainController;
 import filecollector.controller.RunOrCallableEnum;
+import filecollector.controller.collectorWorker.DirectoryAttributeAppendOnce;
 import filecollector.controller.collectorWorker.WorkerExecutor;
 import filecollector.logic.threadpool.ExecutorsTypeEnum;
 import filecollector.logic.threadpool.IPoolIdentifier;
@@ -53,6 +54,7 @@ public class DirectoryCollectorStarter extends Thread implements IPoolIdentifier
 	private void newCallExecutor_FutureGet(PoolIdentifier poolId) {
 		WorkerExecutor workerExecutor = new WorkerExecutor();
 		DirectoryMember dirMember = new DirectoryMember(directoryPath.getDirectoryPath());
+		new DirectoryAttributeAppendOnce(dirMember);
 		workerExecutor.executeWorker(dirMember, poolId);
 		new Collector(dirMember);
 	}

@@ -21,7 +21,7 @@ public class TreeWillExpandListener_My implements TreeWillExpandListener {
 		TreePath tp = arg0.getPath();
 		DefaultMutableTreeNode dmt = (DefaultMutableTreeNode) tp.getLastPathComponent();
 		DirectoryMember dm = (DirectoryMember) dmt.getUserObject();
-		System.out.println(dm.toPrint());
+//		System.out.println(dm.toPrint());
 		TreeStructure_My.dirListToTreeNode(dm, dmt);
 	}
 
