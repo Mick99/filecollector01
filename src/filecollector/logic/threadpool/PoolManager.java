@@ -59,13 +59,13 @@ public class PoolManager {
 		if (l != null && srv != null) {
 			newId = l.addExecutorService(type, srv);
 			boolean msgBool = executorSrvList.add(l);
-			if (msg.isTraceEnabled())
-				msg.trace("Add to Set= " + msgBool);
+			if (msg.isInfoEnabled())
+				msg.info("Add to Set= " + msgBool);
 		}
 		return newId;
 	}
 	public ExecutorService usePool(IPoolIdentifier runnable, PoolIdentifier poolIdentifier) {
-		ListOfExecutorServices l = getListService(poolIdentifier.getType(), "USEPool");
+		ListOfExecutorServices l = getListService(poolIdentifier.getType(), "USEPool", runnable.infoStrFALSCH());
 		if (l != null) {
 			ExecutorService exeSrv = l.getExecutorService(poolIdentifier);
 			if (exeSrv != null) {
@@ -79,7 +79,7 @@ public class PoolManager {
 	public void clearPool(PoolIdentifier poolIdentifier) {
 		ListOfExecutorServices l = getListService(poolIdentifier.getType(), "CLEARPool");
 		if (l != null) {
-			msg.debug("shutdown PoolIdentifier: " + poolIdentifier.toString());
+			msg.warn("shutdown PoolIdentifier: " + poolIdentifier.toString());
 			if (shutdownPool(l.getExecutorService(poolIdentifier))) {
 				if (!l.removeElementOfExecutorService(poolIdentifier)) {
 					exc.info("Remove failed for PoolIdentifier: " + poolIdentifier.toString());
@@ -108,22 +108,26 @@ public class PoolManager {
 	}
 	private ListOfExecutorServices getListService(ExecutorsTypeEnum type, String... optDebugStr) {
 		String callerMethode = "";
+		String moreInfo = "";
 		if (optDebugStr.length > 0)
 			callerMethode = optDebugStr[0];
+		if (optDebugStr.length > 1)
+			moreInfo = optDebugStr[1];
+
 		ListOfExecutorServices tmp = new ListOfExecutorServices(type);
 		boolean containsRes = executorSrvList.contains(tmp);
-		if (msg.isTraceEnabled()) {
-			String msgMessage = String.format("%s-> getListService (%s) contains=%b", callerMethode, type.name(), containsRes);
-			msg.trace(msgMessage);
+		if (msg.isInfoEnabled()) {
+			String msgMessage = String.format("%s(%s)-> contains=%b :: %s", callerMethode, type.name(), containsRes, moreInfo);
+			msg.info(msgMessage);
 		}
 		if (containsRes) {
 			Iterator<ListOfExecutorServices> it = executorSrvList.iterator();
 			while (it.hasNext()) {
 				ListOfExecutorServices srv = it.next();
 				boolean equalsRes = srv.equals(tmp);
-				if (msg.isTraceEnabled()) {
-					String msgMessage = String.format("%s-> getListService (%s) equals=%b", callerMethode, type.name(), equalsRes);
-					msg.trace(msgMessage);
+				if (msg.isDebugEnabled()) {
+					String msgMessage = String.format("%s(%s)-> equals=%b", callerMethode, type.name(), equalsRes);
+					msg.debug(msgMessage);
 				}
 				if (equalsRes)
 					return srv;

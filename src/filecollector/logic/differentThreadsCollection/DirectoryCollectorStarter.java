@@ -72,4 +72,8 @@ public class DirectoryCollectorStarter extends Thread implements IPoolIdentifier
 	public void transferNewIdentifier(PoolIdentifier poolId) {
 		poolIdentifier = poolId.newIdentifier();
 	}
+	@Override
+	public String infoStrFALSCH() {
+		return String.format("Start from Dir=%s , %s", directoryPath.getDirectoryPath().toString(), this.getClass().getSimpleName());
+	}
 }

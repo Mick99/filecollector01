@@ -73,9 +73,9 @@ class ListOfExecutorServices {
 	@Override
 	public boolean equals(Object obj) {
 		boolean equ = isEqual(obj);
-		if (msg.isTraceEnabled()) {
+		if (msg.isDebugEnabled()) {
 			String msgMessage = String.format("this(%s) equals=%b", toString(), equ);
-			msg.trace(msgMessage);
+			msg.debug(msgMessage);
 		}
 		return equ;
 	}

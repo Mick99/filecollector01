@@ -127,7 +127,7 @@ public abstract class AbstractDirectoryWorker implements IPoolIdentifier {
 			int cw = WorkerCounter.createWorker();
 			int wi = WorkerCounter.getWorkerId();
 			workerName = "Worker [ " + wi + " ]";
-			msg.trace("Create worker count " + cw + " : " + workerName + " on Path " + directory.getPath().toString());
+			msg.debug("Create worker count " + cw + " : " + workerName + " on Path " + directory.getPath().toString());
 			return true;
 		} catch (IOException e) {
 			// TODO MW_140710: Take a closer look. log e, path (e.g. security violation...)
@@ -144,11 +144,16 @@ public abstract class AbstractDirectoryWorker implements IPoolIdentifier {
 			// ignore
 		} finally {
 			int rw = WorkerCounter.releaseWorker();
-			msg.debug("Release " + rw + " for " + workerName + " on Path " + directory.getPath().toString());
+			msg.info("Release " + rw + " for " + workerName + " on Path " + directory.getPath().toString());
 		}
 	}
 	@Override
 	public void transferNewIdentifier(PoolIdentifier poolId) {
 		poolIdentifier = poolId.newIdentifier();
 	}
+	@Override
+	public String infoStrFALSCH() {
+		return String.format("%s", directory.getFileName());
+	}
+
 }

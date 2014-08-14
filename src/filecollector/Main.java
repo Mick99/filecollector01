@@ -17,9 +17,8 @@ public class Main {
 
 	public static void main(String[] args) {
 		PropertyConfigurator.configureAndWatch("config/Log4j.properties", RELOAD);
-		msg.info("Start");
+		msg.warn("Start");
 		MainController mc = new MainController();
 		mc.entryApplikation(args);
-		msg.info("End");
 	}
 }
