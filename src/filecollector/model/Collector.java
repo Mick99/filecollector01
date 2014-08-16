@@ -21,6 +21,8 @@ public class Collector {
 	private DirectoryMember dirOrigUnsorted;
 	private DirectoryMember dirSortByDirFirst;
 	private DirectoryMember dirSortByFileFirst;
+	
+	
 
 	public Collector(DirectoryMember root) {
 		this.dirOrigUnsorted = root;
@@ -68,25 +70,73 @@ public class Collector {
 			}
 		}
 	}
+
+	// Copy-Ctor test
+	private DirectoryMember testCopyOfOrig;
 	
-	
-	
-	//TODO MW_140810: !!! To DELETE, nur wg. Recursion erst mal noch lassen !!!
-	public MutableTreeNode newRootNodeStructure() {
-        // Wurzelknoten erstellen 
-        MutableTreeNode rootNode = new DefaultMutableTreeNode(dirOrigUnsorted.getFileName());
-        recursiveDirectoryLevel(dirOrigUnsorted, rootNode, 2);
+	public void testCopyCtor() {
+		testCopyOfOrig = new DirectoryMember(dirOrigUnsorted);
+		for (FileSystemMember fsm : testCopyOfOrig.getDirContent()) {
+			fsm.setPath_FORTEST();
+		}
+		testCompareBUTNotEquals(dirOrigUnsorted, testCopyOfOrig);
+	}
+	private void testCompareBUTNotEquals(DirectoryMember orig, DirectoryMember copy) {
+		int j = 0;
+		Iterator<FileSystemMember> origIt = orig.getDirContent().iterator();
+		Iterator<FileSystemMember> copyIt = copy.getDirContent().iterator();
+		while (origIt.hasNext()) {
+			FileSystemMember fileOrig = (FileSystemMember) origIt.next();
+			if (copyIt.hasNext()) {
+				FileSystemMember fileCopy = (FileSystemMember) copyIt.next();
+				equCompareHash(fileOrig, fileCopy);
+				if ((fileOrig.getClass() == DirectoryMember.class) && (fileCopy.getClass() == DirectoryMember.class)) {
+					DirectoryMember newOrig = (DirectoryMember) fileOrig;
+					DirectoryMember newCopy = (DirectoryMember) fileCopy;
+					testCompareBUTNotEquals(newOrig, newCopy);
+				}
+			} else {
+				System.out.println("copy Next?");
+			}
+		}
+	}
+	private void equCompareHash(FileSystemMember orig, FileSystemMember copy) {
+		if (orig == copy) System.out.println("NOOO");
+		if (orig.hashCode() != copy.hashCode()) {
+			System.out.format("hash?");
+		}
+		if (!orig.equals(copy)) {
+			System.out.format("equal?");
+		}
+		int comp = orig.compareTo(copy); 
+		if (comp != 0) {
+//			System.out.format("compareTo?");
+		}
+		System.out.format("compTo = %d", comp);
+		System.out.format("%norig hash: %d  %s%n", orig.hashCode(), orig.getFileName());
+		System.out.format("copy hash: %d  %s%n", copy.hashCode(), copy.getFileName());
 		
+		System.out.format("compTo Times=%d%n",orig.getFileTimes().compareTo(copy.getFileTimes()));
+//		System.out.println("equCompareHash");
+	}
+	// Copy-Ctor test
+
+	// TODO MW_140810: !!! To DELETE, nur wg. Recursion erst mal noch lassen !!!
+	public MutableTreeNode newRootNodeStructure() {
+		// Wurzelknoten erstellen
+		MutableTreeNode rootNode = new DefaultMutableTreeNode(dirOrigUnsorted.getFileName());
+		recursiveDirectoryLevel(dirOrigUnsorted, rootNode, 2);
+
 		return rootNode;
 	}
 	private void recursiveDirectoryLevel(final DirectoryMember dm, MutableTreeNode resultTreeNode, int level) {
-		int j=0;
+		int j = 0;
 		if (level > 0) {
 			Iterator<FileSystemMember> iFsm = dm.getDirContent().iterator();
 			while (iFsm.hasNext()) {
 				FileSystemMember fileSystemMember = (FileSystemMember) iFsm.next();
-				DefaultMutableTreeNode tmp = new DefaultMutableTreeNode(fileSystemMember.getFileName());
-				resultTreeNode.insert(tmp, j++);
+				// DefaultMutableTreeNode tmp = new DefaultMutableTreeNode(fileSystemMember.getFileName());
+				// resultTreeNode.insert(tmp, j++);
 				if (fileSystemMember.getClass() == DirectoryMember.class) {
 					DirectoryMember newDm = (DirectoryMember) fileSystemMember;
 					recursiveDirectoryLevel(newDm, resultTreeNode, --level);
@@ -94,5 +144,5 @@ public class Collector {
 			}
 		}
 	}
-	//MW_140810: !!! To DELETE, nur wg. Recursion erst mal noch lassen !!!
+	// MW_140810: !!! To DELETE, nur wg. Recursion erst mal noch lassen !!!
 }

@@ -30,7 +30,7 @@ public class DirectoryPath {
 		checkValidDirectoryPath(directoryPath);
 		this.directoryPath = directoryPath;
 	}
-	public boolean isDirectoryPathNull() {
+	private boolean isDirectoryPathNull() {
 		return directoryPath == null;
 	}
 	@Override

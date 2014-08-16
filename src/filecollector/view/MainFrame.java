@@ -25,6 +25,7 @@ import javax.swing.tree.TreeModel;
 import filecollector.controller.IGuiCallback;
 import filecollector.controller.MainController;
 import filecollector.controller.RunOrCallableEnum;
+import filecollector.model.Collector;
 import filecollector.model.DirectoryPath;
 import filecollector.model.My_IllegalArgumentException;
 import filecollector.view.tree.DefaultTreeCellRenderer_My;
@@ -126,7 +127,7 @@ public class MainFrame {
 		return newDirectoryTree;
 	}
 	private JPanel createInputPanel() {
-		final JTextField directoryInput = new JTextField("d:/test1", 30);
+		final JTextField directoryInput = new JTextField("d:/test2", 30);
 		Font font = new Font(Font.DIALOG_INPUT, Font.ITALIC, 14);
 		directoryInput.setFont(font);
 		final JButton sendInput = new JButton("Send input");
@@ -172,12 +173,22 @@ public class MainFrame {
 				runOrCall.setSelected(MainController.runOrCallableEnum.getRunOrCall());
 			}
 		});
+		final JButton testCopyCtor = new JButton("testCopyCtor");
+		testCopyCtor.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				Collector.getCollector().testCopyCtor();
+			}
+		});
+		
 
 		final JPanel inputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		inputPanel.add(sendInput);
 		inputPanel.add(directoryInput);
 		inputPanel.add(startCollect);
 		inputPanel.add(runOrCall);
+		inputPanel.add(testCopyCtor);
 
 		// JPanel f�r Toolbar und Separator
 		final JPanel compoundPanel = new JPanel(new BorderLayout());

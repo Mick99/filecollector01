@@ -48,11 +48,11 @@ public class DirectoryMember extends FileSystemMember {
 			FileSystemMember origMember = (FileSystemMember) it.next();
 			if (origMember.getClass() == FileMember.class) {
 				FileMember orig = (FileMember) origMember;
-				new FileMember(orig);
+				addFileSystemMember(new FileMember(orig));
 			}
 			if (origMember.getClass() == DirectoryMember.class) {
 				DirectoryMember orig = (DirectoryMember) origMember;
-				new DirectoryMember(orig);
+				addFileSystemMember(new DirectoryMember(orig));
 			}
 		}
 	}

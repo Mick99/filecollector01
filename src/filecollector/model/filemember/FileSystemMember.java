@@ -24,6 +24,7 @@ public abstract class FileSystemMember implements Comparable<FileSystemMember> {
 
 	// private final String ABSOLUTE_PATH_NAME; //TODO MW_140811: Not necessary, maybe delete
 	private Path path;
+	private Path path_Absolute; // if we switch to relative path, right now it isn't
 	private EnumSet<FileAttributesEnum> fileAttributes = EnumSet.noneOf(FileAttributesEnum.class);
 	private FileTimes fileTimes = null;
 
@@ -114,9 +115,9 @@ public abstract class FileSystemMember implements Comparable<FileSystemMember> {
 	}
 
 	protected FileSystemMember(final Path path) {
-		// Inside "if else" through final not possible
 		if (path.isAbsolute()) {
 			this.path = path;
+			this.path_Absolute = path.toAbsolutePath();
 		} else {
 			exc.warn(String.format("Only absolute paths are allowed %s:\n", path.toString()), new IllegalArgumentException());
 		}
@@ -137,6 +138,10 @@ public abstract class FileSystemMember implements Comparable<FileSystemMember> {
 	}
 	protected void setPath(Path path) {
 		this.path = path;
+	}
+	public void setPath_FORTEST() {
+		String newP = path.toString() + "_New";
+		setPath(Paths.get(newP));
 	}
 	public EnumSet<FileAttributesEnum> getFileAttributes() {
 		return fileAttributes;
