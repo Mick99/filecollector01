@@ -1,9 +1,13 @@
 package filecollector.model;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
@@ -17,6 +21,10 @@ public class Collector {
 	// private static final Logger msg = Logger.getLogger("Message");
 	// private static final Logger exc = Logger.getLogger("Exception");
 
+	public enum viewTest {
+		DIRSTRUCT, DIRLIST;
+		
+	}
 	private static Collector self;
 	private DirectoryMember dirOrigUnsorted;
 	private DirectoryMember dirSortByDirFirst;
@@ -36,7 +44,7 @@ public class Collector {
 	public static Collector getCollector() {
 		return self;
 	}
-	public DirectoryMember getCollectionView(CollectionViewSelectorEnum vs) {
+	public DirectoryMember getCollectionView(ViewSortEnum vs) {
 		switch (vs) {
 		case ORIG_UNSORTED:
 			return dirOrigUnsorted;
@@ -70,7 +78,15 @@ public class Collector {
 			}
 		}
 	}
-
+//	private List<DirectoryMember> dirList = new ArrayList<>();
+//	private Set<DirectoryMember> dirSet	= new HashSet<>();
+//	public <T extends Collection<DirectoryMember>> T getDir(Collection<?> typeOfCollection) {
+//		if (typeOfCollection instanceof Collection<DirectoryMember>) {
+//			
+//		}
+//		
+//		return (T) new ArrayList<DirectoryMember>();
+//	}
 	// Copy-Ctor test
 	private DirectoryMember testCopyOfOrig;
 	

@@ -6,7 +6,7 @@ import java.util.ListIterator;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 
-import filecollector.model.CollectionViewSelectorEnum;
+import filecollector.model.ViewSortEnum;
 import filecollector.model.Collector;
 import filecollector.model.filemember.DirectoryMember;
 import filecollector.model.filemember.FileMember;
@@ -18,7 +18,7 @@ public final class TreeStructure_My {
 	}
 	public static MutableTreeNode startTreeStructure_TEST() {
 		// Once create first "Root-Node"...
-		DirectoryMember dirMem = Collector.getCollector().getCollectionView(CollectionViewSelectorEnum.ORIG_UNSORTED);
+		DirectoryMember dirMem = Collector.getCollector().getCollectionView(ViewSortEnum.ORIG_UNSORTED);
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode(dirMem);
 		createOneLevelTreeNode(dirMem, root);
 		// After that create second level nodes and finish, because all collapsed
