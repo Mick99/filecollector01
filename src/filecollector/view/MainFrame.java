@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -28,6 +29,7 @@ import filecollector.controller.RunOrCallableEnum;
 import filecollector.model.Collector;
 import filecollector.model.DirectoryPath;
 import filecollector.model.My_IllegalArgumentException;
+import filecollector.model.ViewSortEnum;
 import filecollector.view.tree.DefaultTreeCellRenderer_My;
 import filecollector.view.tree.DefaultTreeModel_My;
 import filecollector.view.tree.TreeExpansionListener_My;
@@ -88,11 +90,27 @@ public class MainFrame {
 		skipToolBar.add(new JButton("<<"));
 		skipToolBar.add(new JButton(">>"));
 		skipToolBar.add(new JButton("->|"));
+		skipToolBar.addSeparator();
+		
+		final JComboBox<String> viewSortSelector = new JComboBox<>();
+		for (ViewSortEnum v : ViewSortEnum.values())
+			viewSortSelector.addItem(v.name());
+		viewSortSelector.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				JComboBox<String> selectedChoice = (JComboBox<String>) event.getSource();
+				String s = (String) selectedChoice.getSelectedItem();
+				System.out.print(s);
+				Collector.getCollector().test1(s);
+			}
+		});
 
 		// Ausrichtung LEFT ist wichtig, da die Toolbars sonst mittig sind.
 		final JPanel toolbarPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		toolbarPanel.add(zoomToolBar);
 		toolbarPanel.add(skipToolBar);
+		toolbarPanel.add(viewSortSelector);
 
 		// JPanel f�r Toolbar und Separator
 		final JPanel compoundPanel = new JPanel(new BorderLayout());
@@ -178,7 +196,8 @@ public class MainFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				Collector.getCollector().testCopyCtor();
+//				Collector.getCollector().testCopyCtor();
+				Collector.getCollector().test();
 			}
 		});
 		

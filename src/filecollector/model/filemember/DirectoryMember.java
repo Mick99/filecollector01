@@ -2,11 +2,13 @@ package filecollector.model.filemember;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-@SuppressWarnings("unused")
+import filecollector.model.ViewSortEnum;
+
+
 public class DirectoryMember extends FileSystemMember {
 	/**
 	 * List of sub directory content
@@ -29,31 +31,36 @@ public class DirectoryMember extends FileSystemMember {
 		dirContent = new ArrayList<FileSystemMember>();
 	}
 	/**
-	 * Copy-constructor for deep object copy.
-	 * @param original: Object
+	 * List Copy-constructor for deep object copy with natural ordering.
+	 * @param original: DirectoryMember
 	 */
 	/*TODO MW_140812: Bei Copy-Ctor sollte ich wohl besser private init Methode schreiben, 
 	 * um die Ablaeufe des Standard-ctor nicht nochmal zu coden und bei Anpassungen am Verhalten den Copy-Ctor zu vergessen. 
 	 * Denn this(Path) darf kann ich in abgeleiteten Klassen nicht mehr aufrufen, dass geht nur in der Basisklasse.
 	 * 
 	 */
-	public DirectoryMember(final DirectoryMember original) {
+	public DirectoryMember(final DirectoryMember original, ViewSortEnum vs) {
 		super(original);
 		init();
 		this.capacitySize = original.capacitySize;
 		this.cumulatedCapacitySize = original.cumulatedCapacitySize;
 		// copy FileSystemMember
-		Iterator<FileSystemMember> it = original.getDirContent().listIterator();
+		List<FileSystemMember> tmp = original.getDirContent();
+		if (vs == ViewSortEnum.SORT_BY_DIR_FIRST || vs == ViewSortEnum.SORT_BY_FILE_FIRST)
+			Collections.sort(tmp);
+
+		Iterator<FileSystemMember> it = tmp.listIterator();
 		while (it.hasNext()) {
 			FileSystemMember origMember = (FileSystemMember) it.next();
 			if (origMember.getClass() == FileMember.class) {
 				FileMember orig = (FileMember) origMember;
 				addFileSystemMember(new FileMember(orig));
 			}
-			if (origMember.getClass() == DirectoryMember.class) {
-				DirectoryMember orig = (DirectoryMember) origMember;
-				addFileSystemMember(new DirectoryMember(orig));
-			}
+			//TODO MW_140818 DEL: Only useful for explorer directory structure 
+//			if (origMember.getClass() == DirectoryMember.class) {
+//				DirectoryMember orig = (DirectoryMember) origMember;
+//				addFileSystemMember(new DirectoryMember(orig));
+//			}
 		}
 	}
 	public void addFileSystemMember(FileSystemMember fileSystemMember) {

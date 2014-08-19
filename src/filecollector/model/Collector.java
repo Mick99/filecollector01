@@ -2,12 +2,11 @@ package filecollector.model;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
@@ -21,40 +20,64 @@ public class Collector {
 	// private static final Logger msg = Logger.getLogger("Message");
 	// private static final Logger exc = Logger.getLogger("Exception");
 
-	public enum viewTest {
-		DIRSTRUCT, DIRLIST;
-		
-	}
 	private static Collector self;
 	private DirectoryMember dirOrigUnsorted;
-	private DirectoryMember dirSortByDirFirst;
-	private DirectoryMember dirSortByFileFirst;
+	private List<DirectoryMember> dirMem; // Wird wohl eher nicht mehr gebraucht
+	private Map<ViewSortEnum, List<DirectoryMember>> mapOfDirMem;
 	
-	
-
 	public Collector(DirectoryMember root) {
 		this.dirOrigUnsorted = root;
-		self = this;
+		init();
 	}
-	// Copy from List to DirecdtoryMember structure
 	public Collector(List<DirectoryMember> list) {
-		dirOrigUnsorted = makeListToDirectoryMemberStructure(list);
+		init();
+//		dirMem = list;
+		deepCopy(list, ViewSortEnum.ORIG_UNSORTED);
+//		sort(mapOfDirMem.get(ViewSortEnum.SORT_BY_FILE_FIRST));
+	}
+	private void init() {
 		self = this;
+		mapOfDirMem = new HashMap<>();
 	}
 	public static Collector getCollector() {
 		return self;
 	}
-	public DirectoryMember getCollectionView(ViewSortEnum vs) {
-		switch (vs) {
-		case ORIG_UNSORTED:
-			return dirOrigUnsorted;
-		case SORT_BY_DIR_FIRST:
-			return dirSortByDirFirst;
-		case SORT_BY_FILE_FIRST:
-			return dirSortByFileFirst;
-		default:
-			throw new NullPointerException();
+	public List<DirectoryMember> getView(ViewSortEnum vs) {
+		if (mapOfDirMem.get(vs.ordinal()) == null) {
+			deepCopy(mapOfDirMem.get(ViewSortEnum.ORIG_UNSORTED), vs);
 		}
+		return mapOfDirMem.get(vs.ordinal());
+	}
+	public DirectoryMember getDirMemView(ViewSortEnum vs) {
+		return dirMem.get(vs.ordinal());
+	}
+	private void deepCopy(List<DirectoryMember> source, ViewSortEnum vs) {
+		List<DirectoryMember> newList = new ArrayList<>(source.size());
+		if (vs == ViewSortEnum.SORT_BY_DIR_FIRST || vs == ViewSortEnum.SORT_BY_FILE_FIRST)
+			Collections.sort(source);
+		for(DirectoryMember dm : source) {
+			DirectoryMember newDm = new DirectoryMember(dm, vs);
+			newList.add(newDm);
+		}
+		mapOfDirMem.put(vs, newList);
+	}
+
+	
+	
+	public void test() {
+		PrintTest p = new PrintTest();
+//		p.printList(mapOfDirMem.get(ViewSortEnum.ORIG_UNSORTED));
+		p.printList(dirMem);
+	}
+	public void test1(String viewSort) {
+		ViewSortEnum vs = ViewSortEnum.TEMP_WORK_BEFORE_SORT;
+		for (ViewSortEnum v : ViewSortEnum.values()) {
+			if (viewSort.equals(v.name())) {
+				vs = v;
+				break;
+			}
+		}
+		System.out.println(vs.printDescription());
 	}
 	// TODO MW_140802: Eher mist, sollte leichter gehen??? Dazu DirMem.., FileMem.. equals,... have to impl
 	private DirectoryMember makeListToDirectoryMemberStructure(List<DirectoryMember> list) {
@@ -78,27 +101,21 @@ public class Collector {
 			}
 		}
 	}
-//	private List<DirectoryMember> dirList = new ArrayList<>();
-//	private Set<DirectoryMember> dirSet	= new HashSet<>();
-//	public <T extends Collection<DirectoryMember>> T getDir(Collection<?> typeOfCollection) {
-//		if (typeOfCollection instanceof Collection<DirectoryMember>) {
-//			
-//		}
-//		
-//		return (T) new ArrayList<DirectoryMember>();
-//	}
+	
+
+	
+	
 	// Copy-Ctor test
 	private DirectoryMember testCopyOfOrig;
 	
 	public void testCopyCtor() {
-		testCopyOfOrig = new DirectoryMember(dirOrigUnsorted);
+		testCopyOfOrig = new DirectoryMember(dirOrigUnsorted, ViewSortEnum.ORIG_UNSORTED);
 		for (FileSystemMember fsm : testCopyOfOrig.getDirContent()) {
 			fsm.setPath_FORTEST();
 		}
 		testCompareBUTNotEquals(dirOrigUnsorted, testCopyOfOrig);
 	}
 	private void testCompareBUTNotEquals(DirectoryMember orig, DirectoryMember copy) {
-		int j = 0;
 		Iterator<FileSystemMember> origIt = orig.getDirContent().iterator();
 		Iterator<FileSystemMember> copyIt = copy.getDirContent().iterator();
 		while (origIt.hasNext()) {
@@ -146,7 +163,6 @@ public class Collector {
 		return rootNode;
 	}
 	private void recursiveDirectoryLevel(final DirectoryMember dm, MutableTreeNode resultTreeNode, int level) {
-		int j = 0;
 		if (level > 0) {
 			Iterator<FileSystemMember> iFsm = dm.getDirContent().iterator();
 			while (iFsm.hasNext()) {
