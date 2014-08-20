@@ -3,10 +3,9 @@ package filecollector.model;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
@@ -20,10 +19,13 @@ public class Collector {
 	// private static final Logger msg = Logger.getLogger("Message");
 	// private static final Logger exc = Logger.getLogger("Exception");
 
-	private static Collector self;
+	private static Collector self; // Don't use
 	private DirectoryMember dirOrigUnsorted;
 	private List<DirectoryMember> dirMem; // Wird wohl eher nicht mehr gebraucht
-	private Map<ViewSortEnum, List<DirectoryMember>> mapOfDirMem;
+//	private Map<ViewSortEnum, List<DirectoryMember>> mapOfDirMem; // same as EnumMap
+	private EnumMap<ViewSortEnum, List<DirectoryMember>> mapOfDirMem; // but this is more correct
+	private ViewSortEnum currentView = ViewSortEnum.NONE;
+	private DirectoryTreeStructure dirTree = new DirectoryTreeStructure();
 	
 	public Collector(DirectoryMember root) {
 		this.dirOrigUnsorted = root;
@@ -31,29 +33,30 @@ public class Collector {
 	}
 	public Collector(List<DirectoryMember> list) {
 		init();
-//		dirMem = list;
-		deepCopy(list, ViewSortEnum.ORIG_UNSORTED);
-//		sort(mapOfDirMem.get(ViewSortEnum.SORT_BY_FILE_FIRST));
+		deepCopy(list, ViewSortEnum.ORIG);
 	}
 	private void init() {
 		self = this;
-		mapOfDirMem = new HashMap<>();
+//		mapOfDirMem = new HashMap<>();
+		mapOfDirMem = new EnumMap<>(ViewSortEnum.class);
+
 	}
+	@Deprecated
 	public static Collector getCollector() {
 		return self;
 	}
 	public List<DirectoryMember> getView(ViewSortEnum vs) {
-		if (mapOfDirMem.get(vs.ordinal()) == null) {
-			deepCopy(mapOfDirMem.get(ViewSortEnum.ORIG_UNSORTED), vs);
+		if (!mapOfDirMem.containsKey(vs)) {
+			deepCopy(mapOfDirMem.get(ViewSortEnum.ORIG), vs);
 		}
-		return mapOfDirMem.get(vs.ordinal());
+		return mapOfDirMem.get(vs);//(vs.ordinal());
 	}
 	public DirectoryMember getDirMemView(ViewSortEnum vs) {
 		return dirMem.get(vs.ordinal());
 	}
 	private void deepCopy(List<DirectoryMember> source, ViewSortEnum vs) {
 		List<DirectoryMember> newList = new ArrayList<>(source.size());
-		if (vs == ViewSortEnum.SORT_BY_DIR_FIRST || vs == ViewSortEnum.SORT_BY_FILE_FIRST)
+		if (vs == ViewSortEnum.ORIG)
 			Collections.sort(source);
 		for(DirectoryMember dm : source) {
 			DirectoryMember newDm = new DirectoryMember(dm, vs);
@@ -61,13 +64,52 @@ public class Collector {
 		}
 		mapOfDirMem.put(vs, newList);
 	}
-
+	public MutableTreeNode getDirTreeStructure(ViewSortEnum vs) {
+		List<DirectoryMember> tmp = getView(vs);
+		// Create one root-element...
+		DefaultMutableTreeNode dmt = (DefaultMutableTreeNode) dirTree.createRootOfTreeStructure(tmp.get(0));
+		// ... create root level
+		List<DirectoryMember> part = getSubList(mapOfDirMem.get(vs), tmp.get(0), vs);
+//		dmt = 
+		return null;
+	}
+	// Later do it a little bit better than that opaque code??
+	private List<DirectoryMember> getSubList(List<DirectoryMember> source, DirectoryMember parent, ViewSortEnum vs) {
+		List<DirectoryMember> part = new ArrayList<>();
+		DirectoryMember nextMember;
+		Iterator<DirectoryMember> it = source.listIterator();
+		boolean isAdd = false;
+		// Find first parentPath and ...
+		while (it.hasNext() && !isAdd) {
+			nextMember = it.next();
+			isAdd = nextMember.getPath().getParent().equals(parent.getPath());
+			 if (isAdd)
+				 part.add(nextMember);
+		}
+		// ... find until not parentPath. 
+		do {
+			 if (!it.hasNext())
+				 break;
+			 nextMember = it.next();
+			 isAdd = nextMember.getPath().getParent().equals(parent.getPath());
+			 if (isAdd)
+				 part.add(nextMember);
+		} while (isAdd);
+		return part;
+	}
+	private List<FileSystemMember> getFileMemberList(DirectoryMember parent) {
+		List<FileSystemMember> part = new ArrayList<>();
+		for (FileSystemMember fs : parent.getDirContent())
+			part.add(fs);
+		return part;
+	}
 	
 	
 	public void test() {
 		PrintTest p = new PrintTest();
-//		p.printList(mapOfDirMem.get(ViewSortEnum.ORIG_UNSORTED));
-		p.printList(dirMem);
+		List<DirectoryMember> l = getView(ViewSortEnum.ORIG); 
+		p.printList(l);
+//		p.printList(dirMem);
 	}
 	public void test1(String viewSort) {
 		ViewSortEnum vs = ViewSortEnum.TEMP_WORK_BEFORE_SORT;
@@ -109,7 +151,7 @@ public class Collector {
 	private DirectoryMember testCopyOfOrig;
 	
 	public void testCopyCtor() {
-		testCopyOfOrig = new DirectoryMember(dirOrigUnsorted, ViewSortEnum.ORIG_UNSORTED);
+		testCopyOfOrig = new DirectoryMember(dirOrigUnsorted, ViewSortEnum.ORIG);
 		for (FileSystemMember fsm : testCopyOfOrig.getDirContent()) {
 			fsm.setPath_FORTEST();
 		}
