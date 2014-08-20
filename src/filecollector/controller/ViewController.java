@@ -1,11 +1,17 @@
 package filecollector.controller;
 
+import javax.swing.tree.MutableTreeNode;
+
+import filecollector.model.Collector;
 import filecollector.model.DirectoryPath;
+import filecollector.model.ViewSortEnum;
+import filecollector.model.filemember.DirectoryMember;
 import filecollector.view.MainFrame;
 
 public class ViewController implements IGuiCallback, IDirectoryWorkerCallback {
 
 	private MainFrame mf;
+	private Collector collector;
 	private DirectoryWorkerController dirWorkerCtrl;
 
 	public ViewController() {
@@ -28,8 +34,20 @@ public class ViewController implements IGuiCallback, IDirectoryWorkerCallback {
 		dirWorkerCtrl.startCollect(dirPath);
 	}
 	@Override
-	public void finishCollect() {
+	public void finishCollect(Collector collector) {
 		// Wenn alle Threads fertig sind, hier melden...
+		this.collector = collector;
 		mf.newDirectoryStructure();
+	}
+	@Override
+	public MutableTreeNode getDirTreeStructure(ViewSortEnum vs) {
+		if (collector == null)
+			return null;
+		return collector.getDirTreeStructure(vs);
+	}
+	@Override
+	public void dirListToTreeStructure(DirectoryMember dm, MutableTreeNode constructTreeNode) {
+		// collector.dirListToTreeStructure(dm, constructTreeNode);
+		collector.dirListToTreeStructure(dm, constructTreeNode);
 	}
 }

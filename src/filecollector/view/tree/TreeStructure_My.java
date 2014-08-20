@@ -18,7 +18,7 @@ public final class TreeStructure_My {
 	}
 	public static MutableTreeNode startTreeStructure_TEST() {
 		// Once create first "Root-Node"...
-		DirectoryMember dirMem = Collector.getCollector().getDirMemView(ViewSortEnum.ORIG_UNSORTED);
+		DirectoryMember dirMem = Collector.getCollector().getDirMemView(ViewSortEnum.ORIG);
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode(dirMem);
 		createOneLevelTreeNode(dirMem, root);
 		// After that create second level nodes and finish, because all collapsed

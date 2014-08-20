@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import filecollector.controller.IDirectoryWorkerControllerCallback;
 import filecollector.controller.MainController;
 import filecollector.controller.RunOrCallableEnum;
 import filecollector.controller.collectorWorker.DirectoryAttributeAppendOnce;
@@ -40,29 +41,30 @@ public class DirectoryCollectorStarter extends Thread implements IPoolIdentifier
 	}
 	@Override
 	public void run() {
+		Collector collector = null;
 		PoolIdentifier poolId = PoolManager.getInstance().newPool(ExecutorsTypeEnum.CACHED);
 		msg.debug("PoolManager: " + PoolManager.getInstance().toString());
 		if (MainController.runOrCallableEnum != null) {
 			if (MainController.runOrCallableEnum == RunOrCallableEnum.RUNNABLE)
-				newCallExecutor_FutureGet(poolId);
+				collector = newCallExecutor_FutureGet(poolId);
 			if (MainController.runOrCallableEnum == RunOrCallableEnum.CALLABLE)
-				newCallExecutor_Callable(poolId);
+				collector = newCallExecutor_Callable(poolId);
 		}
 		PoolManager.getInstance().clearPool(poolId);
-		directoryWorkerController.finishCollectDirectories();
+		directoryWorkerController.finishCollectDirectories(collector);
 	}
-	private void newCallExecutor_FutureGet(PoolIdentifier poolId) {
+	private Collector newCallExecutor_FutureGet(PoolIdentifier poolId) {
 		WorkerExecutor workerExecutor = new WorkerExecutor();
 		DirectoryMember dirMember = new DirectoryMember(directoryPath.getDirectoryPath());
 		new DirectoryAttributeAppendOnce(dirMember);
 		workerExecutor.executeWorker(dirMember, poolId);
-		new Collector(dirMember);
+		return new Collector(dirMember);
 	}
-	private void newCallExecutor_Callable(PoolIdentifier poolId) {
+	private Collector newCallExecutor_Callable(PoolIdentifier poolId) {
 		List<DirectoryMember> dmList = new ArrayList<>(100);
 		WorkerExecutor workerExecutor = new WorkerExecutor(dmList);
 		workerExecutor.executeWorker(directoryPath.getDirectoryPath(), poolId);
-		new Collector(dmList);
+		return new Collector(dmList);
 	}
 	@Override
 	public String toString() {

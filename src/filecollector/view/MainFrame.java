@@ -1,6 +1,7 @@
 package filecollector.view;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -46,7 +47,10 @@ public class MainFrame {
 	private JCheckBox runOrCall;
 	private JScrollPane dirScrollPane;
 	private JTree dirTree;
+	private JButton startCollect;
+	private JTextField directoryInput;
 
+	private String frameTitle = "File Collector :";
 	private TreeModel dirTreeModel;
 	private IGuiCallback viewCtrlCallback;
 
@@ -54,7 +58,7 @@ public class MainFrame {
 		this.viewCtrlCallback = viewCtrlCallback;
 	}
 	public void createMainFrame() {
-		frame = new JFrame("File Collector");
+		frame = new JFrame(frameTitle);
 		exitListener = new ExitListener(frame);
 		frame.addWindowListener(exitListener);
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -71,11 +75,25 @@ public class MainFrame {
 		exitListener.closeApp();
 	}
 	public void newDirectoryStructure() {
-		// Wrong
-//		DefaultTreeModel_My model = (DefaultTreeModel_My) dirTree.getModel();
-//		MutableTreeNode rootNode = Collector.getCollector().newRootNodeStructure();
-//		model.setRoot(rootNode);
-//		model.reload(rootNode);
+		startCollect.setVisible(true);
+		Color colorOld = startCollect.getBackground();
+		Boolean toogle = new Boolean(false);
+		for (int i = 0; i < 7; i++) {
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				// ignore
+			}
+			if (toogle) {
+				startCollect.setBackground(Color.RED);
+				toogle = Boolean.FALSE;
+			} else {
+				startCollect.setBackground(Color.GREEN);
+				toogle = Boolean.TRUE;
+			}
+		}
+		startCollect.setBackground(colorOld);
+		frame.setTitle(String.format("%s Path= %s", frameTitle, directoryInput.getText()));
 	}
 	private JPanel createToolBarPanel() {
 		// Zwei Toolbars erzeugen
@@ -91,18 +109,33 @@ public class MainFrame {
 		skipToolBar.add(new JButton(">>"));
 		skipToolBar.add(new JButton("->|"));
 		skipToolBar.addSeparator();
-		
+
+		// TODO MW_140819: Schau dir mal Model dazu an, wg Enum und nicht Strings
 		final JComboBox<String> viewSortSelector = new JComboBox<>();
 		for (ViewSortEnum v : ViewSortEnum.values())
 			viewSortSelector.addItem(v.name());
 		viewSortSelector.addActionListener(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent event) {
 				JComboBox<String> selectedChoice = (JComboBox<String>) event.getSource();
 				String s = (String) selectedChoice.getSelectedItem();
-				System.out.print(s);
-				Collector.getCollector().test1(s);
+				// System.out.print(s);
+				// Collector.getCollector().test1(s);
+
+				// Nicht sehr gluecklich String nach Enum
+				ViewSortEnum vs = ViewSortEnum.TEMP_WORK_BEFORE_SORT;
+				for (ViewSortEnum v : ViewSortEnum.values()) {
+					if (s.equals(v.name())) {
+						vs = v;
+						break;
+					}
+				}
+				DefaultTreeModel_My model = (DefaultTreeModel_My) dirTree.getModel();
+				// MutableTreeNode newRoot = TreeStructure_My.startTreeStructure_TEST();
+				MutableTreeNode newRoot = viewCtrlCallback.getDirTreeStructure(vs);
+				model.setRoot(newRoot);
+				model.reload(newRoot);
 			}
 		});
 
@@ -120,7 +153,8 @@ public class MainFrame {
 		return compoundPanel;
 	}
 	private JComponent createCenterPanel() {
-		dirTree = buildJTree(TreeStructure_My.createEmptyTreeStructure(), true);
+		// dirTree = buildJTree(TreeStructure_My.createEmptyTreeStructure());
+		dirTree = buildJTree(viewCtrlCallback.getDirTreeStructure(ViewSortEnum.NONE));
 		dirScrollPane = new JScrollPane(dirTree);
 		final JSplitPane splitPane = new JSplitPane();
 		textArea = new JTextArea("TextArea etwas breiter");
@@ -128,24 +162,24 @@ public class MainFrame {
 		splitPane.setRightComponent(dirScrollPane);
 		return splitPane;
 	}
-	private JTree buildJTree(MutableTreeNode rootNodeAttr, boolean isNew) {
+	private JTree buildJTree(MutableTreeNode rootNodeAttr) {
 		dirTreeModel = new DefaultTreeModel_My(rootNodeAttr);
 		JTree newDirectoryTree = new JTree(dirTreeModel);
 		// TreeCellRenderer
 		newDirectoryTree.setCellRenderer(new DefaultTreeCellRenderer_My());
-		// Model Listener 
+		// Model Listener
 		dirTreeModel.addTreeModelListener(new TreeModelListener_My());
-		// Selection Listener 
+		// Selection Listener
 		newDirectoryTree.addTreeSelectionListener(new TreeSelectionListener_My());
-		// Selection WillExpand 
-		newDirectoryTree.addTreeWillExpandListener(new TreeWillExpandListener_My());
-		// Selection Listener 
+		// Selection WillExpand
+		newDirectoryTree.addTreeWillExpandListener(new TreeWillExpandListener_My(viewCtrlCallback));
+		// Selection Listener
 		newDirectoryTree.addTreeExpansionListener(new TreeExpansionListener_My());
 
 		return newDirectoryTree;
 	}
 	private JPanel createInputPanel() {
-		final JTextField directoryInput = new JTextField("d:/test2", 30);
+		directoryInput = new JTextField("d:/test2", 30);
 		Font font = new Font(Font.DIALOG_INPUT, Font.ITALIC, 14);
 		directoryInput.setFont(font);
 		final JButton sendInput = new JButton("Send input");
@@ -156,13 +190,13 @@ public class MainFrame {
 				String in = directoryInput.getText();
 				textArea.append("\n" + in);
 				DefaultTreeModel_My model = (DefaultTreeModel_My) dirTree.getModel();
-//				MutableTreeNode newRoot = TreeStructure_My.createDemoTree();
+				// MutableTreeNode newRoot = TreeStructure_My.createDemoTree();
 				MutableTreeNode newRoot = TreeStructure_My.startTreeStructure_TEST();
 				model.setRoot(newRoot);
 				model.reload(newRoot);
 			}
 		});
-		final JButton startCollect = new JButton("START");
+		startCollect = new JButton("START");
 		startCollect.addActionListener(new ActionListener() {
 
 			@Override
@@ -170,6 +204,7 @@ public class MainFrame {
 				try {
 					DirectoryPath dir = new DirectoryPath(directoryInput.getText());
 					viewCtrlCallback.startCollect(dir);
+					startCollect.setVisible(false);
 				} catch (My_IllegalArgumentException e) {
 					JOptionPane.showMessageDialog(frame, "Not a valid directory path", "Wrong Dir", JOptionPane.WARNING_MESSAGE);
 				}
@@ -196,11 +231,10 @@ public class MainFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent event) {
-//				Collector.getCollector().testCopyCtor();
+				// Collector.getCollector().testCopyCtor();
 				Collector.getCollector().test();
 			}
 		});
-		
 
 		final JPanel inputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		inputPanel.add(sendInput);

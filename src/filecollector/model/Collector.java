@@ -9,10 +9,12 @@ import java.util.List;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreeNode;
 
 import org.apache.log4j.Logger;
 
 import filecollector.model.filemember.DirectoryMember;
+import filecollector.model.filemember.FileMember;
 import filecollector.model.filemember.FileSystemMember;
 
 public class Collector {
@@ -22,11 +24,12 @@ public class Collector {
 	private static Collector self; // Don't use
 	private DirectoryMember dirOrigUnsorted;
 	private List<DirectoryMember> dirMem; // Wird wohl eher nicht mehr gebraucht
-//	private Map<ViewSortEnum, List<DirectoryMember>> mapOfDirMem; // same as EnumMap
+	// private Map<ViewSortEnum, List<DirectoryMember>> mapOfDirMem; // same as EnumMap
 	private EnumMap<ViewSortEnum, List<DirectoryMember>> mapOfDirMem; // but this is more correct
+	private EnumMap<ViewSortEnum, DefaultMutableTreeNode> mapOfTreeNode; // fuer spaeter
 	private ViewSortEnum currentView = ViewSortEnum.NONE;
-	private DirectoryTreeStructure dirTree = new DirectoryTreeStructure();
-	
+	private DirectoryTreeStructure tree = new DirectoryTreeStructure();
+
 	public Collector(DirectoryMember root) {
 		this.dirOrigUnsorted = root;
 		init();
@@ -37,7 +40,7 @@ public class Collector {
 	}
 	private void init() {
 		self = this;
-//		mapOfDirMem = new HashMap<>();
+		// mapOfDirMem = new HashMap<>();
 		mapOfDirMem = new EnumMap<>(ViewSortEnum.class);
 
 	}
@@ -49,7 +52,7 @@ public class Collector {
 		if (!mapOfDirMem.containsKey(vs)) {
 			deepCopy(mapOfDirMem.get(ViewSortEnum.ORIG), vs);
 		}
-		return mapOfDirMem.get(vs);//(vs.ordinal());
+		return mapOfDirMem.get(vs);// (vs.ordinal());
 	}
 	public DirectoryMember getDirMemView(ViewSortEnum vs) {
 		return dirMem.get(vs.ordinal());
@@ -58,58 +61,90 @@ public class Collector {
 		List<DirectoryMember> newList = new ArrayList<>(source.size());
 		if (vs == ViewSortEnum.ORIG)
 			Collections.sort(source);
-		for(DirectoryMember dm : source) {
+		for (DirectoryMember dm : source) {
 			DirectoryMember newDm = new DirectoryMember(dm, vs);
 			newList.add(newDm);
 		}
 		mapOfDirMem.put(vs, newList);
 	}
 	public MutableTreeNode getDirTreeStructure(ViewSortEnum vs) {
+		if (vs == ViewSortEnum.NONE)
+			return tree.createEmptyTreeStructure();
 		List<DirectoryMember> tmp = getView(vs);
-		// Create one root-element...
-		DefaultMutableTreeNode dmt = (DefaultMutableTreeNode) dirTree.createRootOfTreeStructure(tmp.get(0));
-		// ... create root level
-		List<DirectoryMember> part = getSubList(mapOfDirMem.get(vs), tmp.get(0), vs);
-//		dmt = 
+		// Create one root-element ...
+		DirectoryMember rootDirMem = tmp.get(0);
+		DefaultMutableTreeNode dmt = (DefaultMutableTreeNode) tree.createRootOfTreeStructure(rootDirMem);
+		// ... create root level ...
+		List<DirectoryMember> dirPart = getSubDirList(mapOfDirMem.get(vs), rootDirMem);
+		List<FileMember> filePart = getFileMemberList(rootDirMem);
+		tree.dirListToTreeNode(dirPart, filePart, dmt, vs);
+		// ... create level after root level and finish
+		// DefaultMutableTreeNode tmpDmt = findTreeNode(dmt, dirPart.get(0));
+		for (DirectoryMember dm : dirPart) {
+			DefaultMutableTreeNode tmpDmt = findTreeNode(dmt, dm);
+			dirPart = getSubDirList(mapOfDirMem.get(vs), dm);
+			filePart = getFileMemberList(dm);
+			tree.dirListToTreeNode(dirPart, filePart, tmpDmt, vs);
+		}
+		currentView = vs;
+		return dmt;
+	}
+	private DefaultMutableTreeNode findTreeNode(DefaultMutableTreeNode rootNode, DirectoryMember dm) {
+		for (int i = 0; i < rootNode.getChildCount(); i++) {
+			TreeNode tn = rootNode.getChildAt(i);
+			DefaultMutableTreeNode tmp = (DefaultMutableTreeNode) tn;
+			if (dm.equals(tmp.getUserObject()))
+				return tmp;
+		}
 		return null;
 	}
 	// Later do it a little bit better than that opaque code??
-	private List<DirectoryMember> getSubList(List<DirectoryMember> source, DirectoryMember parent, ViewSortEnum vs) {
+	private List<DirectoryMember> getSubDirList(List<DirectoryMember> source, DirectoryMember parent) {
 		List<DirectoryMember> part = new ArrayList<>();
 		DirectoryMember nextMember;
 		Iterator<DirectoryMember> it = source.listIterator();
 		boolean isAdd = false;
-		// Find first parentPath and ...
+		// Find first parent path and ...
 		while (it.hasNext() && !isAdd) {
 			nextMember = it.next();
 			isAdd = nextMember.getPath().getParent().equals(parent.getPath());
-			 if (isAdd)
-				 part.add(nextMember);
+			if (isAdd)
+				part.add(nextMember);
 		}
-		// ... find until not parentPath. 
+		// ... find until not parent path ...
 		do {
-			 if (!it.hasNext())
-				 break;
-			 nextMember = it.next();
-			 isAdd = nextMember.getPath().getParent().equals(parent.getPath());
-			 if (isAdd)
-				 part.add(nextMember);
+			if (!it.hasNext())
+				break;
+			nextMember = it.next();
+			isAdd = nextMember.getPath().getParent().equals(parent.getPath());
+			if (isAdd)
+				part.add(nextMember);
 		} while (isAdd);
 		return part;
 	}
-	private List<FileSystemMember> getFileMemberList(DirectoryMember parent) {
-		List<FileSystemMember> part = new ArrayList<>();
+	private List<FileMember> getFileMemberList(DirectoryMember parent) {
+		List<FileMember> part = new ArrayList<>();
 		for (FileSystemMember fs : parent.getDirContent())
-			part.add(fs);
+			part.add((FileMember) fs);
 		return part;
 	}
-	
-	
+	public void dirListToTreeStructure(DirectoryMember dirMem, MutableTreeNode constructTreeNode) {
+		List<DirectoryMember> dirPart = getSubDirList(mapOfDirMem.get(currentView), dirMem);
+		DefaultMutableTreeNode dmt = (DefaultMutableTreeNode) constructTreeNode;
+		for (DirectoryMember dm : dirPart) {
+			DefaultMutableTreeNode tmpDmt = findTreeNode(dmt, dm);
+			dirPart = getSubDirList(mapOfDirMem.get(currentView), dm);
+			List<FileMember> filePart = getFileMemberList(dm);
+			tree.dirListToTreeNode(dirPart, filePart, tmpDmt, currentView);
+		}
+
+	}
+
 	public void test() {
 		PrintTest p = new PrintTest();
-		List<DirectoryMember> l = getView(ViewSortEnum.ORIG); 
+		List<DirectoryMember> l = getView(ViewSortEnum.ORIG);
 		p.printList(l);
-//		p.printList(dirMem);
+		// p.printList(dirMem);
 	}
 	public void test1(String viewSort) {
 		ViewSortEnum vs = ViewSortEnum.TEMP_WORK_BEFORE_SORT;
@@ -143,13 +178,10 @@ public class Collector {
 			}
 		}
 	}
-	
 
-	
-	
 	// Copy-Ctor test
 	private DirectoryMember testCopyOfOrig;
-	
+
 	public void testCopyCtor() {
 		testCopyOfOrig = new DirectoryMember(dirOrigUnsorted, ViewSortEnum.ORIG);
 		for (FileSystemMember fsm : testCopyOfOrig.getDirContent()) {
@@ -176,23 +208,24 @@ public class Collector {
 		}
 	}
 	private void equCompareHash(FileSystemMember orig, FileSystemMember copy) {
-		if (orig == copy) System.out.println("NOOO");
+		if (orig == copy)
+			System.out.println("NOOO");
 		if (orig.hashCode() != copy.hashCode()) {
 			System.out.format("hash?");
 		}
 		if (!orig.equals(copy)) {
 			System.out.format("equal?");
 		}
-		int comp = orig.compareTo(copy); 
+		int comp = orig.compareTo(copy);
 		if (comp != 0) {
-//			System.out.format("compareTo?");
+			// System.out.format("compareTo?");
 		}
 		System.out.format("compTo = %d", comp);
 		System.out.format("%norig hash: %d  %s%n", orig.hashCode(), orig.getFileName());
 		System.out.format("copy hash: %d  %s%n", copy.hashCode(), copy.getFileName());
-		
-		System.out.format("compTo Times=%d%n",orig.getFileTimes().compareTo(copy.getFileTimes()));
-//		System.out.println("equCompareHash");
+
+		System.out.format("compTo Times=%d%n", orig.getFileTimes().compareTo(copy.getFileTimes()));
+		// System.out.println("equCompareHash");
 	}
 	// Copy-Ctor test
 

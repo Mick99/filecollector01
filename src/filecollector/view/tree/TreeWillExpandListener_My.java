@@ -6,10 +6,16 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.ExpandVetoException;
 import javax.swing.tree.TreePath;
 
+import filecollector.controller.IGuiCallback;
 import filecollector.model.filemember.DirectoryMember;
 
 public class TreeWillExpandListener_My implements TreeWillExpandListener {
 
+	private IGuiCallback viewCtrlCallback;
+
+	public TreeWillExpandListener_My(IGuiCallback viewCtrlCallback) {
+		this.viewCtrlCallback = viewCtrlCallback;
+	}
 	@Override
 	public void treeWillCollapse(TreeExpansionEvent arg0) throws ExpandVetoException {
 //		System.out.println(arg0.toString() + " My treeWillCollapse");
@@ -22,7 +28,9 @@ public class TreeWillExpandListener_My implements TreeWillExpandListener {
 		DefaultMutableTreeNode dmt = (DefaultMutableTreeNode) tp.getLastPathComponent();
 		DirectoryMember dm = (DirectoryMember) dmt.getUserObject();
 //		System.out.println(dm.toPrint());
-		TreeStructure_My.dirListToTreeNode(dm, dmt);
+		
+//		TreeStructure_My.dirListToTreeNode(dm, dmt);
+		viewCtrlCallback.dirListToTreeStructure(dm, dmt);
 	}
 
 }

@@ -6,7 +6,7 @@ import filecollector.logic.threadpool.PoolManager;
 
 public class MainController {
 	public static Boolean exitApp = false;
-	public static RunOrCallableEnum runOrCallableEnum = RunOrCallableEnum.RUNNABLE;
+	public static RunOrCallableEnum runOrCallableEnum = RunOrCallableEnum.CALLABLE;
 
 	// private static final Logger msg = Logger.getLogger("Message");
 	private static final Logger exc = Logger.getLogger("Exception");

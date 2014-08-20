@@ -3,10 +3,10 @@ package filecollector.controller;
 import org.apache.log4j.Logger;
 
 import filecollector.logic.differentThreadsCollection.DirectoryCollectorStarter;
-import filecollector.logic.differentThreadsCollection.IDirectoryWorkerControllerCallback;
 import filecollector.logic.threadpool.ExecutorsTypeEnum;
 import filecollector.logic.threadpool.PoolIdentifier;
 import filecollector.logic.threadpool.PoolManager;
+import filecollector.model.Collector;
 import filecollector.model.DirectoryPath;
 import filecollector.model.My_IllegalArgumentException;
 
@@ -31,7 +31,7 @@ public class DirectoryWorkerController implements IDirectoryWorkerControllerCall
 		}
 	}
 	@Override
-	public void finishCollectDirectories() {
-		viewCtrlCallback.finishCollect();
+	public void finishCollectDirectories(final Collector collector) {
+		viewCtrlCallback.finishCollect(collector);
 	}
 }

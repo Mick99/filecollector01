@@ -44,11 +44,10 @@ public class DirectoryMember extends FileSystemMember {
 		init();
 		this.capacitySize = original.capacitySize;
 		this.cumulatedCapacitySize = original.cumulatedCapacitySize;
-		// copy FileSystemMember
+		// copy FileMember
 		List<FileSystemMember> tmp = original.getDirContent();
-		if (vs == ViewSortEnum.SORT_BY_DIR_FIRST || vs == ViewSortEnum.SORT_BY_FILE_FIRST)
+		if (vs == ViewSortEnum.ORIG)
 			Collections.sort(tmp);
-
 		Iterator<FileSystemMember> it = tmp.listIterator();
 		while (it.hasNext()) {
 			FileSystemMember origMember = (FileSystemMember) it.next();
