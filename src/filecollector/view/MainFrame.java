@@ -2,8 +2,11 @@ package filecollector.view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -31,12 +34,12 @@ import filecollector.model.Collector;
 import filecollector.model.DirectoryPath;
 import filecollector.model.My_IllegalArgumentException;
 import filecollector.model.ViewSortEnum;
+import filecollector.util.SleepUtils;
 import filecollector.view.tree.DefaultTreeCellRenderer_My;
 import filecollector.view.tree.DefaultTreeModel_My;
 import filecollector.view.tree.TreeExpansionListener_My;
 import filecollector.view.tree.TreeModelListener_My;
 import filecollector.view.tree.TreeSelectionListener_My;
-import filecollector.view.tree.TreeStructure_My;
 import filecollector.view.tree.TreeWillExpandListener_My;
 
 public class MainFrame {
@@ -62,14 +65,24 @@ public class MainFrame {
 		exitListener = new ExitListener(frame);
 		frame.addWindowListener(exitListener);
 		frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-
 		// Das Hauptfenster wird in drei Bereiche unterteilt
 		frame.add(createToolBarPanel(), BorderLayout.NORTH);
 		frame.add(createCenterPanel(), BorderLayout.CENTER);
 		frame.add(createInputPanel(), BorderLayout.SOUTH);
-
 		frame.setSize(700, 350);
+		frame.setLocation(centerFrame(frame));
 		frame.setVisible(true);
+	}
+	private Point centerFrame(JFrame fr) {
+		Dimension frameSize = fr.getSize();
+		double fw = frameSize.getWidth();
+		double fh = frameSize.getHeight();
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		double sw = screenSize.getWidth();
+		double sh = screenSize.getHeight();
+		int xPos = (int) ((sw - fw)/2);
+		int yPos = (int) ((sh - fh)/2);
+		return new Point(xPos, yPos);
 	}
 	public void closeMainFrame() {
 		exitListener.closeApp();
@@ -79,11 +92,7 @@ public class MainFrame {
 		Color colorOld = startCollect.getBackground();
 		Boolean toogle = new Boolean(false);
 		for (int i = 0; i < 7; i++) {
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-				// ignore
-			}
+			SleepUtils.safeSleep(500);
 			if (toogle) {
 				startCollect.setBackground(Color.RED);
 				toogle = Boolean.FALSE;
@@ -102,14 +111,12 @@ public class MainFrame {
 		zoomToolBar.add(new JButton("-"));
 		zoomToolBar.addSeparator();
 		zoomToolBar.add(new JButton("100%"));
-
 		final JToolBar skipToolBar = new JToolBar();
 		skipToolBar.add(new JButton("|<-"));
 		skipToolBar.add(new JButton("<<"));
 		skipToolBar.add(new JButton(">>"));
 		skipToolBar.add(new JButton("->|"));
 		skipToolBar.addSeparator();
-
 		// TODO MW_140819: Schau dir mal Model dazu an, wg Enum und nicht Strings
 		final JComboBox<String> viewSortSelector = new JComboBox<>();
 		for (ViewSortEnum v : ViewSortEnum.values())
@@ -120,11 +127,8 @@ public class MainFrame {
 			public void actionPerformed(ActionEvent event) {
 				JComboBox<String> selectedChoice = (JComboBox<String>) event.getSource();
 				String s = (String) selectedChoice.getSelectedItem();
-				// System.out.print(s);
-				// Collector.getCollector().test1(s);
-
 				// Nicht sehr gluecklich String nach Enum
-				ViewSortEnum vs = ViewSortEnum.TEMP_WORK_BEFORE_SORT;
+				ViewSortEnum vs = ViewSortEnum.NONE;
 				for (ViewSortEnum v : ViewSortEnum.values()) {
 					if (s.equals(v.name())) {
 						vs = v;
@@ -132,34 +136,31 @@ public class MainFrame {
 					}
 				}
 				DefaultTreeModel_My model = (DefaultTreeModel_My) dirTree.getModel();
-				// MutableTreeNode newRoot = TreeStructure_My.startTreeStructure_TEST();
 				MutableTreeNode newRoot = viewCtrlCallback.getDirTreeStructure(vs);
 				model.setRoot(newRoot);
 				model.reload(newRoot);
 			}
 		});
-
 		// Ausrichtung LEFT ist wichtig, da die Toolbars sonst mittig sind.
 		final JPanel toolbarPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		toolbarPanel.add(zoomToolBar);
 		toolbarPanel.add(skipToolBar);
 		toolbarPanel.add(viewSortSelector);
-
 		// JPanel f�r Toolbar und Separator
 		final JPanel compoundPanel = new JPanel(new BorderLayout());
 		compoundPanel.add(toolbarPanel, BorderLayout.NORTH);
 		compoundPanel.add(new JSeparator(), BorderLayout.SOUTH);
-
+		
 		return compoundPanel;
 	}
 	private JComponent createCenterPanel() {
-		// dirTree = buildJTree(TreeStructure_My.createEmptyTreeStructure());
 		dirTree = buildJTree(viewCtrlCallback.getDirTreeStructure(ViewSortEnum.NONE));
 		dirScrollPane = new JScrollPane(dirTree);
 		final JSplitPane splitPane = new JSplitPane();
 		textArea = new JTextArea("TextArea etwas breiter");
 		splitPane.setLeftComponent(textArea);
 		splitPane.setRightComponent(dirScrollPane);
+		
 		return splitPane;
 	}
 	private JTree buildJTree(MutableTreeNode rootNodeAttr) {
@@ -189,11 +190,6 @@ public class MainFrame {
 			public void actionPerformed(ActionEvent event) {
 				String in = directoryInput.getText();
 				textArea.append("\n" + in);
-				DefaultTreeModel_My model = (DefaultTreeModel_My) dirTree.getModel();
-				// MutableTreeNode newRoot = TreeStructure_My.createDemoTree();
-				MutableTreeNode newRoot = TreeStructure_My.startTreeStructure_TEST();
-				model.setRoot(newRoot);
-				model.reload(newRoot);
 			}
 		});
 		startCollect = new JButton("START");
@@ -203,8 +199,8 @@ public class MainFrame {
 			public void actionPerformed(ActionEvent event) {
 				try {
 					DirectoryPath dir = new DirectoryPath(directoryInput.getText());
-					viewCtrlCallback.startCollect(dir);
 					startCollect.setVisible(false);
+					viewCtrlCallback.startCollect(dir);
 				} catch (My_IllegalArgumentException e) {
 					JOptionPane.showMessageDialog(frame, "Not a valid directory path", "Wrong Dir", JOptionPane.WARNING_MESSAGE);
 				}
@@ -226,23 +222,24 @@ public class MainFrame {
 				runOrCall.setSelected(MainController.runOrCallableEnum.getRunOrCall());
 			}
 		});
-		final JButton testCopyCtor = new JButton("testCopyCtor");
+		final JButton testCopyCtor = new JButton("TestBtn");
 		testCopyCtor.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				// Collector.getCollector().testCopyCtor();
-				Collector.getCollector().test();
+				Collector c = Collector.getCollector();
+				if ((c) != null) {
+					// Collector.getCollector().testCopyCtor();
+					c.test();
+				}
 			}
 		});
-
 		final JPanel inputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 		inputPanel.add(sendInput);
 		inputPanel.add(directoryInput);
 		inputPanel.add(startCollect);
 		inputPanel.add(runOrCall);
 		inputPanel.add(testCopyCtor);
-
 		// JPanel f�r Toolbar und Separator
 		final JPanel compoundPanel = new JPanel(new BorderLayout());
 		compoundPanel.add(new JSeparator(), BorderLayout.NORTH);
@@ -250,23 +247,4 @@ public class MainFrame {
 
 		return compoundPanel;
 	}
-	// private JPanel createStatusBarPanel() {
-	// final JPanel statusbarPanel = new JPanel();
-	// statusbarPanel.setLayout(new BorderLayout());
-	//
-	// final JPanel leftPanel = new JPanel();
-	// final JPanel rightPanel = new JPanel();
-	//
-	// // final JLabel info1 = new JLabel("Left aligned info");
-	// final JTextField directoryInput = new JTextField("Directory Input:");
-	// final JLabel info2 = new JLabel("Right aligned info");
-	// leftPanel.add(directoryInput);
-	// rightPanel.add(info2);
-	//
-	// statusbarPanel.add(new JSeparator(), BorderLayout.NORTH);
-	// statusbarPanel.add(leftPanel, BorderLayout.WEST);
-	// statusbarPanel.add(rightPanel, BorderLayout.EAST);
-	//
-	// return statusbarPanel;
-	// }
 }

@@ -22,7 +22,6 @@ public abstract class FileSystemMember implements Comparable<FileSystemMember> {
 	private static final Logger msg = Logger.getLogger("Message");
 	private static final Logger exc = Logger.getLogger("Exception");
 
-	// private final String ABSOLUTE_PATH_NAME; //TODO MW_140811: Not necessary, maybe delete
 	private Path path;
 	private Path path_Absolute; // if we switch to relative path, right now it isn't
 	private EnumSet<FileAttributesEnum> fileAttributes = EnumSet.noneOf(FileAttributesEnum.class);

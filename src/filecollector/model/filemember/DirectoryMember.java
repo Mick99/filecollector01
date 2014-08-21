@@ -34,7 +34,7 @@ public class DirectoryMember extends FileSystemMember {
 	 * List Copy-constructor for deep object copy with natural ordering.
 	 * @param original: DirectoryMember
 	 */
-	/*TODO MW_140812: Bei Copy-Ctor sollte ich wohl besser private init Methode schreiben, 
+	/* MW_140812: Bei Copy-Ctor sollte ich wohl besser private init Methode schreiben, 
 	 * um die Ablaeufe des Standard-ctor nicht nochmal zu coden und bei Anpassungen am Verhalten den Copy-Ctor zu vergessen. 
 	 * Denn this(Path) darf kann ich in abgeleiteten Klassen nicht mehr aufrufen, dass geht nur in der Basisklasse.
 	 * 
