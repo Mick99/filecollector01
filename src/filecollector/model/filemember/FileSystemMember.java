@@ -169,7 +169,7 @@ public abstract class FileSystemMember implements Comparable<FileSystemMember> {
 	public String getFileName() {
 		return (path.getFileName()  == null) ? "" : path.getFileName().toString();
 	}
-	public abstract String toPrint();
+	public abstract String print();
 	@Override
 	public String toString() {
 		return this.getClass().getSimpleName() + " : " + path.toString();

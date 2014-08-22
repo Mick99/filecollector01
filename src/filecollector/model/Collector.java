@@ -3,9 +3,7 @@ package filecollector.model;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -66,7 +64,7 @@ public class Collector {
 	private void deepCopy(List<DirectoryMember> source, ViewSortEnum vs) {
 		List<DirectoryMember> newList = new ArrayList<>(source.size());
 		for (DirectoryMember dm : source) {
-			DirectoryMember newDm = new DirectoryMember(dm, vs);
+			DirectoryMember newDm = new DirectoryMember(dm);
 			newList.add(newDm);
 		}
 		mapOfDirMem.put(vs, newList);
