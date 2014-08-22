@@ -3,10 +3,11 @@ package filecollector.model.filemember;
 import java.nio.file.Path;
 
 public class FileMember extends FileSystemMember {
-	private long fileSize;
+	private FileMemberSize fileSize;
 
 	public FileMember(final Path path) {
 		super(path);
+		fileSize = new FileMemberSize();
 	}
 	/**
 	 * Copy-constructor for deep object copy.
@@ -14,16 +15,13 @@ public class FileMember extends FileSystemMember {
 	 */
 	public FileMember(final FileMember original) {
 		super(original);
-		this.fileSize = original.fileSize;
+		fileSize = new FileMemberSize(original);
 	}
-	public long getFileSize() {
+	public FileMemberSize getFileSize() {
 		return fileSize;
 	}
-	public void setFileSize(long fileSize) {
-		this.fileSize = fileSize;
-	}
 	@Override
-	public String toPrint() {
-		return String.format("%05d: %s   [%3$tF %3$tT]",getFileSize(), getFileName(), getFileTimes().getDaylightZoneOffsetTime(FileTimesEnum.LASTMODIFIED).getTime());
+	public String print() {
+		return String.format("%s: %s   [%3$tF %3$tT]", getFileSize().print(), getFileName(), getFileTimes().getDaylightZoneOffsetTime(FileTimesEnum.LASTMODIFIED).getTime());
 	}
 }

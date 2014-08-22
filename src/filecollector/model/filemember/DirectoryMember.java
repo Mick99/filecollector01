@@ -2,11 +2,8 @@ package filecollector.model.filemember;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-
-import filecollector.model.ViewSortEnum;
 
 
 public class DirectoryMember extends FileSystemMember {
@@ -14,17 +11,11 @@ public class DirectoryMember extends FileSystemMember {
 	 * List of sub directory content
 	 */
 	private List<FileSystemMember> dirContent;
-	/**
-	 * Sum of file sizes without sub directory's
-	 */
-	private long capacitySize = -1L;
-	/**
-	 * Sum of file and sub directory's sizes
-	 */
-	private long cumulatedCapacitySize = -1L;
+	private DirectoryMemberSize dirSize;
 
 	public DirectoryMember(final Path path) {
 		super(path);
+		dirSize = new DirectoryMemberSize();
 		init();
 	}
 	private void init()	{
@@ -39,27 +30,18 @@ public class DirectoryMember extends FileSystemMember {
 	 * Denn this(Path) darf kann ich in abgeleiteten Klassen nicht mehr aufrufen, dass geht nur in der Basisklasse.
 	 * 
 	 */
-	public DirectoryMember(final DirectoryMember original, ViewSortEnum vs) {
+	public DirectoryMember(final DirectoryMember original) {
 		super(original);
 		init();
-		this.capacitySize = original.capacitySize;
-		this.cumulatedCapacitySize = original.cumulatedCapacitySize;
-		// copy FileMember
-		List<FileSystemMember> tmp = original.getDirContent();
-		if (vs == ViewSortEnum.ORIG)
-			Collections.sort(tmp);
-		Iterator<FileSystemMember> it = tmp.listIterator();
+		dirSize = new DirectoryMemberSize(original);
+		// copy FileMembers
+		Iterator<FileSystemMember> it = original.getDirContent().listIterator();
 		while (it.hasNext()) {
 			FileSystemMember origMember = (FileSystemMember) it.next();
 			if (origMember.getClass() == FileMember.class) {
 				FileMember orig = (FileMember) origMember;
 				addFileSystemMember(new FileMember(orig));
 			}
-			//TODO MW_140818 DEL: Only useful for explorer directory structure 
-//			if (origMember.getClass() == DirectoryMember.class) {
-//				DirectoryMember orig = (DirectoryMember) origMember;
-//				addFileSystemMember(new DirectoryMember(orig));
-//			}
 		}
 	}
 	public void addFileSystemMember(FileSystemMember fileSystemMember) {
@@ -69,7 +51,7 @@ public class DirectoryMember extends FileSystemMember {
 		return dirContent;
 	}
 	@Override
-	public String toPrint() {
+	public String print() {
 		// Special handling e.g. 'd:\' getFilname() result is null 
 		String fname = new String();
 		if (getPath().getFileName() != null) {
@@ -78,5 +60,8 @@ public class DirectoryMember extends FileSystemMember {
 			fname = getPath().toString(); 
 		}
 		return String.format("%s   [%2$tF %2$tT]", fname, getFileTimes().getDaylightZoneOffsetTime(FileTimesEnum.LASTMODIFIED).getTime());
+	}
+	DirectoryMemberSize getDirSize() {
+		return dirSize;
 	}
 }
