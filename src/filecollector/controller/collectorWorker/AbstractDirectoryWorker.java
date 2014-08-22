@@ -144,7 +144,7 @@ public abstract class AbstractDirectoryWorker implements IPoolIdentifier {
 			// ignore
 		} finally {
 			int rw = WorkerCounter.releaseWorker();
-			msg.info("Release " + rw + " for " + workerName + " on Path " + directory.getPath().toString());
+			msg.warn("Release " + rw + " for " + workerName + " on Path " + directory.getPath().toString());
 		}
 	}
 	@Override
