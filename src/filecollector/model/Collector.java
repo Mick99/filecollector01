@@ -5,6 +5,9 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
@@ -12,19 +15,23 @@ import javax.swing.tree.TreeNode;
 
 import org.apache.log4j.Logger;
 
+import filecollector.logic.threadpool.ExecutorsTypeEnum;
+import filecollector.logic.threadpool.PoolIdentifier;
+import filecollector.logic.threadpool.PoolManager;
 import filecollector.model.filemember.DirectoryMember;
 import filecollector.model.filemember.FileMember;
 import filecollector.model.filemember.FileSystemMember;
+import filecollector.model.worker.SubListWorker;
 
 public class Collector {
 	// private static final Logger msg = Logger.getLogger("Message");
-	// private static final Logger exc = Logger.getLogger("Exception");
+	private static final Logger exc = Logger.getLogger("Exception");
 
 	private static Collector self; // Don't use
 	private DirectoryMember dirOrigUnsorted;
 	private List<DirectoryMember> dirMem; // Wird wohl eher nicht mehr gebraucht
 	private EnumMap<ViewSortEnum, List<DirectoryMember>> mapOfDirMem; // but this is more correct
-//	private EnumMap<ViewSortEnum, DefaultMutableTreeNode> mapOfTreeNode; // fuer spaeter
+	// private EnumMap<ViewSortEnum, DefaultMutableTreeNode> mapOfTreeNode; // fuer spaeter
 	private ViewSortEnum currentView = ViewSortEnum.NONE;
 	private DirectoryTreeStructure tree = new DirectoryTreeStructure();
 
@@ -72,14 +79,13 @@ public class Collector {
 		DirectoryMember rootDirMem = tmp.get(0);
 		DefaultMutableTreeNode dmt = (DefaultMutableTreeNode) tree.createRootOfTreeStructure(rootDirMem);
 		// ... create root level ...
-		List<DirectoryMember> dirPart = getSubDirList(mapOfDirMem.get(vs), rootDirMem);
+		List<DirectoryMember> dirPart = getSubDirListWorker(mapOfDirMem.get(vs), rootDirMem);
 		List<FileMember> filePart = getFileMemberList(rootDirMem);
 		tree.dirListToTreeNode(dirPart, filePart, dmt, vs);
 		// ... create level after root level and finish
-		// DefaultMutableTreeNode tmpDmt = findTreeNode(dmt, dirPart.get(0));
 		for (DirectoryMember dm : dirPart) {
 			DefaultMutableTreeNode tmpDmt = findTreeNode(dmt, dm);
-			dirPart = getSubDirList(mapOfDirMem.get(vs), dm);
+			dirPart = getSubDirListWorker(mapOfDirMem.get(vs), dm);
 			filePart = getFileMemberList(dm);
 			tree.dirListToTreeNode(dirPart, filePart, tmpDmt, vs);
 		}
@@ -95,30 +101,6 @@ public class Collector {
 		}
 		return null;
 	}
-	// Later do it a little bit better than that opaque code??
-	private List<DirectoryMember> getSubDirList(List<DirectoryMember> source, DirectoryMember parent) {
-		List<DirectoryMember> part = new ArrayList<>();
-		DirectoryMember nextMember;
-		Iterator<DirectoryMember> it = source.listIterator();
-		boolean isAdd = false;
-		// Find first parent path and ...
-		while (it.hasNext() && !isAdd) {
-			nextMember = it.next();
-			isAdd = nextMember.getPath().getParent().equals(parent.getPath());
-			if (isAdd)
-				part.add(nextMember);
-		}
-		// ... find until not parent path ...
-		do {
-			if (!it.hasNext())
-				break;
-			nextMember = it.next();
-			isAdd = nextMember.getPath().getParent().equals(parent.getPath());
-			if (isAdd)
-				part.add(nextMember);
-		} while (isAdd);
-		return part;
-	}
 	private List<FileMember> getFileMemberList(DirectoryMember parent) {
 		List<FileMember> part = new ArrayList<>();
 		for (FileSystemMember fs : parent.getDirContent())
@@ -126,14 +108,52 @@ public class Collector {
 		return part;
 	}
 	public void dirListToTreeStructure(DirectoryMember dirMem, MutableTreeNode constructTreeNode) {
-		List<DirectoryMember> dirPart = getSubDirList(mapOfDirMem.get(currentView), dirMem);
+		List<DirectoryMember> dirPart = getSubDirListWorker(mapOfDirMem.get(currentView), dirMem);
 		DefaultMutableTreeNode dmt = (DefaultMutableTreeNode) constructTreeNode;
 		for (DirectoryMember dm : dirPart) {
 			DefaultMutableTreeNode tmpDmt = findTreeNode(dmt, dm);
-			dirPart = getSubDirList(mapOfDirMem.get(currentView), dm);
+			dirPart = getSubDirListWorker(mapOfDirMem.get(currentView), dm);
 			List<FileMember> filePart = getFileMemberList(dm);
 			tree.dirListToTreeNode(dirPart, filePart, tmpDmt, currentView);
 		}
+	}
+	private List<DirectoryMember> getSubDirListWorker(List<DirectoryMember> source, DirectoryMember parent) {
+		List<DirectoryMember> result = new ArrayList<>();
+		// Split source list
+		PoolIdentifier poolId;
+		if ((poolId = PoolManager.getInstance().isPoolAvailable(ExecutorsTypeEnum.MISCALUS)) == null)
+			poolId = PoolManager.getInstance().newPool(ExecutorsTypeEnum.MISCALUS);
+		int maxSize = source.size();
+		int offset = calculateOffset(maxSize);
+		List<Future<List<DirectoryMember>>> futureList = new ArrayList<>();
+		for (int fromIndex = 0; fromIndex < maxSize; fromIndex += offset) {
+			SubListWorker worker = new SubListWorker(source.subList(fromIndex, (fromIndex + offset > maxSize) ? maxSize : fromIndex + offset), parent, poolId);
+			Future<List<DirectoryMember>> submit = PoolManager.getInstance().usePool(worker, poolId).submit(worker);
+			futureList.add(submit);
+		}
+		for (Future<List<DirectoryMember>> future : futureList) {
+			try {
+				List<DirectoryMember> dirMember = future.get();
+				if (dirMember != null)
+					result.addAll(dirMember);
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+				exc.info("Callable Interrupt", e);
+			} catch (ExecutionException e) {
+				exc.error("Callable Execution", e);
+			}
+		}
+		return result;
+	}
+	// Soll 9 Threads nicht ueberschreiten.
+	private int calculateOffset(int maxSize) {
+		int offset = 8;
+		int threads = 0;
+		do {
+			offset *= 2;
+			threads = maxSize / offset;
+		} while (threads > 8);
+		return offset;
 	}
 
 	

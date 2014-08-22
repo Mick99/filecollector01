@@ -97,7 +97,7 @@ public class PoolManager {
 			tmp = Executors.newSingleThreadExecutor();
 			break;
 		case MISCALUS:
-			tmp = Executors.newFixedThreadPool(2);
+			tmp = Executors.newFixedThreadPool(4);
 			break;
 
 		default:

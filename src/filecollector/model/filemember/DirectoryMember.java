@@ -70,6 +70,13 @@ public class DirectoryMember extends FileSystemMember {
 	}
 	@Override
 	public String toPrint() {
-		return String.format("%s   [%2$tF %2$tT]", getPath().getFileName().toString(), getFileTimes().getDaylightZoneOffsetTime(FileTimesEnum.LASTMODIFIED).getTime());
+		// Special handling e.g. 'd:\' getFilname() result is null 
+		String fname = new String();
+		if (getPath().getFileName() != null) {
+			fname = getPath().getFileName().toString(); 
+		} else {
+			fname = getPath().toString(); 
+		}
+		return String.format("%s   [%2$tF %2$tT]", fname, getFileTimes().getDaylightZoneOffsetTime(FileTimesEnum.LASTMODIFIED).getTime());
 	}
 }

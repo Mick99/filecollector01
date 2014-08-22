@@ -167,7 +167,7 @@ public abstract class FileSystemMember implements Comparable<FileSystemMember> {
 		fileTimes = new FileTimes(testCreation, testAccess, testModified);
 	}
 	public String getFileName() {
-		return path.getFileName().toString();
+		return (path.getFileName()  == null) ? "" : path.getFileName().toString();
 	}
 	public abstract String toPrint();
 	@Override
