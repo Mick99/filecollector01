@@ -64,12 +64,18 @@ public class PoolManager {
 		}
 		return newId;
 	}
-	public ExecutorService usePool(IPoolIdentifier runnable, PoolIdentifier poolIdentifier) {
-		ListOfExecutorServices l = getListService(poolIdentifier.getType(), "USEPool", runnable.infoStrFALSCH());
+	public ExecutorService usePool(IWorker runnable, PoolIdentifier poolIdentifier) {
+		ListOfExecutorServices l = null;
+		if (runnable instanceof IPoolIdentifier) {
+			l = getListService(poolIdentifier.getType(), "USEPool", ((IPoolIdentifier) runnable).infoStrFALSCH());
+			System.out.println("IPool");
+		} else
+			l = getListService(poolIdentifier.getType(), "USEPool");
 		if (l != null) {
 			ExecutorService exeSrv = l.getExecutorService(poolIdentifier);
 			if (exeSrv != null) {
-				runnable.transferNewIdentifier(poolIdentifier);
+				if (runnable instanceof IPoolIdentifier)
+					((IPoolIdentifier) runnable).transferNewIdentifier(poolIdentifier);
 				return exeSrv;
 			}
 		}

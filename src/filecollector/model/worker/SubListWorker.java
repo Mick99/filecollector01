@@ -4,20 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import filecollector.logic.threadpool.IPoolIdentifier;
-import filecollector.logic.threadpool.PoolIdentifier;
+import filecollector.logic.threadpool.IWorker;
 import filecollector.model.filemember.DirectoryMember;
 
-public class SubListWorker implements Callable<List<DirectoryMember>> , IPoolIdentifier {
+public class SubListWorker implements Callable<List<DirectoryMember>> , IWorker {
 
 	private List<DirectoryMember> subSource;
 	private DirectoryMember parent;
-	private PoolIdentifier poolId;
 	
-	public SubListWorker(List<DirectoryMember> subSource, DirectoryMember parent, PoolIdentifier pid) {
+	public SubListWorker(List<DirectoryMember> subSource, DirectoryMember parent) {
 		this.subSource = subSource;
 		this.parent = parent;
-		this.poolId = pid;
 	}
 	@Override
 	public List<DirectoryMember> call() throws Exception {
@@ -32,13 +29,4 @@ public class SubListWorker implements Callable<List<DirectoryMember>> , IPoolIde
 		}
 		return part;
 	}
-	@Override
-	public void transferNewIdentifier(PoolIdentifier poolId) {
-		this.poolId = poolId;
-	}
-	@Override
-	public String infoStrFALSCH() {
-		return this.getClass().getSimpleName() + " :" + poolId;
-	}
-
 }

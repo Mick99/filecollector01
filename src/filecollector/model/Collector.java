@@ -125,7 +125,7 @@ public class Collector {
 		int offset = calculateOffset(maxSize);
 		List<Future<List<DirectoryMember>>> futureList = new ArrayList<>();
 		for (int fromIndex = 0; fromIndex < maxSize; fromIndex += offset) {
-			SubListWorker worker = new SubListWorker(source.subList(fromIndex, (fromIndex + offset > maxSize) ? maxSize : fromIndex + offset), parent, poolId);
+			SubListWorker worker = new SubListWorker(source.subList(fromIndex, (fromIndex + offset > maxSize) ? maxSize : fromIndex + offset), parent);
 			Future<List<DirectoryMember>> submit = PoolManager.getInstance().usePool(worker, poolId).submit(worker);
 			futureList.add(submit);
 		}
