@@ -85,7 +85,7 @@ public abstract class AbstractDirectoryWorker implements IPoolIdentifier {
 	private void appendAttributes(FileMember fm) {
 		DosFileAttributes dosFileAttr = getFileAttributes(fm.getPath());
 		if (dosFileAttr != null) {
-			fm.setFileSize(dosFileAttr.size());
+			fm.getFileSize().setSize(dosFileAttr.size());
 			appendFileTimesAndFlags(fm, dosFileAttr);
 		}
 	}

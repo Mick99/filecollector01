@@ -180,7 +180,7 @@ public class MainFrame {
 		return newDirectoryTree;
 	}
 	private JPanel createInputPanel() {
-		directoryInput = new JTextField("D:/Test/SecondOrdner/SecondLevel1", 30); // D:/Test/SecondOrdner/SecondLevel1 d:/test2
+		directoryInput = new JTextField("d:/test2", 30); // D:/Test/SecondOrdner/SecondLevel1 d:/test2
 		Font font = new Font(Font.DIALOG_INPUT, Font.ITALIC, 14);
 		directoryInput.setFont(font);
 		final JButton sendInput = new JButton("Send input");
