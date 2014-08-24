@@ -5,7 +5,7 @@ public class FileMemberSize implements IMemberSize {
 	private Long size; 
 	
 	FileMemberSize() {
-		size  = new Long(-1);
+		size  = new Long(0);
 	}
 	FileMemberSize(FileMember original) {
 		size  = new Long(original.getFileSize().getSize());
@@ -22,5 +22,4 @@ public class FileMemberSize implements IMemberSize {
 	public String print() {
 		return String.format("%05d", size);
 	}
-
 }

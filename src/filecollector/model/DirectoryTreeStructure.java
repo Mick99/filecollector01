@@ -14,21 +14,14 @@ import filecollector.model.filemember.FileSystemMember;
 
 public class DirectoryTreeStructure {
 
-	public DirectoryTreeStructure() {
+	DirectoryTreeStructure() {
 	}
 	MutableTreeNode createRootOfTreeStructure(DirectoryMember dm) {
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode(dm);
 		return root;
 	}
 	void dirListToTreeNode(List<DirectoryMember> dm, List<FileMember> fm, MutableTreeNode constructTreeNode, ViewSortEnum vs) {
-		List<FileSystemMember> allMember = new ArrayList<>();
-		if (vs == ViewSortEnum.SORT_BY_FILE_FIRST) {
-			allMember.addAll(fm);
-			allMember.addAll(dm);
-		} else {
-			allMember.addAll(dm);
-			allMember.addAll(fm);
-		}
+		List<FileSystemMember> allMember = selectionToShow(dm, fm, vs);
 		int insertPos = 0;
 		for (FileSystemMember fsm : allMember) {
 			constructTreeNode.insert(new DefaultMutableTreeNode(fsm), insertPos++);
@@ -38,5 +31,20 @@ public class DirectoryTreeStructure {
 		FileMember empty = new FileMember(Paths.get("D:/--Empty--"));
 		DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode(empty);
 		return rootNode;
+	}
+	private List<FileSystemMember> selectionToShow(List<DirectoryMember> dm, List<FileMember> fm, ViewSortEnum vs) {
+		List<FileSystemMember> allMember = new ArrayList<>();
+		if (vs == ViewSortEnum.FILE_FIRST || vs == ViewSortEnum.DIR_ONLY) {
+			if (vs == ViewSortEnum.FILE_FIRST) {
+				allMember.addAll(fm);
+				allMember.addAll(dm);
+			} else {
+				allMember.addAll(dm);
+			}
+		} else {
+			allMember.addAll(dm);
+			allMember.addAll(fm);
+		}
+		return allMember;
 	}
 }

@@ -11,8 +11,8 @@ public class DirectoryMemberSize implements IMemberSize {
 	private Long cumulatedCapacitySize;
 
 	DirectoryMemberSize() {
-		capacitySize = new Long(-1);
-		cumulatedCapacitySize = new Long(-1);
+		capacitySize = new Long(0);
+		cumulatedCapacitySize = new Long(0);
 	}
 	/**
 	 * Only for DirectoryMember CopyCtor 
