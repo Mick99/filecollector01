@@ -20,6 +20,6 @@ public class FileMemberSize implements IMemberSize {
 	}
 	@Override
 	public String print() {
-		return String.format("%05d", size);
+		return String.format("%05d", getSize());
 	}
 }

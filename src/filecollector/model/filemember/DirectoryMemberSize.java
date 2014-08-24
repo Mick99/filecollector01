@@ -42,6 +42,6 @@ public class DirectoryMemberSize implements IMemberSize {
 	}
 	@Override
 	public String print() {
-		return null;
+		return String.format("%06d", getSize());
 	}
 }

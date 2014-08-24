@@ -59,9 +59,13 @@ public class DirectoryMember extends FileSystemMember {
 		} else {
 			fname = getPath().toString(); 
 		}
-		return String.format("%s   [%2$tF %2$tT]", fname, getFileTimes().getDaylightZoneOffsetTime(FileTimesEnum.LASTMODIFIED).getTime());
+		return String.format("%s   [%2$tF %2$tT] >>> %3$s", fname, getFileTimes().getDaylightZoneOffsetTime(FileTimesEnum.LASTMODIFIED).getTime(), getDirSize().print());
 	}
-	DirectoryMemberSize getDirSize() {
+	public DirectoryMemberSize getDirSize() {
 		return dirSize;
+	}
+	@Override
+	public Long getSize() {
+		return dirSize.getSize();
 	}
 }

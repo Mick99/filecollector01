@@ -24,4 +24,8 @@ public class FileMember extends FileSystemMember {
 	public String print() {
 		return String.format("%s: %s   [%3$tF %3$tT]", getFileSize().print(), getFileName(), getFileTimes().getDaylightZoneOffsetTime(FileTimesEnum.LASTMODIFIED).getTime());
 	}
+	@Override
+	public Long getSize() {
+		return fileSize.getSize();
+	}
 }

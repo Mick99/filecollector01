@@ -53,6 +53,7 @@ public abstract class AbstractDirectoryWorker implements IPoolIdentifier {
 				processNextDirectoryEntry(it.next());
 			}
 			closeDirectoryStreamInstance();
+			sumFileSystemMemberSize();
 		} else {
 			// TODO MW_140708: How to handle it? throw, log or nothing
 		}
@@ -155,5 +156,11 @@ public abstract class AbstractDirectoryWorker implements IPoolIdentifier {
 	public String infoStrFALSCH() {
 		return String.format("%s", directory.getFileName());
 	}
-
+	private void sumFileSystemMemberSize() {
+		Long sum = new Long(0);
+		for (FileSystemMember fsm : directory.getDirContent()) {
+			sum += fsm.getSize();
+		}
+		directory.getDirSize().setCapacitySize(sum);
+	}
 }
