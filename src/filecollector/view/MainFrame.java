@@ -20,10 +20,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
+import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.JTree;
+import javax.swing.ListSelectionModel;
+import javax.swing.table.TableColumnModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeModel;
 
@@ -35,6 +38,9 @@ import filecollector.model.DirectoryPath;
 import filecollector.model.My_IllegalArgumentException;
 import filecollector.model.ViewSortEnum;
 import filecollector.util.SleepUtils;
+import filecollector.view.table.FileSystemTableModel;
+import filecollector.view.table.ListSelectionListener_My;
+import filecollector.view.table.TableModelListener_My;
 import filecollector.view.tree.DefaultTreeCellRenderer_My;
 import filecollector.view.tree.DefaultTreeModel_My;
 import filecollector.view.tree.TreeExpansionListener_My;
@@ -48,7 +54,9 @@ public class MainFrame {
 	private ExitListener exitListener;
 	private JTextArea textArea;
 	private JCheckBox runOrCall;
-	private JScrollPane dirScrollPane;
+	private JScrollPane dirScrollPaneTree;
+	private JScrollPane dirScrollPaneTable;
+	private JTable fileSysTable;
 	private JTree dirTree;
 	private JButton startCollect;
 	private JTextField directoryInput;
@@ -56,6 +64,7 @@ public class MainFrame {
 	private String frameTitle = "File Collector :";
 	private TreeModel dirTreeModel;
 	private IGuiCallback viewCtrlCallback;
+//	private FileSystemTableModel fileSysModel;
 
 	public MainFrame(IGuiCallback viewCtrlCallback) {
 		this.viewCtrlCallback = viewCtrlCallback;
@@ -69,7 +78,8 @@ public class MainFrame {
 		frame.add(createToolBarPanel(), BorderLayout.NORTH);
 		frame.add(createCenterPanel(), BorderLayout.CENTER);
 		frame.add(createInputPanel(), BorderLayout.SOUTH);
-		frame.setSize(700, 350);
+//		frame.setSize(700, 350);
+		frame.pack();
 		frame.setLocation(centerFrame(frame));
 		frame.setVisible(true);
 	}
@@ -135,10 +145,15 @@ public class MainFrame {
 						break;
 					}
 				}
+				// Tree
 				DefaultTreeModel_My model = (DefaultTreeModel_My) dirTree.getModel();
 				MutableTreeNode newRoot = viewCtrlCallback.getDirTreeStructure(vs);
 				model.setRoot(newRoot);
 				model.reload(newRoot);
+				// Table
+				FileSystemTableModel newTableModel = new FileSystemTableModel(viewCtrlCallback.getTableView());
+				fileSysTable.setModel(newTableModel);
+				
 			}
 		});
 		// Ausrichtung LEFT ist wichtig, da die Toolbars sonst mittig sind.
@@ -154,18 +169,40 @@ public class MainFrame {
 		return compoundPanel;
 	}
 	private JComponent createCenterPanel() {
+		fileSysTable = buildJTable();
 		dirTree = buildJTree(viewCtrlCallback.getDirTreeStructure(ViewSortEnum.NONE));
-		dirScrollPane = new JScrollPane(dirTree);
+		dirScrollPaneTree = new JScrollPane(dirTree);
+		dirScrollPaneTable = new JScrollPane(fileSysTable);
 		final JSplitPane splitPane = new JSplitPane();
-		textArea = new JTextArea("TextArea etwas breiter");
-		splitPane.setLeftComponent(textArea);
-		splitPane.setRightComponent(dirScrollPane);
-		
+//		textArea = new JTextArea("TextArea etwas breiter");
+//		splitPane.setLeftComponent(textArea);
+		splitPane.setLeftComponent(dirScrollPaneTable);
+		splitPane.setRightComponent(dirScrollPaneTree);
 		return splitPane;
 	}
+	private JTable buildJTable() {
+		// Model
+		FileSystemTableModel newTableModel = new FileSystemTableModel();
+		newTableModel.addTableModelListener(new TableModelListener_My());
+		// Table
+		fileSysTable = new JTable(newTableModel);
+		fileSysTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		fileSysTable.setPreferredSize(new Dimension(350, 400));
+		// Selection Listener
+		ListSelectionModel selModel = fileSysTable.getSelectionModel();
+		selModel.addListSelectionListener(new ListSelectionListener_My());
+//		initColWidths(fileSysTable);
+		return fileSysTable;
+	}
+//	private void initColWidths(JTable t) {
+//		TableColumnModel tModel = t.getColumnModel();
+//		tModel.getColumn(0).setPreferredWidth(70);
+//		tModel.getColumn(1).setPreferredWidth(20);
+//	}
 	private JTree buildJTree(MutableTreeNode rootNodeAttr) {
 		dirTreeModel = new DefaultTreeModel_My(rootNodeAttr);
 		JTree newDirectoryTree = new JTree(dirTreeModel);
+		newDirectoryTree.setPreferredSize(new Dimension(350, 400));
 		// TreeCellRenderer
 		newDirectoryTree.setCellRenderer(new DefaultTreeCellRenderer_My());
 		// Model Listener
@@ -173,7 +210,7 @@ public class MainFrame {
 		// Selection Listener
 		newDirectoryTree.addTreeSelectionListener(new TreeSelectionListener_My());
 		// Selection WillExpand
-		newDirectoryTree.addTreeWillExpandListener(new TreeWillExpandListener_My(viewCtrlCallback));
+		newDirectoryTree.addTreeWillExpandListener(new TreeWillExpandListener_My(viewCtrlCallback, fileSysTable));
 		// Selection Listener
 		newDirectoryTree.addTreeExpansionListener(new TreeExpansionListener_My());
 
@@ -188,8 +225,13 @@ public class MainFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent event) {
-				String in = directoryInput.getText();
-				textArea.append("\n" + in);
+//				String in = directoryInput.getText();
+//				textArea.append("\n" + in);
+				
+//				Dimension d = dirScrollPaneTree.getSize();
+//				Dimension d1 = dirScrollPaneTree.getPreferredSize();
+//				System.out.format("w=%d  h=%d", d.width, d.height);
+//				System.out.format("Pre w=%d  h=%d", d1.width, d1.height);
 			}
 		});
 		startCollect = new JButton("START");

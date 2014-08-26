@@ -66,10 +66,9 @@ public class PoolManager {
 	}
 	public ExecutorService usePool(IWorker runnable, PoolIdentifier poolIdentifier) {
 		ListOfExecutorServices l = null;
-		if (runnable instanceof IPoolIdentifier) {
+		if (runnable instanceof IPoolIdentifier)
 			l = getListService(poolIdentifier.getType(), "USEPool", ((IPoolIdentifier) runnable).infoStrFALSCH());
-			System.out.println("IPool");
-		} else
+		else
 			l = getListService(poolIdentifier.getType(), "USEPool");
 		if (l != null) {
 			ExecutorService exeSrv = l.getExecutorService(poolIdentifier);

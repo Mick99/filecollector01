@@ -32,6 +32,7 @@ public class Collector {
 	// private EnumMap<ViewSortEnum, DefaultMutableTreeNode> mapOfTreeNode; // fuer spaeter
 	private ViewSortEnum currentView = ViewSortEnum.NONE;
 	private DirectoryTreeStructure tree = new DirectoryTreeStructure();
+	private List<FileSystemMember> tableDatas;
 
 	// Must be convert to List
 	public Collector(DirectoryMember root) {
@@ -76,10 +77,18 @@ public class Collector {
 		// Create one root-element ...
 		DirectoryMember rootDirMem = tmp.get(0);
 		DefaultMutableTreeNode dmt = (DefaultMutableTreeNode) tree.createRootOfTreeStructure(rootDirMem);
+		//++table
+		tableDatas = new ArrayList<>();
+		tableDatas.add(rootDirMem);
+		//--table
 		// ... create root level ...
 		List<DirectoryMember> dirPart = getSubDirListWorker(mapOfDirMem.get(vs), rootDirMem);
 		List<FileMember> filePart = getFileMemberList(rootDirMem);
 		tree.dirListToTreeNode(dirPart, filePart, dmt, vs);
+		//++table
+		tableDatas.addAll(dirPart);
+		tableDatas.addAll(filePart);
+		//--table
 		// ... create level after root level and finish
 		for (DirectoryMember dm : dirPart) {
 			DefaultMutableTreeNode tmpDmt = findTreeNode(dmt, dm);
@@ -108,6 +117,7 @@ public class Collector {
 	public void dirListToTreeStructure(DirectoryMember dirMem, MutableTreeNode constructTreeNode) {
 		List<DirectoryMember> dirPart = getSubDirListWorker(mapOfDirMem.get(currentView), dirMem);
 		DefaultMutableTreeNode dmt = (DefaultMutableTreeNode) constructTreeNode;
+		insertTableData(dmt);
 		for (DirectoryMember dm : dirPart) {
 			DefaultMutableTreeNode tmpDmt = findTreeNode(dmt, dm);
 			dirPart = getSubDirListWorker(mapOfDirMem.get(currentView), dm);
@@ -153,6 +163,38 @@ public class Collector {
 		} while (threads > 8);
 		return offset;
 	}
+	public List<FileSystemMember> getTableView() {
+		if (tableDatas != null)
+			return tableDatas;
+		return Collections.emptyList();
+	}
+	private void insertTableData(final DefaultMutableTreeNode expandTreeNode) {
+		int insertAfter = tableDatas.indexOf(expandTreeNode.getUserObject());
+		int childCount = expandTreeNode.getChildCount();
+		for (int i=0; i<childCount; i++) {
+			TreeNode tn = expandTreeNode.getChildAt(i);
+			DefaultMutableTreeNode dmt = (DefaultMutableTreeNode) tn;
+			FileSystemMember fsm = (FileSystemMember) dmt.getUserObject();
+			tableDatas.add(insertAfter+1+i, fsm);
+		}
+	}
+	public List<FileSystemMember> removeFromTableView(MutableTreeNode removeChildsFromTreeNode) {
+		removeTableData((DefaultMutableTreeNode)removeChildsFromTreeNode);
+		return tableDatas;
+	}
+	private void removeTableData(final DefaultMutableTreeNode removeChildsFromTreeNode) {
+		int childCount = removeChildsFromTreeNode.getChildCount();
+		for (int i=0; i<childCount; i++) {
+			TreeNode tn = removeChildsFromTreeNode.getChildAt(i);
+			DefaultMutableTreeNode dmt = (DefaultMutableTreeNode) tn;
+			FileSystemMember fsm = (FileSystemMember) dmt.getUserObject();
+			if (!tableDatas.remove(fsm)) {
+				System.out.println("Didnt Remove ???");
+			}
+		}
+		
+	}
+	
 
 	
 	public void test() {

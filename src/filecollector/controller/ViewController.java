@@ -1,11 +1,14 @@
 package filecollector.controller;
 
+import java.util.List;
+
 import javax.swing.tree.MutableTreeNode;
 
 import filecollector.model.Collector;
 import filecollector.model.DirectoryPath;
 import filecollector.model.ViewSortEnum;
 import filecollector.model.filemember.DirectoryMember;
+import filecollector.model.filemember.FileSystemMember;
 import filecollector.view.MainFrame;
 
 public class ViewController implements IGuiCallback, IDirectoryWorkerCallback {
@@ -49,5 +52,13 @@ public class ViewController implements IGuiCallback, IDirectoryWorkerCallback {
 	public void dirListToTreeStructure(DirectoryMember dm, MutableTreeNode constructTreeNode) {
 		// collector.dirListToTreeStructure(dm, constructTreeNode);
 		collector.dirListToTreeStructure(dm, constructTreeNode);
+	}
+	@Override
+	public List<FileSystemMember> getTableView() {
+		return collector.getTableView();
+	}
+	@Override
+	public List<FileSystemMember> removeFromTableView(MutableTreeNode removeChildsFromTreeNode) {
+		return collector.removeFromTableView(removeChildsFromTreeNode);
 	}
 }
