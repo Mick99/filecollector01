@@ -78,8 +78,8 @@ public class MainFrame {
 		frame.add(createToolBarPanel(), BorderLayout.NORTH);
 		frame.add(createCenterPanel(), BorderLayout.CENTER);
 		frame.add(createInputPanel(), BorderLayout.SOUTH);
-//		frame.setSize(700, 350);
-		frame.pack();
+		frame.setSize(700, 350);
+//		frame.pack();
 		frame.setLocation(centerFrame(frame));
 		frame.setVisible(true);
 	}
@@ -187,7 +187,7 @@ public class MainFrame {
 		// Table
 		fileSysTable = new JTable(newTableModel);
 		fileSysTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		fileSysTable.setPreferredSize(new Dimension(350, 400));
+//		fileSysTable.setPreferredSize(new Dimension(350, 400));
 		// Selection Listener
 		ListSelectionModel selModel = fileSysTable.getSelectionModel();
 		selModel.addListSelectionListener(new ListSelectionListener_My());
@@ -202,7 +202,7 @@ public class MainFrame {
 	private JTree buildJTree(MutableTreeNode rootNodeAttr) {
 		dirTreeModel = new DefaultTreeModel_My(rootNodeAttr);
 		JTree newDirectoryTree = new JTree(dirTreeModel);
-		newDirectoryTree.setPreferredSize(new Dimension(350, 400));
+//		newDirectoryTree.setPreferredSize(new Dimension(350, 400));
 		// TreeCellRenderer
 		newDirectoryTree.setCellRenderer(new DefaultTreeCellRenderer_My());
 		// Model Listener
