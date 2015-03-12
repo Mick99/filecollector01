@@ -37,7 +37,7 @@ public class DirectoryMember extends FileSystemMember {
 		// copy FileMembers
 		Iterator<FileSystemMember> it = original.getDirContent().listIterator();
 		while (it.hasNext()) {
-			FileSystemMember origMember = (FileSystemMember) it.next();
+			FileSystemMember origMember = it.next();
 			if (origMember.getClass() == FileMember.class) {
 				FileMember orig = (FileMember) origMember;
 				addFileSystemMember(new FileMember(orig));

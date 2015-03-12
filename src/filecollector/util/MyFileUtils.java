@@ -17,9 +17,6 @@ public final class MyFileUtils {
 	public static boolean isDirectory (final Path dir) {
         if (dir == null)
             throw new IllegalArgumentException("Passed Path must not be null!");
-		if (Files.isDirectory (dir)) {
-			return true;
-		}
-		return false;
+		return (Files.isDirectory (dir)) ? true : false;
 	}
 }

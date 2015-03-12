@@ -26,8 +26,10 @@ public class DirectoryCollectorStarter extends Thread implements IPoolIdentifier
 	private DirectoryPath directoryPath;
 	private PoolIdentifier poolIdentifier;
 	private IDirectoryWorkerControllerCallback directoryWorkerController;
-
-	// No Default constructor
+	
+	private DirectoryCollectorStarter() {
+		// No Default constructor		
+	}
 	public DirectoryCollectorStarter(Path dirPath, IDirectoryWorkerControllerCallback dirWorkerController) throws My_IllegalArgumentException {
 		directoryPath = new DirectoryPath(dirPath);
 		directoryWorkerController = dirWorkerController;
